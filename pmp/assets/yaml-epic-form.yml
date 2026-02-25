@@ -1,0 +1,49 @@
+name: Epic
+description: Create an epic with sub-issues
+labels: ["type:epic"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Epic Definition"
+  - type: input
+    id: title
+    attributes:
+      label: Epic Title
+      placeholder: "[EPIC] Feature Name"
+    validations:
+      required: true
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: High-level description of this epic
+    validations:
+      required: true
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Success Criteria
+      description: What does done look like?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+  - type: textarea
+    id: sub_issues
+    attributes:
+      label: Planned Sub-Issues
+      description: List the work items (will be converted to sub-issues)
+      placeholder: |
+        - [ ] Task 1: Description
+        - [ ] Task 2: Description
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity Tier
+      options:
+        - SIMPLE
+        - STANDARD
+        - COMPLEX
+    validations:
+      required: true

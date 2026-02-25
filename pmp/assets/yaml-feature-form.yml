@@ -1,0 +1,45 @@
+name: Feature Request
+description: Propose a new feature
+labels: ["type:feature"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Feature Request"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What feature do you want?
+      placeholder: As a user, I want...
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 - Critical
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this is done?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Steps
+      description: How to verify this works
+      placeholder: |
+        | Type | Details | Expected |
+        |------|---------|----------|
+        | command | npm test | All pass |
