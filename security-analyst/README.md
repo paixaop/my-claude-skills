@@ -1,6 +1,10 @@
 # Security Analyst
 
-Offensive security analysis skill for Claude Code and Cursor. Coordinates specialized agents through a multi-phase penetration testing pipeline. Finds real vulnerabilities with concrete exploits, not checkbox compliance.
+[![GitHub](https://img.shields.io/github/stars/paixaop/security-analyst?style=social)](https://github.com/paixaop/security-analyst)
+
+Comprehensive security analysis skill for Claude Code, Cursor, and Codex. Identifies vulnerabilities, assesses exploitability, and generates actionable remediation plans. Coordinates specialized agents through a multi-phase pipeline — built for developers and security researchers who want depth, not checkbox compliance.
+
+**Repository:** https://github.com/paixaop/security-analyst
 
 ## When to Use
 
