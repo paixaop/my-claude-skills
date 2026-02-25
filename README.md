@@ -16,7 +16,10 @@ Full planning lifecycle from brainstorm to execution. Covers ideation, plan gene
 - **Execute** — Run implementation with parallel agents and task dependencies
 - **E2E Loop** — Code-test-fix cycles with multiple testing strategies
 
-**Usage:**
+**Trigger phrases** — say any of these to activate PMP:
+> "plan", "brainstorm", "design this", "create a plan", "review plan", "execute plan", "plan from roadmap", "plan from issues", "plan from epic", "e2e loop", "code-test-fix", "run e2e tests", "extend plans", "create issues", "publish to GitHub", "make an epic", "update issues", "sync issues"
+
+**Slash commands:**
 ```
 /pmp                    # Interactive mode
 /pmp:brainstorm         # Start from an idea
@@ -49,7 +52,10 @@ Offensive security analysis suite that runs multi-phase penetration testing with
 - Privacy assessments for PII flows and data subject rights
 - Diff mode to compare security posture between runs
 
-**Usage:**
+**Trigger phrases** — say any of these to activate Security Analyst:
+> "security audit", "penetration test", "pentest", "threat model", "vulnerability hunt", "find vulnerabilities", "security fix plan", "SBOM", "compliance mapping", "privacy assessment", "security posture", "security review", "attack surface"
+
+**Slash commands:**
 ```
 /security-analyst                       # Interactive mode
 /security-analyst:full                  # All 9 phases
@@ -75,7 +81,10 @@ A skill for creating new Claude Code skills. Provides the official format, best 
 - Subagent execution patterns
 - Skill categories and design principles
 
-**Usage:**
+**Trigger phrases** — say any of these to activate Create Skill:
+> "create a skill", "write a skill", "author a skill", "new skill", "skill structure", "SKILL.md format", "skill best practices"
+
+**Slash commands:**
 ```
 /create-skill [skill-name] [purpose]
 ```
