@@ -1,11 +1,9 @@
 {
   "name": "pmp",
-  "displayName": "PMP — Plan-Management Pipeline",
   "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams",
   "version": "1.0.0",
   "author": {
-    "name": "paixaop",
-    "url": "https://github.com/paixaop"
+    "name": "paixaop"
   },
   "homepage": "https://github.com/paixaop/my-claude-skills",
   "repository": "https://github.com/paixaop/my-claude-skills",
