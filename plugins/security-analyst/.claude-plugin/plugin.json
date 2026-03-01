@@ -1,0 +1,14 @@
+{
+  "name": "security-analyst",
+  "displayName": "Security Analyst",
+  "description": "Offensive security analysis suite with multi-phase penetration testing, exploit development, and remediation planning",
+  "version": "1.0.0",
+  "author": {
+    "name": "paixaop",
+    "url": "https://github.com/paixaop"
+  },
+  "homepage": "https://github.com/paixaop/my-claude-skills",
+  "repository": "https://github.com/paixaop/my-claude-skills",
+  "license": "MIT",
+  "keywords": ["security", "penetration-testing", "threat-model", "sbom", "compliance", "vulnerability"]
+}

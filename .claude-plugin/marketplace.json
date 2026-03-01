@@ -1,0 +1,26 @@
+{
+  "name": "my-claude-skills",
+  "owner": {
+    "name": "paixaop"
+  },
+  "metadata": {
+    "description": "Planning, security analysis, and skill authoring plugins for Claude Code",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "pmp",
+      "source": "pmp",
+      "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams",
+      "version": "1.0.0",
+      "author": { "name": "paixaop" }
+    },
+    {
+      "name": "security-analyst",
+      "source": "security-analyst",
+      "description": "Offensive security analysis suite with multi-phase penetration testing, exploit development, and remediation planning",
+      "version": "1.0.0",
+      "author": { "name": "paixaop" }
+    }
+  ]
+}
