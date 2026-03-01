@@ -1,8 +1,32 @@
-# My Claude Code Skills
+# My Claude Skills
 
-A collection of custom skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that extend its capabilities with structured workflows for planning, security analysis, and skill authoring.
+A [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) with plugins for planning and security analysis. Install them individually.
 
-## Skills
+## Installation
+
+Add the marketplace inside a Claude Code session:
+
+```shell
+/plugin marketplace add paixaop/my-claude-skills
+```
+
+Then install the plugins you want:
+
+```shell
+/plugin install pmp@my-claude-skills
+/plugin install security-analyst@my-claude-skills
+```
+
+### Local / Development
+
+Test a plugin locally without installing:
+
+```bash
+claude --plugin-dir ./plugins/pmp
+claude --plugin-dir ./plugins/security-analyst
+```
+
+## Plugins
 
 ### PMP (Plan-Management Pipeline)
 
@@ -16,18 +40,18 @@ Full planning lifecycle from brainstorm to execution. Covers ideation, plan gene
 - **Execute** — Run implementation with parallel agents and task dependencies
 - **E2E Loop** — Code-test-fix cycles with multiple testing strategies
 
-**Trigger phrases** — say any of these to activate PMP:
+**Trigger phrases:**
 > "plan", "brainstorm", "design this", "create a plan", "review plan", "execute plan", "plan from roadmap", "plan from issues", "plan from epic", "e2e loop", "code-test-fix", "run e2e tests", "extend plans", "create issues", "publish to GitHub", "make an epic", "update issues", "sync issues"
 
 **Slash commands:**
 ```
-/pmp                    # Interactive mode
-/pmp:brainstorm         # Start from an idea
-/pmp:plan-spec          # Generate plan from a spec or roadmap
-/pmp:plan-issues        # Generate plan from GitHub Issues
-/pmp:review             # Review an existing plan
-/pmp:execute            # Execute a plan
-/pmp:e2e               # Run E2E test loop
+/pmp:pmp                          # Interactive mode
+/pmp:pmp brainstorm               # Start from an idea
+/pmp:pmp plan-spec                # Generate plan from a spec or roadmap
+/pmp:pmp plan-issues              # Generate plan from GitHub Issues
+/pmp:pmp review                   # Review an existing plan
+/pmp:pmp execute                  # Execute a plan
+/pmp:pmp e2e                      # Run E2E test loop
 ```
 
 ### Security Analyst
@@ -52,46 +76,37 @@ Offensive security analysis suite that runs multi-phase penetration testing with
 - Privacy assessments for PII flows and data subject rights
 - Diff mode to compare security posture between runs
 
-**Trigger phrases** — say any of these to activate Security Analyst:
+**Trigger phrases:**
 > "security audit", "penetration test", "pentest", "threat model", "vulnerability hunt", "find vulnerabilities", "security fix plan", "SBOM", "compliance mapping", "privacy assessment", "security posture", "security review", "attack surface"
 
 **Slash commands:**
 ```
-/security-analyst                       # Interactive mode
-/security-analyst:full                  # All 9 phases
-/security-analyst:focused [component]   # Targeted analysis
-/security-analyst:recon                 # Reconnaissance only
-/security-analyst:threat-model          # STRIDE + attack trees
-/security-analyst:sbom                  # Dependencies and supply chain
-/security-analyst:compliance [framework] # SOC 2, ISO 27001, PCI DSS, etc.
-/security-analyst:privacy               # PII and data privacy assessment
-/security-analyst:fix-plan [run-dir]    # Generate fix plan from findings
-/security-analyst:diff [run-a] [run-b]  # Compare two runs
-/security-analyst:variant-hunt [vuln]   # Find all variants of a known vuln
+/security-analyst:security-analyst                       # Interactive mode
+/security-analyst:security-analyst full                  # All 9 phases
+/security-analyst:security-analyst focused [component]   # Targeted analysis
+/security-analyst:security-analyst recon                 # Reconnaissance only
+/security-analyst:security-analyst threat-model          # STRIDE + attack trees
+/security-analyst:security-analyst sbom                  # Dependencies and supply chain
+/security-analyst:security-analyst compliance [framework] # SOC 2, ISO 27001, PCI DSS, etc.
+/security-analyst:security-analyst privacy               # PII and data privacy assessment
+/security-analyst:security-analyst fix-plan [run-dir]    # Generate fix plan from findings
+/security-analyst:security-analyst diff [run-a] [run-b]  # Compare two runs
+/security-analyst:security-analyst variant-hunt [vuln]   # Find all variants of a known vuln
 ```
 
-### Create Skill
+## Structure
 
-A skill for creating new Claude Code skills. Provides the official format, best practices, and validation guidance from Anthropic's skill architecture.
-
-**Covers:**
-- SKILL.md structure and YAML frontmatter
-- Progressive disclosure (three-level context loading)
-- String substitution and dynamic context
-- Subagent execution patterns
-- Skill categories and design principles
-
-**Trigger phrases** — say any of these to activate Create Skill:
-> "create a skill", "write a skill", "author a skill", "new skill", "skill structure", "SKILL.md format", "skill best practices"
-
-**Slash commands:**
 ```
-/create-skill [skill-name] [purpose]
+.claude-plugin/
+  marketplace.json              # Marketplace catalog
+plugins/
+  pmp/                          # Plan-Management Pipeline plugin
+    .claude-plugin/plugin.json
+    skills/pmp/
+  security-analyst/             # Security analysis plugin
+    .claude-plugin/plugin.json
+    skills/security-analyst/
 ```
-
-## Installation
-
-These skills are located in `~/.claude/skills/` and are automatically available to Claude Code. No additional setup is required.
 
 ## Reference
 
