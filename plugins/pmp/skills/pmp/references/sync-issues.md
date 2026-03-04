@@ -274,7 +274,7 @@ If the issue body was modified directly on GitHub (not through this skill), the 
 
 ## Automatic Sync Detection
 
-During the **Review** stage, if the plan has a `## GitHub Issues` table and the review resulted in plan changes (NEEDS REVISION → updated):
+During the **Plan Review** stage, if the plan has a `## GitHub Issues` table and the review resulted in plan changes (NEEDS REVISION → updated):
 
 After updating the plan, ask:
 > "The plan was updated and has linked GitHub Issues. Want me to sync the changes to GitHub?"

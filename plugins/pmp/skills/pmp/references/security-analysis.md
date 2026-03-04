@@ -6,7 +6,7 @@ Threat modeling and design-level vulnerability assessment for development plans.
 
 ## When to Use
 
-- During plan Review mode (mandatory for plans touching auth, data flows, new endpoints, or secrets)
+- During Plan Review mode (mandatory for plans touching auth, data flows, new endpoints, or secrets)
 - Before implementing any development plan
 - During architecture design review
 

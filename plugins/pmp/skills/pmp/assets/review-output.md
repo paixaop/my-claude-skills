@@ -1,4 +1,5 @@
 ## Plan Review: [Plan Name]
+<!-- Template for Plan Review output — used by references/review.md -->
 
 ### Summary
 [1-2 sentence overall assessment]
