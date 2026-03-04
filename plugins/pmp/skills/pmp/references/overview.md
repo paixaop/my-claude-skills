@@ -9,7 +9,7 @@ An AI-agent-driven planning and execution system. Goes from idea to merged PR wi
 ```mermaid
 graph LR
     A[Idea / Spec / Issues] --> B[Generate Plan]
-    B --> C[Review]
+    B --> C[Plan Review]
     C --> D{GitHub Issues?}
     D -->|Create new| E[GitHub Planning]
     D -->|Already exist| F[Execute]
@@ -21,14 +21,15 @@ graph LR
 
 Every transition between stages requires user confirmation. The agent never auto-advances.
 
-### Four Entry Points
+### Five Entry Points
 
 | You say... | What happens |
 |------------|--------------|
-| "I have an idea for..." | **Workflow 1** -- Brainstorm → Plan → Review → Execute |
-| "Here's my roadmap/spec" | **Workflow 2** -- Plan → Review → Execute |
-| "Plan from epic #41" | **Workflow 4** -- Fetch Issues → Plan → Review → Execute |
-| "Review this plan" | **Workflow 3** -- Review → Execute |
+| "I have an idea for..." | **Workflow 1** -- Brainstorm → Plan → Plan Review → Execute |
+| "Here's my roadmap/spec" | **Workflow 2** -- Plan → Plan Review → Execute |
+| "Plan from epic #41" | **Workflow 4** -- Fetch Issues → Plan → Plan Review → Execute |
+| "Review this plan" | **Workflow 3** -- Plan Review → Execute |
+| "Review specs" / "Architecture review" | **Workflow 5** -- Architecture & Spec Review (standalone report) |
 
 Plus standalone modes:
 
@@ -94,7 +95,8 @@ pmp/
 ├── config.md                         # Central constants — paths, thresholds, labels, announcements
 │   ├── brainstorm.md                 # Collaborative design stage
 │   ├── generate-plans.md             # Plan generation (+ GitHub Issues Mode)
-│   ├── review.md                     # Skeptical senior engineer review
+│   ├── review.md                     # Plan review — skeptical senior engineer
+│   ├── spec-review.md                # Architecture & spec review — 10-phase deep system analysis
 │   ├── execute-loop.md               # Code-test-fix loop with E2E
 │   ├── execute.md                    # Subagent/batch execution mode
 │   ├── github-planning.md            # Issue/Epic/Project creation
@@ -110,7 +112,8 @@ pmp/
     ├── design-doc.md                 # Design document from brainstorm
     ├── feature.md                    # Feature spec with ACs and E2E tests
     ├── task.md                       # TDD task with steps
-    ├── review-output.md              # Review verdict and findings
+    ├── review-output.md              # Plan review verdict and findings
+    ├── spec-review-output.md         # Architecture & spec review report
     ├── issue-simple.md               # SIMPLE tier: single issue body
     ├── issue-epic.md                 # STANDARD/COMPLEX: epic body
     ├── issue-sub-issue.md            # Sub-issue body

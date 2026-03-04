@@ -1,6 +1,8 @@
-# Review
+# Plan Review
 
 Critically review implementation plans. Treat every plan as if submitted by a junior developer.
+
+> **This is the Plan Review.** It evaluates implementation plans for quality, completeness, security, and adherence to project conventions. For reviewing technical specifications (finding inconsistencies, gaps, contradictions), see [spec-review.md](spec-review.md).
 
 **Announce at start** with message from [config.md](../config.md) Stage Announcements.
 

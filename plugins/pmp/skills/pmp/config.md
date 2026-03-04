@@ -198,7 +198,8 @@ MINOR: none | [bullet list with file:line]
 | Stage | Message |
 |-------|---------|
 | Brainstorm / Generate Plan | `Planning...` |
-| Review | `Reviewing this junior dev's plan...` |
+| Plan Review | `Reviewing this junior dev's plan...` |
+| Architecture & Spec Review | `Conducting architecture review...` |
 | GitHub Planning | `Publishing to GitHub...` |
 | Sync Issues | `Syncing plan to GitHub Issues...` |
 | Execute (completion) | `I'm done baby - Skippy the Magnificent` |

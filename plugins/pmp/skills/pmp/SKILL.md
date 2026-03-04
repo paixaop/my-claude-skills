@@ -1,6 +1,6 @@
 ---
 name: pmp
-description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', or discusses feature ideas, implementation specs, or roadmaps."
+description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Also provides standalone architecture & spec review for deep system analysis — threat modeling, failure modes, scalability, performance, and operability. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', 'review specs', 'review specifications', 'spec review', 'architecture review', 'design review', 'threat model', 'find inconsistencies', or discusses feature ideas, implementation specs, or roadmaps."
 ---
 
 # PMP — Plan
@@ -11,7 +11,7 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
 ## Workflows
 
-Four entry points, one shared path from Review onward.
+Five entry points. Workflows 1–4 share a path from Plan Review onward. Workflow 5 (Architecture & Spec Review) is standalone.
 
 **CRITICAL: Always ask the user before transitioning to the next stage.** Use the AskQuestion tool. Never auto-advance. If any stage finds the plan needs modification, ask the user if we should update the plan (go back to Generate Plan).
 
@@ -22,7 +22,8 @@ stateDiagram-v2
     [*] --> Brainstorm : idea / feature request
     [*] --> GeneratePlan : spec / roadmap provided
     [*] --> FetchIssues : GitHub issues / epic provided
-    [*] --> Review : existing plan file
+    [*] --> PlanReview : existing plan file
+    [*] --> SpecReview : "review specs" / architecture review
     [*] --> GitHubPlanning : "create issues" / "make epic"
     [*] --> SyncIssues : "update issues" / "sync issues"
     [*] --> TestOnly : "run tests" / "re-test"
@@ -61,9 +62,9 @@ stateDiagram-v2
         SavePlan --> [*]
     }
 
-    GeneratePlan --> Review : user confirms
+    GeneratePlan --> PlanReview : user confirms
 
-    state Review {
+    state PlanReview {
         [*] --> ReadPlan
         ReadPlan --> ReadCode
         ReadCode --> SecurityGate
@@ -79,8 +80,25 @@ stateDiagram-v2
         Approved --> [*]
     }
 
-    Review --> GitHubPlanning : user confirms
-    Review --> Execute : user declines issues
+    PlanReview --> GitHubPlanning : user confirms
+    PlanReview --> Execute : user declines issues
+
+    state SpecReview {
+        [*] --> MapCorpus
+        MapCorpus --> ClassifyDocs
+        ClassifyDocs --> ReadAllSpecs
+        ReadAllSpecs --> ReconstructSystem
+        ReconstructSystem --> DeepAnalysis
+        DeepAnalysis --> ProduceReport
+
+        ProduceReport --> DiscussFindings : user picks "discuss"
+        ProduceReport --> ReviewDone : user picks "done"
+
+        DiscussFindings --> ProduceReport : re-ask
+        ReviewDone --> [*]
+    }
+
+    SpecReview --> [*] : report delivered
 
     state GitHubPlanning {
         [*] --> DetermineTier
@@ -143,36 +161,47 @@ stateDiagram-v2
 1. Read [brainstorm.md](references/brainstorm.md) — loops until user says to move ahead, or agent asks and user confirms
 2. **Ask:** "Ready to generate the implementation plan?" — wait for confirmation
 3. Read [generate-plans.md](references/generate-plans.md) — produces the implementation plan
-4. **Ask:** "Plan generated. Ready for review?" — wait for confirmation
-5. Read [review.md](references/review.md) — loops until user says to implement/execute
+4. **Ask:** "Plan generated. Ready for plan review?" — wait for confirmation
+5. Read [review.md](references/review.md) — **Plan Review**: loops until user says to implement/execute
 6. **GitHub Planning** (see below) — publish plan as GitHub Issues if user opts in
 7. Read [execute-loop.md](references/execute-loop.md) — implements with code-test-fix loop
 
 ### Workflow 2: From Spec/Roadmap (spec, requirements, roadmap provided)
 
 1. Read [generate-plans.md](references/generate-plans.md) — produces the implementation plan from provided input
-2. **Ask:** "Plan generated. Ready for review?" — wait for confirmation
-3. Read [review.md](references/review.md) — loops until user says to implement/execute
+2. **Ask:** "Plan generated. Ready for plan review?" — wait for confirmation
+3. Read [review.md](references/review.md) — **Plan Review**: loops until user says to implement/execute
 4. **GitHub Planning** (see below) — publish plan as GitHub Issues if user opts in
 5. Read [execute-loop.md](references/execute-loop.md) — implements with code-test-fix loop
 
 ### Workflow 3: From Existing Plan (plan file already exists)
 
-1. Read [review.md](references/review.md) — loops until user says to implement/execute
+1. Read [review.md](references/review.md) — **Plan Review**: loops until user says to implement/execute
 2. **GitHub Planning** (see below) — publish plan as GitHub Issues if user opts in
 3. Read [execute-loop.md](references/execute-loop.md) — implements with code-test-fix loop
 
 ### Workflow 4: From GitHub Issues (epic/issues already exist)
 
 ```
-Fetch Issues → Generate Plan →ask→ Review (loop) →ask→ Execute (PR closes issues)
+Fetch Issues → Generate Plan →ask→ Plan Review (loop) →ask→ Execute (PR closes issues)
 ```
 
 1. Read [generate-plans.md](references/generate-plans.md) — **GitHub Issues Mode**: fetches epic + sub-issues, normalizes into roadmap, generates plan with `## GitHub Issues` table pre-populated
-2. **Ask:** "Plan generated from GitHub Issues. Ready for review?" — wait for confirmation
-3. Read [review.md](references/review.md) — loops until user says to implement/execute
+2. **Ask:** "Plan generated from GitHub Issues. Ready for plan review?" — wait for confirmation
+3. Read [review.md](references/review.md) — **Plan Review**: loops until user says to implement/execute
 4. **Skip GitHub Planning** — issues already exist, table is already in the plan
 5. Read [execute-loop.md](references/execute-loop.md) — implements with code-test-fix loop, PR closes all issues on merge
+
+### Workflow 5: Architecture & Spec Review (deep system analysis)
+
+Standalone workflow — does not feed into Plan Review or Execute. Produces a read-only report.
+
+```
+Architecture & Spec Review (loop) → Done
+```
+
+1. Read [spec-review.md](references/spec-review.md) — reconstructs system model, runs 10-phase deep analysis (invariants, state machines, threat modeling, attack simulation, performance, resource utilization, failure modes, scalability, operability)
+2. Loops on discussion until user says "done"
 
 ### Entry Point Detection
 
@@ -181,8 +210,9 @@ Fetch Issues → Generate Plan →ask→ Review (loop) →ask→ Execute (PR clo
 | Idea, feature request, "what if", design discussion | **Workflow 1** — start at Brainstorm |
 | Spec, requirements, roadmap, user stories provided | **Workflow 2** — start at Generate Plan |
 | GitHub issue URL, epic number, "plan from issues", "plan from epic" | **Workflow 4** — start at Fetch Issues → Generate Plan |
-| Existing plan file, "review this", "execute this" | **Workflow 3** — start at Review |
-| Existing plan + new roadmap items, "extend" | Read [generate-plans.md](references/generate-plans.md) (Extend Mode) then Review |
+| Existing plan file, "review this", "execute this" | **Workflow 3** — start at Plan Review |
+| "review specs", "spec review", "architecture review", "design review", "threat model", "find inconsistencies", "review documentation", "check specs" | **Workflow 5** — start at Architecture & Spec Review |
+| Existing plan + new roadmap items, "extend" | Read [generate-plans.md](references/generate-plans.md) (Extend Mode) then Plan Review |
 | "create issues", "publish to GitHub", "make an epic" | **GitHub Planning Only** — read [github-planning](references/github-planning.md) with existing plan as input |
 | "update issues", "sync issues", "push plan changes" | **Sync Issues** — read [sync-issues.md](references/sync-issues.md) to diff and update existing issues |
 | "run tests", "re-test", "check E2E" | **Test Only** — see below |
@@ -249,11 +279,11 @@ For agent-driven tests, the user can specify which suites to run:
 
 ## GitHub Planning Stage (Optional)
 
-After Review approves a plan and before Execute begins, offer to publish the plan as GitHub Issues.
+After Plan Review approves a plan and before Execute begins, offer to publish the plan as GitHub Issues.
 
 ### When It Triggers
 
-After the review loop completes (APPROVED or user says "proceed"), use AskQuestion:
+After the Plan Review loop completes (APPROVED or user says "proceed"), use AskQuestion:
 
 > "Plan is approved. Before implementation, want me to publish this plan as GitHub Issues?"
 
@@ -298,7 +328,7 @@ Every plan file MUST have YAML frontmatter tracking its lifecycle status. See [c
 
 Each workflow stage is responsible for updating the frontmatter before proceeding:
 - **Generate Plan** sets `status: draft` + `created_at`
-- **Review** (on approval) sets `status: reviewed` + `reviewed_at`
+- **Plan Review** (on approval) sets `status: reviewed` + `reviewed_at`
 - **GitHub Planning** sets `status: issues_created` + `issues_created_at` + `epic`
 - **Execute** (on start) sets `status: executing` + `execution_started_at`
 - **Execute** (on completion) sets `status: implemented` + `completed_at` + `pr`, then moves the plan to `docs/plans/implemented/`
@@ -381,7 +411,8 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [design-doc.md](assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
 | [feature.md](assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
 | [task.md](assets/task.md) | TDD task with steps | write.md |
-| [review-output.md](assets/review-output.md) | Review verdict and findings | review.md |
+| [review-output.md](assets/review-output.md) | Plan review verdict and findings | review.md |
+| [spec-review-output.md](assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
 | [issue-simple.md](assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
 | [issue-epic.md](assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
 | [issue-sub-issue.md](assets/issue-sub-issue.md) | Sub-issue body | github-planning.md |
@@ -401,8 +432,10 @@ All constants (paths, thresholds, labels, announcements, commit conventions, **c
 ## Additional Resources
 
 - Plan generation: [generate-plans.md](references/generate-plans.md)
+- Plan review: [review.md](references/review.md)
+- Architecture & spec review: [spec-review.md](references/spec-review.md)
 - Code-test-fix execution loop: [execute-loop.md](references/execute-loop.md)
 - Per-project-type E2E framework guidance: [testing-approaches.md](references/testing-approaches.md)
-- Security analysis (used during Review): [security-analysis.md](references/security-analysis.md)
+- Security analysis (used during Plan Review): [security-analysis.md](references/security-analysis.md)
 - GitHub Issues/Projects from plans: [github-planning.md](references/github-planning.md)
 - Sync plan changes to existing issues: [sync-issues.md](references/sync-issues.md)
