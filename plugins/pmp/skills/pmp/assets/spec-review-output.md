@@ -49,6 +49,52 @@
 
 ---
 
+## Simplification Opportunities
+
+| Component/Abstraction | Problem | Type | Recommendation | Effort |
+|-----------------------|---------|------|----------------|--------|
+| [name] | unnecessary / redundant / over-engineered / premature extensibility | remove / merge / flatten / simplify | [concrete recommendation] | Low / Medium / High |
+
+---
+
+## Component Boundary Issues
+
+| Issue | Components Involved | Problem Type | Recommendation |
+|-------|-------------------|--------------|----------------|
+| [issue] | [components] | circular dependency / unclear ownership / cross-cutting / leaky abstraction | [recommendation] |
+
+---
+
+## Consistency Problems
+
+| Inconsistency | Locations | Type | Proposed Resolution |
+|---------------|-----------|------|---------------------|
+| [inconsistency] | [where it appears] | conflicting statements / duplicate concepts / inconsistent terminology / mismatched responsibilities | [canonical term or resolution] |
+
+### Unified Terminology Model (if needed)
+
+| Canonical Term | Also Called | Definition |
+|---------------|------------|------------|
+| [term] | [aliases found in spec] | [single definition] |
+
+---
+
+## Determinism Issues
+
+| Issue | Location | Type | Risk | Recommendation |
+|-------|----------|------|------|----------------|
+| [issue] | [component/pipeline] | non-deterministic / order-dependent / race-condition / hidden state | Critical / High / Medium / Low | [specific fix] |
+
+---
+
+## Configuration Model Issues
+
+| Issue | Setting(s) | Type | Risk | Recommendation |
+|-------|-----------|------|------|----------------|
+| [issue] | [config field(s)] | ambiguous / overlapping / hidden default / undefined state / precedence conflict | Critical / High / Medium / Low | [specific fix] |
+
+---
+
 ## Invariant Violations
 
 | Invariant | Enforced? | Violation Path | Consequence |
@@ -84,11 +130,19 @@
 
 ---
 
-## Performance Bottlenecks
+## Performance & Optimization
+
+### Bottlenecks
 
 | Bottleneck | Location | Impact | Latency Tier |
 |------------|----------|--------|--------------|
 | [bottleneck] | [component/path] | [description] | P50 / P95 / P99 / throughput |
+
+### Optimization Recommendations
+
+| Optimization | Target | Expected Impact | Type | Effort |
+|-------------|--------|-----------------|------|--------|
+| [optimization] | [component/path] | [latency/throughput/complexity reduction] | eliminate hop / remove abstraction / simplify data flow / reduce dependencies | Low / Medium / High |
 
 ---
 
@@ -224,8 +278,35 @@
 
 ## Recommended Architectural Improvements
 
-| Priority | Improvement | Addresses | Effort |
-|----------|-------------|-----------|--------|
-| 1 | [improvement] | [which findings] | Low / Medium / High |
-| 2 | [improvement] | [which findings] | Low / Medium / High |
-| ... | | | |
+| Priority | Improvement | Addresses | Fix Type | Effort |
+|----------|-------------|-----------|----------|--------|
+| 1 | [improvement] | [which findings] | Spec Fix / Design Fix / Implementation Guidance / Simplification | Low / Medium / High |
+| 2 | [improvement] | [which findings] | Spec Fix / Design Fix / Implementation Guidance / Simplification | Low / Medium / High |
+| ... | | | | |
+
+---
+
+## Suggested Revised Architecture
+<!-- OPTIONAL: Include only when major structural improvements are warranted. Delete for minor findings. -->
+
+### Summary of Structural Changes
+
+[1-2 paragraph description of what changes and why]
+
+### Revised Component Topology
+
+```
+[text-form component diagram showing simplified architecture]
+```
+
+### Revised Pipeline Model
+
+| Stage | Responsibility | Inputs | Outputs |
+|-------|---------------|--------|---------|
+| [stage] | [what it does] | [inputs] | [outputs] |
+
+### Before / After Comparison
+
+| Aspect | Current | Proposed | Rationale |
+|--------|---------|----------|-----------|
+| [aspect] | [current state] | [proposed state] | [why this is better] |

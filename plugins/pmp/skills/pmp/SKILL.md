@@ -1,6 +1,6 @@
 ---
 name: pmp
-description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Also provides standalone architecture & spec review for deep system analysis — threat modeling, AI red team attack analysis, failure modes, scalability, performance, and operability. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', 'review specs', 'review specifications', 'spec review', 'architecture review', 'design review', 'threat model', 'red team', 'find inconsistencies', or discusses feature ideas, implementation specs, or roadmaps."
+description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Also provides standalone architecture & spec review for deep system analysis — architectural simplification, consistency analysis, determinism evaluation, configuration validation, threat modeling, AI red team attack analysis, failure modes, scalability, performance optimization, and operability. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', 'review specs', 'review specifications', 'spec review', 'architecture review', 'design review', 'threat model', 'red team', 'find inconsistencies', 'simplify architecture', or discusses feature ideas, implementation specs, or roadmaps."
 ---
 
 # PMP — Plan
@@ -200,7 +200,7 @@ Standalone workflow — does not feed into Plan Review or Execute. Produces a re
 Architecture & Spec Review (loop) → Done
 ```
 
-1. Read [spec-review.md](references/spec-review.md) — reconstructs system model, runs 12-phase deep analysis (invariants, state machines, threat modeling, attack simulation, AI red team analysis for AI-featured specs, performance, resource utilization, failure modes, scalability, operability)
+1. Read [spec-review.md](references/spec-review.md) — reconstructs system model, runs 15-phase deep analysis (architectural simplicity, consistency, determinism, configuration validation, invariants, state machines, threat modeling, attack simulation, AI red team analysis for AI-featured specs, performance & optimization, resource utilization, failure modes, scalability, operability, remediation & refactoring)
 2. Loops on discussion until user says "done"
 
 ### Entry Point Detection

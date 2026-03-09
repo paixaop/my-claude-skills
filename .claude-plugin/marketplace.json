@@ -8,8 +8,8 @@
     {
       "name": "pmp",
       "source": "./plugins/pmp",
-      "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams",
-      "version": "1.0.0",
+      "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Deep architecture & spec review with simplification analysis, determinism evaluation, and AI red team attack simulation",
+      "version": "1.3.0",
       "author": { "name": "paixaop" }
     },
     {
