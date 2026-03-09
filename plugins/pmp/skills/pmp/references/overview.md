@@ -96,7 +96,7 @@ pmp/
 │   ├── brainstorm.md                 # Collaborative design stage
 │   ├── generate-plans.md             # Plan generation (+ GitHub Issues Mode)
 │   ├── review.md                     # Plan review — skeptical senior engineer
-│   ├── spec-review.md                # Architecture & spec review — 10-phase deep system analysis
+│   ├── spec-review.md                # Architecture & spec review — 15-phase deep system analysis
 │   ├── execute-loop.md               # Code-test-fix loop with E2E
 │   ├── execute.md                    # Subagent/batch execution mode
 │   ├── github-planning.md            # Issue/Epic/Project creation

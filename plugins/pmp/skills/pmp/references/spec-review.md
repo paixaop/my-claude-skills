@@ -1,6 +1,6 @@
 # Architecture & Spec Review
 
-Deep architecture review of technical specifications. Reconstructs the system model and stress-tests it for architectural flaws, security risks, underspecified behavior, scalability limitations, and operational weaknesses.
+Deep architecture review of technical specifications. Reconstructs the system model and stress-tests it for architectural flaws, unnecessary complexity, inconsistencies, non-deterministic behavior, security risks, underspecified behavior, scalability limitations, and operational weaknesses.
 
 > **This is the Architecture & Spec Review.** It evaluates specs/documentation as a Principal Systems Architect and Security Engineer conducting a formal design review. For reviewing implementation plans (architecture, security, testing, conventions), see [review.md](review.md).
 
@@ -10,6 +10,8 @@ Deep architecture review of technical specifications. Reconstructs the system mo
 
 You are a Principal Systems Architect and Security Engineer conducting a formal design review.
 
+Your objective is to **improve the architecture**, not merely summarize it.
+
 Assume the system runs in **large-scale enterprise production** with:
 - adversarial inputs
 - high concurrency
@@ -18,7 +20,25 @@ Assume the system runs in **large-scale enterprise production** with:
 
 Treat this as a **pre-production architecture review** — break the design before attackers or production traffic does.
 
+Aggressively identify opportunities to:
+- simplify the design
+- eliminate ambiguity
+- improve determinism
+- remove unnecessary complexity
+- enforce architectural consistency
+- improve reliability and testability
+
 Be highly critical and analytical. Do not summarize the specification. Reconstruct the system and analyze it.
+
+### Review Principles
+
+When reviewing the spec, prioritize:
+
+1. **Simplicity over extensibility** — remove what isn't needed before adding flexibility
+2. **Determinism over flexibility** — predictable behavior beats configurable behavior
+3. **Explicit behavior over implicit behavior** — no hidden defaults, no magic
+4. **Strong boundaries over shared state** — clear ownership, minimal coupling
+5. **Operational clarity over theoretical purity** — optimize for debugging, not elegance
 
 ## Inputs
 
@@ -69,14 +89,16 @@ stateDiagram-v2
     }
 
     state DeepAnalysis {
-        [*] --> FormalInvariants
+        [*] --> ArchitecturalQuality
+        ArchitecturalQuality --> DeterminismAndConfig
+        DeterminismAndConfig --> FormalInvariants
         FormalInvariants --> StateMachineValidation
         StateMachineValidation --> ThreatModeling
         ThreatModeling --> AttackSimulation
         AttackSimulation --> AIRedTeamAnalysis : AI features detected
-        AttackSimulation --> PerformanceModel : no AI features
-        AIRedTeamAnalysis --> PerformanceModel
-        PerformanceModel --> ResourceUtilization
+        AttackSimulation --> PerformanceOptimization : no AI features
+        AIRedTeamAnalysis --> PerformanceOptimization
+        PerformanceOptimization --> ResourceUtilization
         ResourceUtilization --> FailureModeAnalysis
         FailureModeAnalysis --> ScalabilityAnalysis
         ScalabilityAnalysis --> Operability
@@ -132,7 +154,7 @@ For each component identify:
 - outputs
 - state
 - failure modes
-
+    
 #### 2. Request Lifecycle
 
 Describe the **exact lifecycle of a request**, step-by-step from:
@@ -155,7 +177,104 @@ Determine whether state is: local, shared, replicated, or eventually consistent.
 
 ---
 
-### Phase 2: Formal Invariants
+### Phase 2: Architectural Simplicity & Boundaries
+
+Evaluate the architecture for unnecessary complexity and unclear boundaries. The goal is to identify everything that can be simplified, consolidated, or removed.
+
+#### Simplicity
+
+Identify:
+- unnecessary components that don't justify their existence
+- redundant abstractions (multiple layers doing the same thing)
+- over-engineered modules (solving problems that don't exist)
+- features that can be merged or removed without loss
+- accidental complexity introduced by the design itself
+- premature extensibility (plugin systems, hook points, abstraction layers for hypothetical future needs)
+
+Recommend:
+- components to consolidate or eliminate
+- abstractions to flatten
+- simpler alternatives to complex mechanisms
+
+#### Component Boundaries
+
+Ensure the architecture clearly defines:
+- module boundaries and responsibilities
+- ownership of state
+- allowed dependency directions
+
+Flag:
+- circular dependencies between components
+- unclear or overlapping ownership of state or behavior
+- cross-cutting responsibilities that blur module boundaries
+- components that know too much about each other's internals
+
+Recommend improvements to ensure:
+- strong separation of concerns
+- well-defined module contracts (inputs, outputs, invariants)
+- unidirectional dependency graphs
+
+---
+
+### Phase 3: Internal Consistency & Determinism
+
+#### Consistency
+
+Check that the specification is **internally coherent**. Identify:
+- conflicting statements across documents or sections
+- duplicate concepts described with different names
+- inconsistent terminology (same thing called different names in different places)
+- mismatched responsibilities (component described differently in different sections)
+
+Verify consistency across:
+- component naming
+- pipeline stages and their ordering
+- configuration structures and field names
+- API contracts
+- lifecycle descriptions and state transitions
+
+If inconsistencies exist, propose a **unified terminology model** with canonical names.
+
+#### Determinism
+
+The system should behave **predictably and deterministically**. Identify areas where behavior may become:
+- non-deterministic (different outcomes for same inputs)
+- order-dependent (results change based on evaluation order)
+- race-condition prone (concurrent operations with undefined ordering)
+- dependent on hidden state (behavior changes based on invisible context)
+
+Evaluate determinism of:
+- request handling pipelines
+- plugin/middleware execution order
+- configuration evaluation and precedence
+- policy evaluation chains
+- caching layers and cache invalidation
+
+Recommend deterministic rules:
+- explicit, documented execution order for all pipeline stages
+- immutable inputs within processing stages
+- stateless modules where possible
+- deterministic pipeline stages with well-defined input/output contracts
+
+#### Configuration Model
+
+Analyze the configuration design. Check for:
+- ambiguous settings (unclear what a value means or does)
+- overlapping configuration fields (multiple ways to control the same behavior)
+- hidden defaults (behavior changes when a field is omitted, but the default isn't documented)
+- configuration states that create undefined behavior (contradictory settings)
+- configuration precedence ambiguity (file vs env var vs flag vs API — which wins?)
+
+Recommend:
+- explicit defaults for every configuration field
+- schema validation with clear error messages
+- configuration linting rules
+- deterministic precedence rules (documented, tested)
+- elimination of configuration combinations that produce undefined states
+
+---
+
+### Phase 4: Formal Invariants
 
 Identify **critical invariants** the system must maintain. Examples:
 - policies must always execute before upstream requests
@@ -170,7 +289,7 @@ For each invariant determine:
 
 ---
 
-### Phase 3: State Machine Validation
+### Phase 5: State Machine Validation
 
 Model the request lifecycle as a **state machine** with states like:
 
@@ -187,7 +306,7 @@ Identify possible **invalid states** the system could enter.
 
 ---
 
-### Phase 4: Threat Modeling
+### Phase 6: Threat Modeling
 
 Use the STRIDE model. Analyze threats for:
 - **Spoofing** — identity forgery, token replay
@@ -209,7 +328,7 @@ For each threat provide: **Threat**, **Attack path**, **Impact**, **Severity**, 
 
 ---
 
-### Phase 5: Attack Simulation
+### Phase 7: Attack Simulation
 
 Simulate adversarial scenarios:
 
@@ -233,7 +352,7 @@ For each scenario: explain how the system would behave and identify weaknesses.
 
 ---
 
-### Phase 6: Performance Model
+### Phase 8: Performance & Architectural Optimization
 
 Construct the **critical request path**. Identify:
 - synchronous dependencies
@@ -245,11 +364,25 @@ Construct the **critical request path**. Identify:
 
 Evaluate potential impact on: P50, P95, P99 latency and throughput.
 
-Identify performance bottlenecks.
+#### Optimization Analysis
+
+Beyond identifying bottlenecks, evaluate the design for:
+- unnecessary network hops between components
+- avoidable serialization/deserialization (data converted between formats without need)
+- excessive abstractions that add latency without value
+- redundant processing stages (same data processed multiple times)
+- cross-module dependencies that force synchronous coordination
+
+Suggest optimizations that:
+- reduce critical path latency
+- minimize state that must be shared or synchronized
+- reduce cross-module dependencies
+- simplify data flow through the system
+- eliminate unnecessary indirection
 
 ---
 
-### Phase 7: Resource Utilization
+### Phase 9: Resource Utilization
 
 Analyze resource consumption risks:
 - CPU usage, memory allocation
@@ -262,7 +395,7 @@ Identify any: unbounded buffers, unbounded concurrency, memory leak risks, backp
 
 ---
 
-### Phase 8: Failure Mode Analysis
+### Phase 10: Failure Mode Analysis
 
 Simulate failures:
 - upstream outage
@@ -274,9 +407,14 @@ Simulate failures:
 
 Check whether the system: fails open, fails closed, creates retry storms, causes cascading failures.
 
+Ensure the architecture defines:
+- safe fallback behavior for every failure mode
+- deterministic error propagation (errors don't silently change behavior)
+- graceful degradation paths
+
 ---
 
-### Phase 9: Scalability Analysis
+### Phase 11: Scalability Analysis
 
 Evaluate scaling behavior under:
 - high request concurrency
@@ -288,16 +426,22 @@ Identify bottlenecks: centralized state, synchronous control plane calls, shared
 
 ---
 
-### Phase 10: Operability
+### Phase 12: Operability
 
 Evaluate operational viability:
 
 **Observability:** metrics, distributed tracing, request correlation, policy decision logs, debugging visibility.
 
+Verify the system can answer:
+- What happened? (structured logging, event trail)
+- Why did it happen? (decision logs, causal tracing)
+- What decision was made? (policy evaluation audit)
+- What policy was applied? (configuration audit trail)
+
 **Lifecycle:** configuration management, rollout strategy, backward compatibility, schema evolution, upgrade paths.
 
 
-### Phase 11: AI Red Team Attack Analysis (Conditional)
+### Phase 13: AI Red Team Attack Analysis (Conditional)
 
 > **Trigger:** Run this phase ONLY when the system under review involves AI/LLM features — AI gateways, LLM proxies, agentic systems, tool-calling architectures, RAG pipelines, prompt routing, or any component where an LLM processes user-influenced input. Skip entirely for non-AI systems.
 
@@ -305,7 +449,7 @@ Switch mindset: you are now an **adversarial AI security researcher** performing
 
 Assume the system will be deployed in enterprise environments with adversarial users attempting to bypass policy enforcement, execute unauthorized tools, exfiltrate sensitive data, override system prompts, perform denial-of-service, escalate privileges, and leak secrets.
 
-#### 11.1 Attack Surface Mapping
+#### 13.1 Attack Surface Mapping
 
 Identify every entry point where an attacker could influence system behavior:
 
@@ -324,7 +468,7 @@ Identify every entry point where an attacker could influence system behavior:
 
 For each entry point, map it to the internal components it reaches and the trust boundary it crosses.
 
-#### 11.2 Prompt Injection Attacks
+#### 13.2 Prompt Injection Attacks
 
 Design attacks that could override system instructions:
 
@@ -344,7 +488,7 @@ For each attack, document:
 | **Expected System Behavior** | How the system should respond |
 | **Possible Bypass** | How the attack might circumvent defenses |
 
-#### 11.3 Tool Execution Exploits
+#### 13.3 Tool Execution Exploits
 
 Attempt to exploit the tool execution system:
 
@@ -357,7 +501,7 @@ Attempt to exploit the tool execution system:
 
 Evaluate whether the model could be manipulated into calling tools it should not, calling tools with arguments it should not, or calling tools in sequences that bypass individual-call validation.
 
-#### 11.4 Data Exfiltration Attacks
+#### 13.4 Data Exfiltration Attacks
 
 Attempt to extract sensitive information:
 
@@ -370,7 +514,7 @@ Attempt to extract sensitive information:
 
 For each vector, design a concrete prompt that attempts the extraction and assess whether the spec's defenses would prevent it.
 
-#### 11.5 Policy Bypass Attacks
+#### 13.5 Policy Bypass Attacks
 
 Attempt to bypass the policy enforcement system:
 
@@ -383,7 +527,7 @@ Attempt to bypass the policy enforcement system:
 
 For each attack, explain exactly which policy check it bypasses and why.
 
-#### 11.6 Model Output Exploits
+#### 13.6 Model Output Exploits
 
 Evaluate whether model output could be weaponized:
 
@@ -395,7 +539,7 @@ Evaluate whether model output could be weaponized:
 
 Determine whether downstream systems (UIs, APIs, logging pipelines, other agents) could be exploited by model-generated content.
 
-#### 11.7 Resource Exhaustion Attacks
+#### 13.7 Resource Exhaustion Attacks
 
 Attempt to cause system failure through resource abuse:
 
@@ -409,7 +553,7 @@ Attempt to cause system failure through resource abuse:
 
 Evaluate whether the spec defines defenses for each vector.
 
-#### 11.8 Multi-Tenant Attacks
+#### 13.8 Multi-Tenant Attacks
 
 Attempt to exploit tenant isolation boundaries:
 
@@ -421,7 +565,7 @@ Attempt to exploit tenant isolation boundaries:
 
 For each attack, assess whether the spec enforces sufficient isolation.
 
-#### 11.9 Advanced Attacks
+#### 13.9 Advanced Attacks
 
 Attempt creative and emerging attack vectors:
 
@@ -436,7 +580,7 @@ Attempt creative and emerging attack vectors:
 
 ---
 
-### Phase 12: Fix Proposal Rules
+### Phase 14: Remediation & Refactoring
 
 For **every issue discovered**, you must propose a remediation.
 
@@ -450,6 +594,7 @@ Fix Type:
 • Spec Fix — missing requirement or ambiguous specification  
 • Design Fix — architectural change required  
 • Implementation Guidance — engineering practice improvement  
+• Simplification — component removal, consolidation, or boundary adjustment  
 
 If the correct fix depends on missing requirements:
 
@@ -464,6 +609,25 @@ Each fix must also include:
 Avoid vague recommendations.
 
 Proposed fixes must be technically actionable.
+
+#### Architecture Refactoring Suggestions
+
+Beyond individual fixes, propose structural improvements when warranted:
+- modules that should be merged or split
+- pipeline stages that should be reordered, consolidated, or eliminated
+- configuration models that should be simplified
+- unnecessary extensibility points that should be removed
+- dependency directions that should be reversed
+
+#### Suggested Revised Architecture (Optional)
+
+If major improvements are possible, propose a **cleaner architectural structure**:
+- component diagram (text form) showing simplified topology
+- revised pipeline model with consolidated stages
+- improved module boundaries with clear ownership
+- before/after comparison highlighting what was removed or simplified
+
+Only include this section when the changes are substantial enough to warrant a redesign sketch. Minor improvements should stay in the per-issue remediations.
 
 ---
 
