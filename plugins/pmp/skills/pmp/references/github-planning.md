@@ -57,11 +57,13 @@ Called after plan review is complete to create:
    gh label list --json name --jq '.[].name' | grep "type:"
    → If missing: Create label taxonomy (see Label Taxonomy section)
 
-5. mcp__contextd__memory_search(
+5. If contextd MCP is available:
+   mcp__contextd__memory_search(
      project_id: "<project>",
      query: "github planning <feature-name>"
    )
    → Check if Issues already exist for this feature
+   → If contextd is NOT available: skip this step (no cross-session memory)
 
 6. Verify GraphQL API access (for STANDARD/COMPLEX tier):
    gh api graphql -f query='{ viewer { login } }'

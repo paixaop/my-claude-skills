@@ -635,6 +635,8 @@ Only include this section when the changes are substantial enough to warrant a r
 
 Use [assets/spec-review-output.md](../assets/spec-review-output.md) for the report structure.
 
+Save the report to the reviews directory defined in [config.md](../config.md) File Paths, using the review filename pattern (`YYYY-MM-DD-<architecture>-review.md`). Create the directory if it doesn't exist. The `<architecture>` slug should be a short, kebab-case identifier for the system or component under review (e.g., `2025-03-11-auth-gateway-review.md`).
+
 - Produce findings across all phases
 - If the same issue appears across multiple phases, report once with all relevant phase references
 - Prefer root-cause framing over symptom repetition

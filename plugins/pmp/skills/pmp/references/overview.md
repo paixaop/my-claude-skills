@@ -91,45 +91,44 @@ PR merges → GitHub auto-closes all issues
 
 ```
 pmp/
-├── SKILL.md                          # Main skill — workflows, lifecycle, rules
-├── config.md                         # Central constants — paths, thresholds, labels, announcements
-│   ├── brainstorm.md                 # Collaborative design stage
-│   ├── generate-plans.md             # Plan generation (+ GitHub Issues Mode)
-│   ├── review.md                     # Plan review — skeptical senior engineer
-│   ├── spec-review.md                # Architecture & spec review — 15-phase deep system analysis
-│   ├── execute-loop.md               # Code-test-fix loop with E2E
-│   ├── execute.md                    # Subagent/batch execution mode
-│   ├── github-planning.md            # Issue/Epic/Project creation
-│   ├── sync-issues.md                # Sync plan changes to existing issues
-│   ├── testing-approaches.md         # Per-project-type E2E guidance
-│   ├── security-analysis.md          # STRIDE + attack tree analysis
-│   ├── write.md                      # TDD-driven plan writing
-│   ├── implementer-prompt.md         # Agent team: implementer
+├── SKILL.md                            # Main skill — workflows, lifecycle, rules
+├── config.md                           # Central constants — paths, thresholds, labels, announcements
+├── references/
+│   ├── brainstorm.md                   # Collaborative design stage
+│   ├── generate-plans.md               # Plan generation (+ GitHub Issues Mode)
+│   ├── review.md                       # Plan review — skeptical senior engineer
+│   ├── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
+│   ├── execute-loop.md                 # Code-test-fix loop with E2E + agent teams
+│   ├── github-planning.md              # Issue/Epic/Project creation
+│   ├── sync-issues.md                  # Sync plan changes to existing issues
+│   ├── testing-approaches.md           # Per-project-type E2E guidance
+│   ├── security-analysis.md            # STRIDE + attack tree analysis
+│   ├── implementer-prompt.md           # Agent team: implementer
 │   ├── code-quality-reviewer-prompt.md # Agent team: code reviewer
-│   └── spec-reviewer-prompt.md       # Agent team: spec reviewer
+│   └── spec-reviewer-prompt.md         # Agent team: spec reviewer
 └── assets/
-    ├── plan.md                       # Full implementation plan structure
-    ├── design-doc.md                 # Design document from brainstorm
-    ├── feature.md                    # Feature spec with ACs and E2E tests
-    ├── task.md                       # TDD task with steps
-    ├── review-output.md              # Plan review verdict and findings
-    ├── spec-review-output.md         # Architecture & spec review report
-    ├── issue-simple.md               # SIMPLE tier: single issue body
-    ├── issue-epic.md                 # STANDARD/COMPLEX: epic body
-    ├── issue-sub-issue.md            # Sub-issue body
-    ├── pr-body.md                    # Pull request body
-    ├── e2e-test-spec.md              # Agent-driven test spec format
-    ├── security-analysis-output.md   # Security analysis report
-    ├── github-issues-table.md        # Feature→Issue mapping table
-    ├── phase-exit-criteria.md        # Phase gate checklist
-    ├── yaml-feature-form.yml         # GitHub Issue form: feature
-    ├── yaml-bug-form.yml             # GitHub Issue form: bug
-    └── yaml-epic-form.yml            # GitHub Issue form: epic
+    ├── plan.md                         # Full implementation plan structure
+    ├── design-doc.md                   # Design document from brainstorm
+    ├── feature.md                      # Feature spec with ACs and E2E tests
+    ├── task.md                         # TDD task with steps
+    ├── review-output.md                # Plan review verdict and findings
+    ├── spec-review-output.md           # Architecture & spec review report
+    ├── issue-simple.md                 # SIMPLE tier: single issue body
+    ├── issue-epic.md                   # STANDARD/COMPLEX: epic body
+    ├── issue-sub-issue.md              # Sub-issue body
+    ├── pr-body.md                      # Pull request body
+    ├── e2e-test-spec.md                # Agent-driven test spec format
+    ├── security-analysis-output.md     # Security analysis report
+    ├── github-issues-table.md          # Feature→Issue mapping table
+    ├── phase-exit-criteria.md          # Phase gate checklist
+    ├── yaml-feature-form.yml           # GitHub Issue form: feature
+    ├── yaml-bug-form.yml               # GitHub Issue form: bug
+    └── yaml-epic-form.yml              # GitHub Issue form: epic
 ```
 
 ## Plan File Anatomy
 
-Plans live in `docs/plans/` and get archived to `docs/implemented/` after execution.
+Plans live in `docs/plans/` and get archived to `docs/plans/implemented/` after execution.
 
 ```markdown
 # Auth System Implementation Plan

@@ -128,6 +128,7 @@ Walk through every acceptance criterion and confirm it has an E2E test case dire
 
 ### 6. Save the Plan
 
+- **Bootstrap the directory:** `mkdir -p docs/plans` (create if it doesn't exist)
 - Save using filename pattern from [config.md](../config.md) File Paths
 - **Frontmatter (MANDATORY):** Every plan MUST include YAML frontmatter as the very first content in the file (see [config.md](../config.md) Plan Frontmatter). Set `status: draft` and `created_at` to the current UTC timestamp. All other fields are left blank.
 - **GitHub Issues Mode:** Include the pre-filled GitHub Issues table (see [assets/github-issues-table.md](../assets/github-issues-table.md)) in the plan file. Add `**Source:** GitHub Epic #<number>` to the plan header.
@@ -173,7 +174,35 @@ For each item in the new/updated roadmap:
 
 Walk through every active (non-removed) feature and confirm all ACs have test cases.
 
-### 5. Save Updated Plan
+### 5. Present Change Summary
+
+Before saving, present a structured diff summary to the user for confirmation:
+
+```
+## Plan Changes: [Plan Name]
+
+### Added
+| Feature | Dependencies | ACs | E2E Tests |
+|---------|-------------|-----|-----------|
+| Feature N: [Name] | [deps] | [count] | [count] |
+
+### Modified
+| Feature | What Changed |
+|---------|-------------|
+| Feature K: [Name] | [sections changed — e.g., "AC-K.2 updated, new affected file"] |
+
+### Removed
+| Feature | Reason |
+|---------|--------|
+| Feature J: [Name] | [reason from user or roadmap] |
+
+### Unchanged
+- Feature 1, Feature 2, ...
+```
+
+Use AskQuestion: "Here are the planned changes. Apply them?"
+
+### 6. Save Updated Plan
 
 Same filename. Preserve existing frontmatter — do NOT reset `status` or timestamps from prior stages. Add a changelog section below the frontmatter/header:
 

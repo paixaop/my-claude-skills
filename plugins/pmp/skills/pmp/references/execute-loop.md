@@ -129,6 +129,68 @@ Each fix loop iteration consumes context. When dispatching a fix agent (or resum
 
 ---
 
+## Multi-Session Resume
+
+When returning to an in-progress execution after a session break (hours or days later), follow this protocol before continuing:
+
+### 1. Verify State
+
+```bash
+# What branch are we on?
+git branch --show-current
+
+# What was the last commit?
+git log --oneline -5
+
+# Is there uncommitted work?
+git status
+
+# Has the integration branch advanced?
+git fetch origin
+git log HEAD..<integration-branch> --oneline
+```
+
+### 2. Check for Conflicts
+
+If the integration branch has new commits since execution started:
+
+```bash
+# Test merge without committing
+git merge --no-commit --no-ff origin/<integration-branch>
+# If conflicts: abort and ask the user
+git merge --abort
+```
+
+Use AskQuestion:
+1. **Rebase onto latest** — `git rebase origin/<integration-branch>` then re-run all E2E tests
+2. **Merge latest in** — `git merge origin/<integration-branch>` then re-run all E2E tests
+3. **Continue without merging** — proceed from current state (may cause merge conflicts later)
+
+After merging/rebasing, re-run the full E2E test suite before continuing with new features. If tests fail, enter the fix loop.
+
+### 3. Find the Checkpoint
+
+- Read the plan file (check `status` in frontmatter — should be `executing`)
+- Look for the most recent checkpoint summary in the conversation or plan file
+- If no checkpoint: check TodoWrite for which features are marked complete, verify with `git log`
+
+### 4. Verify Completed Work
+
+Run the E2E test suite to confirm previously-implemented features still pass:
+
+```bash
+# Run with concise output
+<test-runner-command> <concise-flags>
+```
+
+If any previously-passing tests now fail (due to environment changes, dependency updates, etc.), fix them before continuing.
+
+### 5. Resume
+
+Continue from the next uncompleted feature in the plan. Re-read the plan file and the current batch boundaries. Proceed with the normal per-feature loop.
+
+---
+
 ## Before Starting
 
 1. **Read the plan completely**
@@ -255,6 +317,26 @@ Only after ALL E2E tests pass:
 - Run the project CI command (from plan header)
 - If CI fails, fix and amend the commit
 - **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../config.md) GitHub Conventions — do NOT close; the PR will close it on merge
+
+### Step 5.5: TWO-STAGE REVIEW (Subagent Mode)
+
+When using agent teams (Task tool) for implementation, run a two-stage review after each feature's commit. Skip this step if implementing directly (no subagents).
+
+**Stage 1: Spec Compliance Review**
+
+Dispatch a spec reviewer using [spec-reviewer-prompt.md](spec-reviewer-prompt.md):
+- Reviewer reads actual code — does NOT trust the implementer's report
+- Verifies: nothing missing, nothing extra, nothing misunderstood
+- If issues found: implementer fixes, spec reviewer re-reviews. Loop until approved.
+
+**Stage 2: Code Quality Review**
+
+Only after spec compliance passes. Dispatch a code quality reviewer using [code-quality-reviewer-prompt.md](code-quality-reviewer-prompt.md):
+- Reviews code clarity, error handling, test quality, security, patterns
+- If issues found: implementer fixes, quality reviewer re-reviews. Loop until approved.
+
+Both reviewers use `model: fast` (focused read-and-compare tasks). See the prompt templates for the exact dispatch format and mandatory structured return format.
+
 - Mark feature complete in TodoWrite
 
 ### Step 6: NEXT FEATURE OR BATCH HANDOFF
@@ -315,6 +397,7 @@ Only after the new suite passes AND the smoke check passes:
 - Commit using format from [config.md](../config.md) Commit Conventions
 - Run project CI command if applicable
 - **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../config.md) GitHub Conventions — do NOT close; the PR will close it on merge
+- **Two-stage review:** Same as code-file model Step 5.5 (spec compliance then code quality) when using agent teams
 - Mark feature complete in TodoWrite
 
 ### Step 6: NEXT FEATURE OR BATCH HANDOFF

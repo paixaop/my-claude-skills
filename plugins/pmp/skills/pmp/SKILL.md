@@ -1,5 +1,6 @@
 ---
 name: pmp
+version: "1.4.0"
 description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Also provides standalone architecture & spec review for deep system analysis — architectural simplification, consistency analysis, determinism evaluation, configuration validation, threat modeling, AI red team attack analysis, failure modes, scalability, performance optimization, and operability. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', 'review specs', 'review specifications', 'spec review', 'architecture review', 'design review', 'threat model', 'red team', 'find inconsistencies', 'simplify architecture', or discusses feature ideas, implementation specs, or roadmaps."
 ---
 
@@ -234,6 +235,30 @@ Before **Generate Plan** or **Execute**, auto-detect and confirm with the user:
 | **Library/Package** | No main entrypoint, exported packages | Integration tests with realistic consumer scenarios |
 | **gRPC/WebSocket** | Proto files, WS handlers | Protocol-specific test clients |
 
+### 1b. Monorepo Detection
+
+Check for workspace configuration files that signal a monorepo:
+
+| Signal | Tool |
+|---|---|
+| `pnpm-workspace.yaml` | pnpm workspaces |
+| `lerna.json` | Lerna |
+| `nx.json` | Nx |
+| `turbo.json` | Turborepo |
+| `Cargo.toml` with `[workspace]` | Rust workspaces |
+| `go.work` | Go workspaces |
+| Multiple `package.json` files in subdirectories | npm/yarn workspaces |
+
+If a monorepo is detected:
+
+1. **Ask which package(s) the plan targets** — use AskQuestion to present the list of packages/apps
+2. **Scope detection per package** — project type, CI command, test directory, and integration branch may differ per package
+3. **Record package scope in the plan header** — add `**Package:** <path>` (e.g., `packages/api/`)
+4. **Scope E2E tests to the target package** — test runner commands and directories are relative to the package root
+5. **CI command** — may be a workspace-level command (e.g., `turbo test --filter=api`) or package-level
+
+Present detections per package for user confirmation.
+
 ### 2. Project Conventions
 
 | Convention | Detection Method | Fallback |
@@ -253,6 +278,34 @@ Present ALL detections to the user for confirmation. User can override any.
 | **Hybrid** | Fullstack projects | Code-file for API tests + chosen model for UI tests. Plan notes model per AC. |
 
 Commit to one model during project detection. Confirm with the user before plan generation.
+
+### 4. E2E Test Opt-Out
+
+Some projects or features legitimately don't benefit from E2E tests. When in doubt, ask the user.
+
+**Auto-detect and flag these cases:**
+
+| Project Signal | Reason E2E May Not Apply |
+|---|---|
+| Pure utility library (no I/O, no server, no CLI) | Only unit/integration tests are meaningful |
+| Type definitions or schema-only packages | Nothing to execute end-to-end |
+| Documentation-only changes | No behavior to test |
+| Configuration or infrastructure changes | Better tested by CI/CD validation |
+
+When any of these are detected, use AskQuestion:
+
+> "This looks like a [type]. E2E tests may not add value here. Options:"
+> 1. **Include E2E tests anyway** — full E2E infrastructure and per-feature tests
+> 2. **Skip E2E, use integration tests** — plan includes integration tests but no E2E infrastructure
+> 3. **Skip E2E, unit tests only** — plan includes unit tests only
+
+If the user opts out of E2E:
+- Plan generation skips the E2E Test Infrastructure section
+- Feature specs include test cases but marked as unit or integration tests
+- Execute loop runs the project's test runner instead of a dedicated E2E suite
+- The code-test-fix loop still applies (tests must pass before commit)
+
+**Default:** If unsure whether E2E tests apply, ask the user. Never silently skip them.
 
 ## Test Only Mode (E2E)
 
@@ -346,6 +399,7 @@ These are non-negotiable. No exceptions.
 - **CI gate:** Detected CI command must pass clean before any commit (see E2E Project Detection)
 - **Commits:** see [config.md](config.md) Commit Conventions
 - **Complexity ceiling:** Enforce project-appropriate complexity limits (e.g., `gocyclo` for Go, ESLint complexity rule for JS/TS, Pylint for Python)
+- **Dependency management:** When adding new dependencies: pin exact versions, prefer well-maintained packages with active communities, check for known vulnerabilities (`npm audit`, `pip-audit`, `govulncheck`), document why the dependency is needed in the plan. Avoid adding dependencies for trivial functionality that can be implemented in a few lines.
 - **What, not how:** Plans describe behavior, inputs/outputs, constraints, affected files, rationale. The coding agent determines implementation
 - **Parallel execution:** Use agent teams (Task tool) for 2+ independent subtasks — subject to the rules below
 - **Context management:** Read [config.md](config.md) Context Management before Execute. Batch controllers every 3 features, demand structured returns from all subagents, use concise test output flags. Controller context exhaustion is the #1 cause of execution failures.
@@ -410,7 +464,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [plan.md](assets/plan.md) | Full implementation plan structure | generate-plans.md |
 | [design-doc.md](assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
 | [feature.md](assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
-| [task.md](assets/task.md) | TDD task with steps | write.md |
+| [task.md](assets/task.md) | TDD task with steps | reference template |
 | [review-output.md](assets/review-output.md) | Plan review verdict and findings | review.md |
 | [spec-review-output.md](assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
 | [issue-simple.md](assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
@@ -420,7 +474,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [e2e-test-spec.md](assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
 | [security-analysis-output.md](assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
 | [github-issues-table.md](assets/github-issues-table.md) | Feature→Issue mapping table | generate-plans.md, github-planning.md |
-| [phase-exit-criteria.md](assets/phase-exit-criteria.md) | Phase gate checklist | write.md |
+| [phase-exit-criteria.md](assets/phase-exit-criteria.md) | Phase gate checklist | reference template |
 | [yaml-feature-form.yml](assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
 | [yaml-bug-form.yml](assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
 | [yaml-epic-form.yml](assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
@@ -439,3 +493,22 @@ All constants (paths, thresholds, labels, announcements, commit conventions, **c
 - Security analysis (used during Plan Review): [security-analysis.md](references/security-analysis.md)
 - GitHub Issues/Projects from plans: [github-planning.md](references/github-planning.md)
 - Sync plan changes to existing issues: [sync-issues.md](references/sync-issues.md)
+- Agent team prompts: [implementer-prompt.md](references/implementer-prompt.md), [spec-reviewer-prompt.md](references/spec-reviewer-prompt.md), [code-quality-reviewer-prompt.md](references/code-quality-reviewer-prompt.md)
+- Skill overview and quick start: [overview.md](references/overview.md)
+
+## Changelog
+
+### 1.4.0
+
+- **Multi-session resume:** Added protocol for resuming execution after session breaks (execute-loop.md)
+- **Two-stage review:** Consolidated subagent-driven review (spec compliance + code quality) into execute-loop.md from removed execute.md
+- **Monorepo support:** Added detection and scoping for workspace-based monorepos
+- **E2E opt-out:** Added guidance for projects where E2E tests don't apply (ask if in doubt)
+- **Dependency management:** Added supply chain guidance to Project Rules
+- **Plan diff summary:** Extend Mode now presents a structured change summary before saving
+- **Security analysis persistence:** Reports saved to `docs/reviews/` alongside architecture reviews
+- **Directory bootstrapping:** `generate-plans.md` creates `docs/plans/` if it doesn't exist
+- **Removed:** `write.md` and `execute.md` (consolidated into `generate-plans.md` and `execute-loop.md`)
+- **Fixed:** `overview.md` wrong archive path (`docs/implemented/` → `docs/plans/implemented/`)
+- **Fixed:** `overview.md` file tree indentation
+- **Fixed:** `github-planning.md` contextd pre-flight no longer fails when contextd is unavailable

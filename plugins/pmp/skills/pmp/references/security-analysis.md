@@ -101,6 +101,8 @@ For each endpoint and integration:
 
 Use [assets/security-analysis-output.md](../assets/security-analysis-output.md) for the report structure.
 
+Save the report to the reviews directory defined in [config.md](../config.md) File Paths, using the security analysis filename pattern (`YYYY-MM-DD-<name>-security-analysis.md`). Create the directory if it doesn't exist. The `<name>` slug should be a short, kebab-case identifier for the plan or component under analysis (e.g., `2025-03-11-auth-api-security-analysis.md`).
+
 ## Scope Boundary
 
 This analysis covers plan-level threats only. It does NOT cover:
