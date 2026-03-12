@@ -10,8 +10,11 @@ Central configuration for all PMP constants. Reference files and templates use t
 |----------|-------|---------|
 | Plans directory | `docs/plans/` | generate-plans, write, brainstorm, execute-loop, SKILL |
 | Completed plans directory | `docs/plans/implemented/` | execute-loop, execute |
-| Plan filename pattern | `YYYY-MM-DD-<name>-plan.md` | generate-plans, write |
+| Reviews directory | `docs/reviews/` | spec-review, security-analysis |
+| Plan filename pattern | `YYYY-MM-DD-<name>-plan.md` | generate-plans |
 | Design doc filename pattern | `YYYY-MM-DD-<topic>-design.md` | brainstorm |
+| Review filename pattern | `YYYY-MM-DD-<architecture>-review.md` | spec-review |
+| Security analysis filename pattern | `YYYY-MM-DD-<name>-security-analysis.md` | security-analysis |
 
 ---
 
