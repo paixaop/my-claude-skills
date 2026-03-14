@@ -14,12 +14,15 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [brainstorm.md](../pmp/references/brainstorm.md) and follow it completely — it contains the full brainstorming loop
+2. Read [brainstorm.md](references/brainstorm.md) and follow it completely — it contains the full brainstorming loop
 3. When the user approves the design, ask: "Ready to generate the implementation plan?"
-4. If yes → tell the user to invoke `/pmp:plan` or read [generate-plans.md](../pmp/references/generate-plans.md) and proceed
+4. If yes → tell the user to invoke `/pmp:plan`
+
+## Key References
+
+- Design document template: [design-doc.md](assets/design-doc.md)
 
 ## Shared Resources
 
 - Configuration & constants: [config.md](../pmp/config.md)
-- Design document template: [design-doc.md](../pmp/assets/design-doc.md)
 - Full lifecycle overview: [overview.md](../pmp/references/overview.md)

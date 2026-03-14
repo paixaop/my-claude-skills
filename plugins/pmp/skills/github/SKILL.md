@@ -16,21 +16,24 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 ### Create Issues (from plan)
 
 1. Read [config.md](../pmp/config.md) for current constants — especially Complexity Tiers and Label Taxonomy
-2. Read [github-planning.md](../pmp/references/github-planning.md) and follow it completely — it contains pre-flight checks, tier-based creation, Projects v2 setup, plan annotation, and the mandatory checklist
+2. Read [github-planning.md](references/github-planning.md) and follow it completely — it contains pre-flight checks, tier-based creation, Projects v2 setup, plan annotation, and the mandatory checklist
 3. After issues are created and the plan is annotated, ask: "Issues created. Ready to start implementation?"
-4. If yes → tell the user to invoke `/pmp:execute` or read [execute-loop.md](../pmp/references/execute-loop.md)
+4. If yes → tell the user to invoke `/pmp:execute`
 
 ### Sync Issues (update existing)
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [sync-issues.md](../pmp/references/sync-issues.md) and follow it completely — it diffs plan changes against live issues
+2. Read [sync-issues.md](references/sync-issues.md) and follow it completely — it diffs plan changes against live issues
 
 ## Key References
 
-- Epic template: [issue-epic.md](../pmp/assets/issue-epic.md)
-- Feature issue template: [issue-sub-issue.md](../pmp/assets/issue-sub-issue.md)
-- Task issue template: [issue-task.md](../pmp/assets/issue-task.md)
-- Simple issue template: [issue-simple.md](../pmp/assets/issue-simple.md)
+- Epic template: [issue-epic.md](assets/issue-epic.md)
+- Feature issue template: [issue-sub-issue.md](assets/issue-sub-issue.md)
+- Task issue template: [issue-task.md](assets/issue-task.md)
+- Simple issue template: [issue-simple.md](assets/issue-simple.md)
+- YAML forms: [yaml-feature-form.yml](assets/yaml-feature-form.yml), [yaml-bug-form.yml](assets/yaml-bug-form.yml), [yaml-epic-form.yml](assets/yaml-epic-form.yml)
+
+## Shared Resources
+
 - GitHub Issues table: [github-issues-table.md](../pmp/assets/github-issues-table.md)
-- YAML forms: [yaml-feature-form.yml](../pmp/assets/yaml-feature-form.yml), [yaml-bug-form.yml](../pmp/assets/yaml-bug-form.yml), [yaml-epic-form.yml](../pmp/assets/yaml-epic-form.yml)
 - Full lifecycle overview: [overview.md](../pmp/references/overview.md)

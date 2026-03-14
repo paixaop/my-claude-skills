@@ -84,7 +84,7 @@ Called after plan review is complete to create:
 
 ## Label Taxonomy (Required)
 
-**Create these labels in your repository if they don't exist.** See [config.md](../config.md) Label Taxonomy for the full list of labels, colors, and descriptions.
+**Create these labels in your repository if they don't exist.** See [config.md](../../pmp/config.md) Label Taxonomy for the full list of labels, colors, and descriptions.
 
 ```bash
 # Create labels using values from config.md
@@ -132,7 +132,7 @@ gh api graphql -f query='...' -f body="$BODY" ...
 
 ### Issue Body Templates
 
-Each tier uses specific templates for issue bodies. Read the template, fill in values from the plan. See [config.md](../config.md) Plan ↔ GitHub Mapping for the full hierarchy.
+Each tier uses specific templates for issue bodies. Read the template, fill in values from the plan. See [config.md](../../pmp/config.md) Plan ↔ GitHub Mapping for the full hierarchy.
 
 | Level | Template | Label |
 |------|----------|-------|
@@ -583,7 +583,7 @@ Store these in `.github/ISSUE_TEMPLATE/` for structured issue creation. Template
 
 ## PR Template
 
-Create `.github/pull_request_template.md` using [assets/pr-body.md](../assets/pr-body.md).
+Create `.github/pull_request_template.md` using [assets/pr-body.md](../../execute/assets/pr-body.md).
 
 ---
 
@@ -798,7 +798,7 @@ Adapted from Auto-Claude planning concepts. See CREDITS.md.
 - [ ] Verify all Issues appear in Project with correct field values
 
 ### Plan Annotation (after all issues created):
-- [ ] **Update frontmatter:** Set `status: issues_created`, `issues_created_at` to current UTC timestamp, and `epic: "#<number>"` (see [config.md](../config.md) Plan Frontmatter)
+- [ ] **Update frontmatter:** Set `status: issues_created`, `issues_created_at` to current UTC timestamp, and `epic: "#<number>"` (see [config.md](../../pmp/config.md) Plan Frontmatter)
 - [ ] Add `**Epic:** #<number>` to the plan header
 - [ ] Add/update the `## GitHub Issues` table in the plan file (3-level: Epic > Feature > Task)
 - [ ] Annotate Feature Dependency Graph: append `(#<number>)` to each feature

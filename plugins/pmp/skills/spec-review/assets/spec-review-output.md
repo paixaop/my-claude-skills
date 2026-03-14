@@ -57,6 +57,24 @@
 
 ---
 
+## Design Philosophy Assessment
+
+### First Principles & Best Practices
+
+| Aspect | Assessment | Evidence |
+|--------|-----------|----------|
+| First principles grounding | [grounded / partially grounded / cargo-culted] | [which decisions reflect first principles vs copied patterns] |
+| Best practices alignment | [aligned / partially aligned / divergent] | [which practices are followed or violated] |
+
+### Optimization & Priority Analysis
+
+| Question | Current State | Recommendation | Rationale |
+|----------|--------------|----------------|-----------|
+| Optimizing for what we shouldn't? | [what the design over-optimizes for] | [what to optimize for instead] | [why] |
+| Prioritizing what we shouldn't? | [what the design over-prioritizes] | [what to prioritize instead] | [why] |
+
+---
+
 ## Component Boundary Issues
 
 | Issue | Components Involved | Problem Type | Recommendation |

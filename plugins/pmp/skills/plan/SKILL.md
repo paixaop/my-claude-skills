@@ -14,14 +14,17 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [generate-plans.md](../pmp/references/generate-plans.md) and follow it completely — it contains E2E project detection, plan generation, GitHub Issues Mode, and Extend Mode
+2. Read [generate-plans.md](references/generate-plans.md) and follow it completely — it contains E2E project detection, plan generation, GitHub Issues Mode, and Extend Mode
 3. After saving the plan, ask: "Plan saved. Ready for plan review?"
-4. If yes → tell the user to invoke `/pmp:review` or read [review.md](../pmp/references/review.md) and proceed
+4. If yes → tell the user to invoke `/pmp:review`
 
 ## Key References
 
-- Plan template: [plan.md](../pmp/assets/plan.md)
-- Feature template: [feature.md](../pmp/assets/feature.md)
+- Plan template: [plan.md](assets/plan.md)
+- Feature template: [feature.md](assets/feature.md)
+
+## Shared Resources
+
 - GitHub Issues table: [github-issues-table.md](../pmp/assets/github-issues-table.md)
 - Testing approaches by project type: [testing-approaches.md](../pmp/references/testing-approaches.md)
 - Full lifecycle overview: [overview.md](../pmp/references/overview.md)

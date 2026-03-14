@@ -1,6 +1,6 @@
 ---
 name: pmp
-version: "1.6.0"
+version: "1.7.0"
 description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis), pmp:github (issues/projects). This root skill routes to the right stage based on the user's input."
 ---
 
@@ -23,6 +23,7 @@ For direct invocation when you know which stage you need:
 | `/pmp:review` | Skeptical senior-engineer review of an existing plan |
 | `/pmp:execute` | Code-test-fix loop, implements plan with agent teams. Also: test-only mode |
 | `/pmp:spec-review` | Deep 15-phase architecture & spec analysis (standalone) |
+| `/pmp:discuss` | Structured walkthrough of review findings, collect fixes into a plan |
 | `/pmp:github` | Publish plan as GitHub Issues/Projects, or sync changes to existing issues |
 
 ## Routing
@@ -31,16 +32,17 @@ When the user's intent maps to a specific stage, read the reference for that sta
 
 | Signal | Stage | Reference |
 |--------|-------|-----------|
-| Idea, feature request, "what if", "design this" | Brainstorm | [brainstorm.md](references/brainstorm.md) |
-| Spec, roadmap, requirements, "create a plan" | Plan | [generate-plans.md](references/generate-plans.md) |
-| GitHub issue URL, epic number, "plan from issues" | Plan (Issues Mode) | [generate-plans.md](references/generate-plans.md) |
-| Existing plan file, "review this" | Review | [review.md](references/review.md) |
-| "execute plan", "implement", "start coding" | Execute | [execute-loop.md](references/execute-loop.md) |
-| "review specs", "architecture review", "threat model" | Spec Review | [spec-review.md](references/spec-review.md) |
-| "create issues", "make an epic" | GitHub | [github-planning.md](references/github-planning.md) |
-| "sync issues", "update issues" | GitHub (Sync) | [sync-issues.md](references/sync-issues.md) |
-| "run tests", "re-test" | Execute (Test Only) | [execute-loop.md](references/execute-loop.md) |
-| Existing plan + "extend" | Plan (Extend) | [generate-plans.md](references/generate-plans.md) |
+| Idea, feature request, "what if", "design this" | Brainstorm | [brainstorm.md](../brainstorm/references/brainstorm.md) |
+| Spec, roadmap, requirements, "create a plan" | Plan | [generate-plans.md](../plan/references/generate-plans.md) |
+| GitHub issue URL, epic number, "plan from issues" | Plan (Issues Mode) | [generate-plans.md](../plan/references/generate-plans.md) |
+| Existing plan file, "review this" | Review | [review.md](../review/references/review.md) |
+| "execute plan", "implement", "start coding" | Execute | [execute-loop.md](../execute/references/execute-loop.md) |
+| "review specs", "architecture review", "threat model" | Spec Review | [spec-review.md](../spec-review/references/spec-review.md) |
+| "create issues", "make an epic" | GitHub | [github-planning.md](../github/references/github-planning.md) |
+| "sync issues", "update issues" | GitHub (Sync) | [sync-issues.md](../github/references/sync-issues.md) |
+| "discuss review", "walk through findings", "go through the review" | Discuss | [discuss.md](../discuss/references/discuss.md) |
+| "run tests", "re-test" | Execute (Test Only) | [execute-loop.md](../execute/references/execute-loop.md) |
+| Existing plan + "extend" | Plan (Extend) | [generate-plans.md](../plan/references/generate-plans.md) |
 
 ### Lifecycle Flow
 
@@ -52,6 +54,8 @@ Workflows 1–4 share a path: each stage hands off to the next with user confirm
 4. **Execute** → implements, creates PR, archives plan
 
 Workflow 5 (**Spec Review**) is standalone — produces a report, no execution.
+
+**Discuss** can follow either Review or Spec Review — walks through findings interactively, collects fixes into a plan, then optionally hands off to Execute.
 
 ## Project Rules
 

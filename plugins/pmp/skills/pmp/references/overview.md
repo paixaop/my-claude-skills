@@ -237,39 +237,66 @@ PR merges → GitHub auto-closes all issues
 
 ```
 pmp/
-├── SKILL.md                            # Main skill — workflows, lifecycle, rules
-├── config.md                           # Central constants — paths, thresholds, labels, announcements
-├── references/
-│   ├── brainstorm.md                   # Collaborative design stage
-│   ├── generate-plans.md               # Plan generation (+ GitHub Issues Mode)
-│   ├── review.md                       # Plan review — skeptical senior engineer
-│   ├── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
-│   ├── execute-loop.md                 # Code-test-fix loop with E2E + agent teams
-│   ├── github-planning.md              # Issue/Epic/Project creation
-│   ├── sync-issues.md                  # Sync plan changes to existing issues
-│   ├── testing-approaches.md           # Per-project-type E2E guidance
-│   ├── security-analysis.md            # STRIDE + attack tree analysis
-│   ├── implementer-prompt.md           # Agent team: implementer
-│   ├── code-quality-reviewer-prompt.md # Agent team: code reviewer
-│   └── spec-reviewer-prompt.md         # Agent team: spec reviewer
-└── assets/
-    ├── plan.md                         # Full implementation plan structure
-    ├── design-doc.md                   # Design document from brainstorm
-    ├── feature.md                      # Feature spec with ACs and E2E tests
-    ├── task.md                         # TDD task with steps
-    ├── review-output.md                # Plan review verdict and findings
-    ├── spec-review-output.md           # Architecture & spec review report
-    ├── issue-simple.md                 # SIMPLE tier: single issue body
-    ├── issue-epic.md                   # STANDARD/COMPLEX: epic body
-    ├── issue-sub-issue.md              # Sub-issue body
-    ├── pr-body.md                      # Pull request body
-    ├── e2e-test-spec.md                # Agent-driven test spec format
-    ├── security-analysis-output.md     # Security analysis report
-    ├── github-issues-table.md          # Feature→Issue mapping table
-    ├── phase-exit-criteria.md          # Phase gate checklist
-    ├── yaml-feature-form.yml           # GitHub Issue form: feature
-    ├── yaml-bug-form.yml               # GitHub Issue form: bug
-    └── yaml-epic-form.yml              # GitHub Issue form: epic
+├── pmp/
+│   ├── SKILL.md                            # Main skill — lifecycle router
+│   ├── config.md                           # Central constants — paths, thresholds, labels, announcements
+│   ├── references/
+│   │   ├── overview.md                     # This file — lifecycle overview
+│   │   ├── testing-approaches.md           # Per-project-type E2E guidance (shared)
+│   │   └── spec-reviewer-prompt.md         # Agent team: spec reviewer (shared)
+│   └── assets/
+│       ├── github-issues-table.md          # Feature→Issue mapping table (shared)
+│       ├── task.md                         # TDD task with steps
+│       └── phase-exit-criteria.md          # Phase gate checklist
+├── brainstorm/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── design-doc.md                   # Design document from brainstorm
+│   └── references/
+│       └── brainstorm.md                   # Collaborative design stage
+├── plan/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   ├── plan.md                         # Full implementation plan structure
+│   │   └── feature.md                      # Feature spec with ACs and E2E tests
+│   └── references/
+│       └── generate-plans.md               # Plan generation (+ GitHub Issues Mode)
+├── review/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   ├── review-output.md                # Plan review verdict and findings
+│   │   └── security-analysis-output.md     # Security analysis report
+│   └── references/
+│       ├── review.md                       # Plan review — skeptical senior engineer
+│       └── security-analysis.md            # STRIDE + attack tree analysis
+├── execute/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   ├── pr-body.md                      # Pull request body
+│   │   └── e2e-test-spec.md                # Agent-driven test spec format
+│   └── references/
+│       ├── execute-loop.md                 # Code-test-fix loop with E2E + agent teams
+│       ├── implementer-prompt.md           # Agent team: implementer
+│       └── code-quality-reviewer-prompt.md # Agent team: code reviewer
+├── github/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   ├── issue-simple.md                 # SIMPLE tier: single issue body
+│   │   ├── issue-epic.md                   # STANDARD/COMPLEX: epic body
+│   │   ├── issue-sub-issue.md              # Sub-issue body
+│   │   ├── issue-task.md                   # Task issue body
+│   │   ├── yaml-feature-form.yml           # GitHub Issue form: feature
+│   │   ├── yaml-bug-form.yml               # GitHub Issue form: bug
+│   │   └── yaml-epic-form.yml              # GitHub Issue form: epic
+│   └── references/
+│       ├── github-planning.md              # Issue/Epic/Project creation
+│       └── sync-issues.md                  # Sync plan changes to existing issues
+└── spec-review/
+    ├── SKILL.md
+    ├── assets/
+    │   └── spec-review-output.md           # Architecture & spec review report
+    └── references/
+        └── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
 ```
 
 ## Assets
@@ -278,24 +305,24 @@ Reusable templates for all artifacts. Reference files use these templates — re
 
 | Template | Purpose | Used By |
 |----------|---------|---------|
-| [plan.md](../assets/plan.md) | Full implementation plan structure | generate-plans.md |
-| [design-doc.md](../assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
-| [feature.md](../assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
+| [plan.md](../../plan/assets/plan.md) | Full implementation plan structure | generate-plans.md |
+| [design-doc.md](../../brainstorm/assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
+| [feature.md](../../plan/assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
 | [task.md](../assets/task.md) | TDD task with steps | reference template |
-| [review-output.md](../assets/review-output.md) | Plan review verdict and findings | review.md |
-| [spec-review-output.md](../assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
-| [issue-simple.md](../assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
-| [issue-epic.md](../assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
-| [issue-sub-issue.md](../assets/issue-sub-issue.md) | Feature issue body (sub-issue of epic) | github-planning.md |
-| [issue-task.md](../assets/issue-task.md) | Task issue body (sub-issue of feature) | github-planning.md |
-| [pr-body.md](../assets/pr-body.md) | Pull request body | execute-loop.md |
-| [e2e-test-spec.md](../assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
-| [security-analysis-output.md](../assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
+| [review-output.md](../../review/assets/review-output.md) | Plan review verdict and findings | review.md |
+| [spec-review-output.md](../../spec-review/assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
+| [issue-simple.md](../../github/assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
+| [issue-epic.md](../../github/assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
+| [issue-sub-issue.md](../../github/assets/issue-sub-issue.md) | Feature issue body (sub-issue of epic) | github-planning.md |
+| [issue-task.md](../../github/assets/issue-task.md) | Task issue body (sub-issue of feature) | github-planning.md |
+| [pr-body.md](../../execute/assets/pr-body.md) | Pull request body | execute-loop.md |
+| [e2e-test-spec.md](../../execute/assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
+| [security-analysis-output.md](../../review/assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
 | [github-issues-table.md](../assets/github-issues-table.md) | Feature→Issue mapping table | generate-plans.md, github-planning.md |
 | [phase-exit-criteria.md](../assets/phase-exit-criteria.md) | Phase gate checklist | reference template |
-| [yaml-feature-form.yml](../assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
-| [yaml-bug-form.yml](../assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
-| [yaml-epic-form.yml](../assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
+| [yaml-feature-form.yml](../../github/assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
+| [yaml-bug-form.yml](../../github/assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
+| [yaml-epic-form.yml](../../github/assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
 
 ## Plan File Anatomy
 
@@ -364,6 +391,12 @@ Tell the agent what you want:
 The agent handles the rest — detecting your project type, choosing test frameworks, creating branches, and wiring up GitHub Issues.
 
 ## Changelog
+
+### 1.7.0
+
+- **Analysis cache:** Per-file digest cache for skills that read spec files upfront. Stores structured summaries with SHA256 change detection — unchanged files load from cache on re-run. Any skill can opt in via `docs/.cache/<skill>/`. See `references/analysis-cache.md`.
+- **`/pmp:discuss` sub-skill:** Structured walkthrough of review findings (plan review or spec-review). Iterates findings from most critical to least, explains each issue, proposes solutions, asks the user what to do (Acknowledge/Fix/Skip/Defer). Collects fixes into a plan and hands off to execute.
+- **Spec-review caching:** Phase 0 (Discovery) now checks for cached summaries before reading files. Only changed/new files are re-read on subsequent runs.
 
 ### 1.6.0
 
