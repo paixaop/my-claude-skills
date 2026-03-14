@@ -113,6 +113,19 @@ stateDiagram-v2
     Completion --> [*] : done
 ```
 
+## E2E Principles
+
+These principles apply across all execution models:
+
+- **Specs, not code:** Plans describe WHAT to build/test, never HOW (no code snippets)
+- **Structural traceability:** Every AC has its E2E test case directly beneath it — no cross-references needed
+- **Two-stage commits:** Implementation commits after unit/integration tests pass. E2E test commits after E2E tests pass. Each feature produces two commits.
+- **Fix loop ceiling:** see [config.md](../config.md) Thresholds for max attempts per feature
+- **Test isolation:** Each feature's tests handle their own setup/teardown, runnable independently
+- **No hardcoded conventions:** Integration branch, CI command, test directory all come from project detection (recorded in the plan header)
+
+---
+
 ## Context Management
 
 Read [config.md](../config.md) Context Management before starting. The rules below are critical for preventing context window exhaustion during execution.
@@ -271,6 +284,9 @@ When creating tasks with `TaskCreate`, always set up dependency chains with `Tas
 3. **Split into waves** — group independent tasks into waves. Launch wave N+1 only after wave N completes. Never launch dependent work speculatively.
 4. **Include full context in each agent's prompt** — parallel agents share nothing. Each prompt must contain all file paths, decisions, and constraints it needs. Never assume an agent can see another agent's output.
 5. **Consolidate after parallel waves** — after a parallel wave completes, review all outputs for conflicts before launching the next wave.
+6. **Lean prompts** — include only the file paths, task-specific decisions, and constraints each agent needs. Point to `CLAUDE.md` for project conventions instead of inlining them. Never dump the full plan into every agent prompt.
+7. **Demand structured returns** — every agent MUST return in the structured format defined in [config.md](../config.md) Context Management. Extract only the structured fields from agent returns — discard prose.
+8. **Use fast model for reviewers** — spec compliance and code quality reviewers are focused tasks that benefit from `model: fast`.
 
 Never launch parallel agents that write to the same files or where one agent's output is another's input. When in doubt, serialize.
 
@@ -565,6 +581,33 @@ Total           | 12/12     | ALL PASS
    mv docs/plans/<plan-file>.md docs/plans/implemented/<plan-file>.md
    ```
 9. **Announce** with completion message from [config.md](../config.md) Stage Announcements
+
+---
+
+## Test Only Mode
+
+When the user just wants to re-run E2E tests (no new coding):
+
+1. Read the plan's E2E Test Infrastructure section to find the test runner command (code-file) or test spec files (agent-driven)
+2. Execute all E2E test suites
+3. Report results in a summary table:
+
+```
+Suite           | Tests   | Status
+────────────────┼─────────┼───────
+Suite 1         | 5/5     | PASS
+Suite 2         | 3/3     | PASS
+────────────────┼─────────┼───────
+Total           | 8/8     | ALL PASS
+```
+
+4. If failures found, offer to enter fix mode (fix loop from the per-feature loop above)
+
+For agent-driven tests, the user can specify which suites to run:
+- No arguments: run all suites
+- Suite names: run only those suites
+
+Project detection details (type, conventions, monorepo) are in the plan header — no need to re-detect.
 
 ---
 

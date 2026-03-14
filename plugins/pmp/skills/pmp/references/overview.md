@@ -21,6 +21,152 @@ graph LR
 
 Every transition between stages requires user confirmation. The agent never auto-advances.
 
+## Detailed State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Brainstorm : idea / feature request
+    [*] --> GeneratePlan : spec / roadmap provided
+    [*] --> FetchIssues : GitHub issues / epic provided
+    [*] --> PlanReview : existing plan file
+    [*] --> SpecReview : "review specs" / architecture review
+    [*] --> GitHubPlanning : "create issues" / "make epic"
+    [*] --> SyncIssues : "update issues" / "sync issues"
+    [*] --> TestOnly : "run tests" / "re-test"
+
+    state FetchIssues {
+        [*] --> IdentifyEpic : issue URL / number
+        IdentifyEpic --> FetchSubIssues : gh api graphql
+        FetchSubIssues --> ParseIssueBodies
+        ParseIssueBodies --> BuildRoadmap : normalize to feature specs
+        BuildRoadmap --> PreFillIssueTable : issues already exist
+        PreFillIssueTable --> [*]
+    }
+
+    FetchIssues --> GeneratePlan : issues fetched
+
+    state Brainstorm {
+        [*] --> Explore : read context
+        Explore --> AskClarify
+        AskClarify --> ProposeApproaches
+        ProposeApproaches --> PresentDesign
+        PresentDesign --> Refine
+        Refine --> AskClarify : user wants changes
+        Refine --> DesignDoc : user approves
+        DesignDoc --> [*]
+    }
+
+    Brainstorm --> GeneratePlan : user confirms
+
+    state GeneratePlan {
+        [*] --> ReadRoadmap
+        ReadRoadmap --> AnalyzeCodebase
+        AnalyzeCodebase --> ClarifyRequirements
+        ClarifyRequirements --> WritePlan
+        WritePlan --> VerifyCoverage
+        VerifyCoverage --> SavePlan
+        SavePlan --> [*]
+    }
+
+    GeneratePlan --> PlanReview : user confirms
+
+    state PlanReview {
+        [*] --> ReadPlan
+        ReadPlan --> ReadCode
+        ReadCode --> SecurityGate
+        SecurityGate --> ScoreChecklist
+        ScoreChecklist --> ProduceReview
+
+        ProduceReview --> UpdatePlan : user picks "update"
+        ProduceReview --> Discuss : user picks "discuss"
+        ProduceReview --> Approved : user picks "proceed"
+
+        UpdatePlan --> ReadPlan : re-review
+        Discuss --> ProduceReview : re-ask
+        Approved --> [*]
+    }
+
+    PlanReview --> GitHubPlanning : user confirms
+    PlanReview --> Execute : user declines issues
+
+    state SpecReview {
+        [*] --> MapCorpus
+        MapCorpus --> ClassifyDocs
+        ClassifyDocs --> ReadAllSpecs
+        ReadAllSpecs --> ReconstructSystem
+        ReconstructSystem --> DeepAnalysis
+        DeepAnalysis --> ProduceReport
+
+        ProduceReport --> DiscussFindings : user picks "discuss"
+        ProduceReport --> ReviewDone : user picks "done"
+
+        DiscussFindings --> ProduceReport : re-ask
+        ReviewDone --> [*]
+    }
+
+    SpecReview --> [*] : report delivered
+
+    state GitHubPlanning {
+        [*] --> DetermineTier
+        DetermineTier --> PreFlight
+        PreFlight --> CreateLabels
+        CreateLabels --> CreateIssues
+        CreateIssues --> RecordMapping : write to plan file
+        RecordMapping --> [*]
+    }
+
+    GitHubPlanning --> Execute : user confirms
+
+    state Execute {
+        [*] --> SetupInfra : first run
+        SetupInfra --> FeatureLoop
+
+        state FeatureLoop {
+            [*] --> TaskA_Impl : Task A
+            TaskA_Impl --> RunUnitTests
+            RunUnitTests --> UnitFixLoop : tests fail
+            RunUnitTests --> CommitImpl : all pass
+            UnitFixLoop --> RunUnitTests : fix applied
+            UnitFixLoop --> Blocked : ceiling reached
+            CommitImpl --> TaskB_E2E : Task B
+            TaskB_E2E --> RunE2ETests
+            RunE2ETests --> E2EFixLoop : tests fail
+            RunE2ETests --> CommitE2E : all pass
+            E2EFixLoop --> RunE2ETests : fix applied
+            E2EFixLoop --> Blocked : ceiling reached
+            CommitE2E --> CommentOnIssue : if GH issues exist
+            CommentOnIssue --> [*]
+            CommitE2E --> [*] : no GH issues
+        }
+
+        FeatureLoop --> FeatureLoop : next feature
+        FeatureLoop --> FinalRun : all features done
+        FinalRun --> CreatePR
+        CreatePR --> PRClosesIssues : GH issues (Closes #N in body)
+        PRClosesIssues --> UpdateFrontmatter
+        CreatePR --> UpdateFrontmatter : no GH issues
+        UpdateFrontmatter --> ArchivePlan : move to docs/plans/implemented/
+        ArchivePlan --> [*]
+    }
+
+    state SyncIssues {
+        [*] --> ReadPlanForSync
+        ReadPlanForSync --> FetchCurrentIssues
+        FetchCurrentIssues --> DiffBodies
+        DiffBodies --> PresentDiff
+        PresentDiff --> ApplySync : user approves
+        ApplySync --> UpdateEpicBody
+        UpdateEpicBody --> UpdatePlanTable
+        UpdatePlanTable --> [*]
+    }
+
+    SyncIssues --> [*] : synced
+
+    TestOnly --> [*] : results reported
+
+    Execute --> [*] : done
+```
+
 ### Five Entry Points
 
 | You say... | What happens |
@@ -126,6 +272,31 @@ pmp/
     └── yaml-epic-form.yml              # GitHub Issue form: epic
 ```
 
+## Assets
+
+Reusable templates for all artifacts. Reference files use these templates — read them when creating the corresponding artifact.
+
+| Template | Purpose | Used By |
+|----------|---------|---------|
+| [plan.md](../assets/plan.md) | Full implementation plan structure | generate-plans.md |
+| [design-doc.md](../assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
+| [feature.md](../assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
+| [task.md](../assets/task.md) | TDD task with steps | reference template |
+| [review-output.md](../assets/review-output.md) | Plan review verdict and findings | review.md |
+| [spec-review-output.md](../assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
+| [issue-simple.md](../assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
+| [issue-epic.md](../assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
+| [issue-sub-issue.md](../assets/issue-sub-issue.md) | Feature issue body (sub-issue of epic) | github-planning.md |
+| [issue-task.md](../assets/issue-task.md) | Task issue body (sub-issue of feature) | github-planning.md |
+| [pr-body.md](../assets/pr-body.md) | Pull request body | execute-loop.md |
+| [e2e-test-spec.md](../assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
+| [security-analysis-output.md](../assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
+| [github-issues-table.md](../assets/github-issues-table.md) | Feature→Issue mapping table | generate-plans.md, github-planning.md |
+| [phase-exit-criteria.md](../assets/phase-exit-criteria.md) | Phase gate checklist | reference template |
+| [yaml-feature-form.yml](../assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
+| [yaml-bug-form.yml](../assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
+| [yaml-epic-form.yml](../assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
+
 ## Plan File Anatomy
 
 Plans live in `docs/plans/` and get archived to `docs/plans/implemented/` after execution.
@@ -191,3 +362,37 @@ Tell the agent what you want:
 ```
 
 The agent handles the rest — detecting your project type, choosing test frameworks, creating branches, and wiring up GitHub Issues.
+
+## Changelog
+
+### 1.6.0
+
+- **Sub-skill architecture:** Split PMP into focused sub-skills (`pmp:brainstorm`, `pmp:plan`, `pmp:review`, `pmp:execute`, `pmp:spec-review`, `pmp:github`). Each loads only the context it needs. Root `pmp` skill becomes a router for ambiguous requests.
+- **Improved descriptions:** Each sub-skill has a focused, trigger-optimized description instead of one monolithic description covering all use cases.
+- **SKILL.md further compressed:** Root skill is now 72 lines (down from 530 in v1.4). Sub-skills average 28 lines each.
+
+### 1.5.0
+
+- **Two-task execution model:** Each feature now produces two separate commits — Task A (implementation + unit tests) and Task B (E2E tests). Halves per-task cognitive load.
+- **3-level GitHub mapping:** Plan → Epic, Feature → Issue, Task → Sub-issue. Clean 1:1 mapping with consistent terminology throughout.
+- **Task issue template:** New `assets/issue-task.md` for task-level sub-issues under feature issues.
+- **Feature template update:** `assets/feature.md` now includes explicit Tasks table with Task A/B and issue references.
+- **Terminology cleanup:** Complexity tiers use "features" not "tasks". Labels use `type:feature` for feature issues, `type:task` for task sub-issues.
+- **Updated commit conventions:** `feat(<scope>): <feature>` for implementation, `test(<scope>): e2e tests for <feature>` for E2E.
+- **Implementer scope reduction:** Implementer agents no longer write E2E tests — only unit/integration tests.
+- **Structural restructure:** SKILL.md compressed to routing layer (~120 lines). Operational content moved to reference files for progressive disclosure.
+
+### 1.4.0
+
+- **Multi-session resume:** Added protocol for resuming execution after session breaks (execute-loop.md)
+- **Two-stage review:** Consolidated subagent-driven review (spec compliance + code quality) into execute-loop.md from removed execute.md
+- **Monorepo support:** Added detection and scoping for workspace-based monorepos
+- **E2E opt-out:** Added guidance for projects where E2E tests don't apply (ask if in doubt)
+- **Dependency management:** Added supply chain guidance to Project Rules
+- **Plan diff summary:** Extend Mode now presents a structured change summary before saving
+- **Security analysis persistence:** Reports saved to `docs/reviews/` alongside architecture reviews
+- **Directory bootstrapping:** `generate-plans.md` creates `docs/plans/` if it doesn't exist
+- **Removed:** `write.md` and `execute.md` (consolidated into `generate-plans.md` and `execute-loop.md`)
+- **Fixed:** `overview.md` wrong archive path (`docs/implemented/` → `docs/plans/implemented/`)
+- **Fixed:** `overview.md` file tree indentation
+- **Fixed:** `github-planning.md` contextd pre-flight no longer fails when contextd is unavailable

@@ -13,6 +13,95 @@ A roadmap in any of these forms:
 | **URL** | Link to a Google Doc, Notion page, etc. |
 | **GitHub Issues** | Epic number (`#41`), issue URL, or "plan from issues" — triggers GitHub Issues Mode (see below) |
 
+## E2E Project Detection
+
+Before generating a plan, auto-detect and confirm with the user:
+
+### 1. Project Type and E2E Testing Approach
+
+| Project Type | Detection Signals | E2E Testing Approach |
+|---|---|---|
+| **Web App (frontend)** | `package.json` with React/Vue/Svelte/Next, HTML templates | Playwright test scripts or Playwright MCP browser tests |
+| **Web App (fullstack)** | Both frontend + backend server | Playwright for UI + HTTP client for API |
+| **REST/HTTP API** | Go/Python/Node server, no UI | Language-native HTTP test client |
+| **CLI Tool** | `main.go`/`main.py` with cobra/argparse/click, no server | Subprocess execution + stdout/stderr/exit-code assertions |
+| **Library/Package** | No main entrypoint, exported packages | Integration tests with realistic consumer scenarios |
+| **gRPC/WebSocket** | Proto files, WS handlers | Protocol-specific test clients |
+
+### 1b. Monorepo Detection
+
+Check for workspace configuration files that signal a monorepo:
+
+| Signal | Tool |
+|---|---|
+| `pnpm-workspace.yaml` | pnpm workspaces |
+| `lerna.json` | Lerna |
+| `nx.json` | Nx |
+| `turbo.json` | Turborepo |
+| `Cargo.toml` with `[workspace]` | Rust workspaces |
+| `go.work` | Go workspaces |
+| Multiple `package.json` files in subdirectories | npm/yarn workspaces |
+
+If a monorepo is detected:
+
+1. **Ask which package(s) the plan targets** — use AskQuestion to present the list of packages/apps
+2. **Scope detection per package** — project type, CI command, test directory, and integration branch may differ per package
+3. **Record package scope in the plan header** — add `**Package:** <path>` (e.g., `packages/api/`)
+4. **Scope E2E tests to the target package** — test runner commands and directories are relative to the package root
+5. **CI command** — may be a workspace-level command (e.g., `turbo test --filter=api`) or package-level
+
+Present detections per package for user confirmation.
+
+### 2. Project Conventions
+
+| Convention | Detection Method | Fallback |
+|---|---|---|
+| **Integration branch** | `git branch -a` for `dev`/`develop`/`main`/`master`; check CLAUDE.md / CONTRIBUTING.md | Ask the user |
+| **CI command** | `Makefile` targets (`ci`, `test`), `package.json` scripts, `.github/workflows/`, `Justfile` | Ask the user |
+| **Test directory** | Existing `e2e/`, `tests/e2e/`, `test/`, `__tests__/`, `*_test.go` patterns | Propose based on project type |
+
+Present ALL detections to the user for confirmation. User can override any.
+
+### 3. Execution Model Selection
+
+| Model | When | How |
+|---|---|---|
+| **Code-file tests** | Default for API, CLI, Library | Agent writes test code files, runs with single command, parses output. Persistent, CI-runnable. |
+| **Agent-driven tests** | Option for Web Apps | Agent reads test spec markdown files, executes via Playwright MCP interactively. No test code files. |
+| **Hybrid** | Fullstack projects | Code-file for API tests + chosen model for UI tests. Plan notes model per AC. |
+
+Commit to one model during project detection. Confirm with the user before plan generation.
+
+### 4. E2E Test Opt-Out
+
+Some projects or features legitimately don't benefit from E2E tests. When in doubt, ask the user.
+
+**Auto-detect and flag these cases:**
+
+| Project Signal | Reason E2E May Not Apply |
+|---|---|
+| Pure utility library (no I/O, no server, no CLI) | Only unit/integration tests are meaningful |
+| Type definitions or schema-only packages | Nothing to execute end-to-end |
+| Documentation-only changes | No behavior to test |
+| Configuration or infrastructure changes | Better tested by CI/CD validation |
+
+When any of these are detected, use AskQuestion:
+
+> "This looks like a [type]. E2E tests may not add value here. Options:"
+> 1. **Include E2E tests anyway** — full E2E infrastructure and per-feature tests
+> 2. **Skip E2E, use integration tests** — plan includes integration tests but no E2E infrastructure
+> 3. **Skip E2E, unit tests only** — plan includes unit tests only
+
+If the user opts out of E2E:
+- Plan generation skips the E2E Test Infrastructure section
+- Feature specs include test cases but marked as unit or integration tests
+- Execute loop runs the project's test runner instead of a dedicated E2E suite
+- The code-test-fix loop still applies (tests must pass before commit)
+
+**Default:** If unsure whether E2E tests apply, ask the user. Never silently skip them.
+
+---
+
 ## Process
 
 ### 0. Fetch Issues (GitHub Issues Mode Only)
@@ -105,7 +194,7 @@ Use parallel agents if available, otherwise sequential:
 
 - Detect project type, language, framework, build system
 - Find existing test infrastructure (test directories, frameworks, CI config)
-- Detect integration branch and CI command (see E2E Project Detection in SKILL.md)
+- Detect integration branch and CI command (see E2E Project Detection above)
 - Map current architecture (entry points, data layer, API surface)
 - Identify relevant files per roadmap feature
 
