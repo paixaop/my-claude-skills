@@ -15,8 +15,8 @@ You MUST create a TodoWrite task for each step and complete them in order:
    c. **Present design sections** — scaled to complexity, get user approval after each section
    d. **Refine** — incorporate feedback, revisit earlier decisions if needed
    e. **Check exit** — if the user says to move ahead, exit the loop. Otherwise, after presenting a complete design, use AskQuestion: "The design covers [summary]. Ready to move to plan generation, or want to refine further?"
-3. **Write design doc** — save to plans directory using design doc filename pattern from [config.md](../config.md) File Paths
-4. **Transition to Generate Plan** — read [generate-plans.md](generate-plans.md) and follow it
+3. **Write design doc** — save to plans directory using design doc filename pattern from [config.md](../../pmp/config.md) File Paths
+4. **Transition to Generate Plan** — read [generate-plans.md](../../plan/references/generate-plans.md) and follow it
 
 ## Exploring Context
 
@@ -54,11 +54,11 @@ Use agent teams for parallel research when multiple areas need exploration:
 
 ## Writing the Design Doc
 
-Save using design doc filename pattern from [config.md](../config.md) File Paths, using [assets/design-doc.md](../assets/design-doc.md).
+Save using design doc filename pattern from [config.md](../../pmp/config.md) File Paths, using [assets/design-doc.md](../assets/design-doc.md).
 
 ## Transition
 
 After the design doc is saved:
 1. Use AskQuestion: "Design saved. Ready to generate the implementation plan?"
-2. Once confirmed, read [generate-plans.md](generate-plans.md) and follow it — the design doc becomes input
+2. Once confirmed, read [generate-plans.md](../../plan/references/generate-plans.md) and follow it — the design doc becomes input
 3. Do NOT invoke any other skill or start implementation

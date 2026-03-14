@@ -2,9 +2,9 @@
 
 Critically review implementation plans. Treat every plan as if submitted by a junior developer.
 
-> **This is the Plan Review.** It evaluates implementation plans for quality, completeness, security, and adherence to project conventions. For reviewing technical specifications (finding inconsistencies, gaps, contradictions), see [spec-review.md](spec-review.md).
+> **This is the Plan Review.** It evaluates implementation plans for quality, completeness, security, and adherence to project conventions. For reviewing technical specifications (finding inconsistencies, gaps, contradictions), see [spec-review.md](../../spec-review/references/spec-review.md).
 
-**Announce at start** with message from [config.md](../config.md) Stage Announcements.
+**Announce at start** with message from [config.md](../../pmp/config.md) Stage Announcements.
 
 ```mermaid
 stateDiagram-v2
@@ -115,8 +115,8 @@ Create a TodoWrite with these items and check each:
 - [ ] No unresolved questions or TODOs
 
 ### Conventions
-- [ ] Plans in correct directory (see [config.md](../config.md) File Paths)
-- [ ] Commit messages follow format (see [config.md](../config.md) Commit Conventions)
+- [ ] Plans in correct directory (see [config.md](../../pmp/config.md) File Paths)
+- [ ] Commit messages follow format (see [config.md](../../pmp/config.md) Commit Conventions)
 - [ ] Detected CI command as verification gate
 - [ ] Complexity within project-appropriate limits
 - [ ] Branch from detected integration branch (never `main` unless it IS the integration branch)
@@ -179,6 +179,6 @@ Ask the user: "Plan looks good — no issues found. Ready to proceed to implemen
 ### Transition to Execute
 
 Only after the user explicitly says to implement/execute:
-1. **Update frontmatter:** Set `status: reviewed` and `reviewed_at` to the current UTC timestamp in the plan file (see [config.md](../config.md) Plan Frontmatter)
-2. Read [execute-loop.md](execute-loop.md) and follow it
+1. **Update frontmatter:** Set `status: reviewed` and `reviewed_at` to the current UTC timestamp in the plan file (see [config.md](../../pmp/config.md) Plan Frontmatter)
+2. Read [execute-loop.md](../../execute/references/execute-loop.md) and follow it
 3. Do NOT start implementation without user confirmation

@@ -10,9 +10,9 @@ Every plan concept maps 1:1 to a GitHub artifact:
 
 | Plan Concept | GitHub Artifact | Label | Template |
 |---|---|---|---|
-| **Plan** | Epic issue | `type:epic` | [issue-epic.md](assets/issue-epic.md) |
-| **Feature** | Issue (sub-issue of Epic) | `type:feature` | [issue-sub-issue.md](assets/issue-sub-issue.md) |
-| **Task** (Task A: impl, Task B: E2E) | Sub-issue (sub-issue of Feature) | `type:task` | [issue-task.md](assets/issue-task.md) |
+| **Plan** | Epic issue | `type:epic` | [issue-epic.md](../github/assets/issue-epic.md) |
+| **Feature** | Issue (sub-issue of Epic) | `type:feature` | [issue-sub-issue.md](../github/assets/issue-sub-issue.md) |
+| **Task** (Task A: impl, Task B: E2E) | Sub-issue (sub-issue of Feature) | `type:task` | [issue-task.md](../github/assets/issue-task.md) |
 
 **Hierarchy:**
 ```
@@ -44,6 +44,7 @@ Epic #41 (Plan)
 | Design doc filename pattern | `YYYY-MM-DD-<topic>-design.md` | brainstorm |
 | Review filename pattern | `YYYY-MM-DD-<architecture>-review.md` | spec-review |
 | Security analysis filename pattern | `YYYY-MM-DD-<name>-security-analysis.md` | security-analysis |
+| Analysis cache directory | `docs/.cache/` | All skills (opt-in) — see [analysis-cache.md](references/analysis-cache.md) |
 
 ---
 
@@ -235,6 +236,7 @@ MINOR: none | [bullet list with file:line]
 | Brainstorm / Generate Plan | `Planning...` |
 | Plan Review | `Reviewing this junior dev's plan...` |
 | Architecture & Spec Review | `Conducting architecture review...` |
+| Discuss Findings | `Walking through review findings...` |
 | GitHub Planning | `Publishing to GitHub...` |
 | Sync Issues | `Syncing plan to GitHub Issues...` |
 | Execute (completion) | `I'm done baby - Skippy the Magnificent` |

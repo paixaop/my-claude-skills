@@ -2,9 +2,9 @@
 
 Deep architecture review of technical specifications. Reconstructs the system model and stress-tests it for architectural flaws, unnecessary complexity, inconsistencies, non-deterministic behavior, security risks, underspecified behavior, scalability limitations, and operational weaknesses.
 
-> **This is the Architecture & Spec Review.** It evaluates specs/documentation as a Principal Systems Architect and Security Engineer conducting a formal design review. For reviewing implementation plans (architecture, security, testing, conventions), see [review.md](review.md).
+> **This is the Architecture & Spec Review.** It evaluates specs/documentation as a Principal Systems Architect and Security Engineer conducting a formal design review. For reviewing implementation plans (architecture, security, testing, conventions), see [review.md](../../review/references/review.md).
 
-**Announce at start** with message from [config.md](../config.md) Stage Announcements.
+**Announce at start** with message from [config.md](../../pmp/config.md) Stage Announcements.
 
 ## Mindset
 
@@ -76,8 +76,9 @@ stateDiagram-v2
     state Discovery {
         [*] --> MapCorpus
         MapCorpus --> ClassifyDocs
-        ClassifyDocs --> ReadAll
-        ReadAll --> [*]
+        ClassifyDocs --> CheckCache
+        CheckCache --> ReadUncached
+        ReadUncached --> [*]
     }
 
     state SystemReconstruction {
@@ -128,10 +129,22 @@ stateDiagram-v2
    - **Primary specs**: Markdown/text documents defining the system (review targets)
    - **Reference material**: OpenAPI schemas, JSON schemas, ADRs, code comments (use for cross-validation, don't review independently)
 
-3. **Read all documents completely**
-   - Read every spec file before beginning analysis
+3. **Check analysis cache** — see [analysis-cache.md](../../pmp/references/analysis-cache.md)
+   - Check for `docs/.cache/spec-review/manifest.json`
+   - If manifest exists: hash each spec file (`shasum -a 256`), compare to manifest
+     - **Unchanged files** → load cached summaries instead of reading source
+     - **Changed files** → read source, regenerate summary, update cache
+     - **New files** → read source, generate summary, add to cache
+     - **Deleted files** → remove from manifest and delete summary
+   - If no manifest: proceed to step 4 (full read), then build cache afterward
+   - Report cache status: `X cached, Y changed, Z new, W deleted`
+
+4. **Read documents** (full read on cold cache, changed/new only on warm cache)
+   - Read every uncached spec file before beginning analysis
    - Track key terms, states, field names, and identifiers as you read
    - Note cross-references between documents
+   - After reading, produce a structured summary per file using the spec-review extraction template from [analysis-cache.md](../../pmp/references/analysis-cache.md) and write to `docs/.cache/spec-review/summaries/`
+   - Write or update `docs/.cache/spec-review/manifest.json`
 
 ---
 
@@ -213,6 +226,17 @@ Recommend improvements to ensure:
 - strong separation of concerns
 - well-defined module contracts (inputs, outputs, invariants)
 - unidirectional dependency graphs
+
+#### Design Philosophy
+
+Evaluate whether the architecture's foundational choices are sound:
+
+- **First principles** — Does the architecture reflect first principles thinking, or does it cargo-cult patterns from other systems without justification?
+- **Best practices** — Are the proposed solutions anchored in established best practices for this problem domain?
+- **Misplaced optimization** — What is the design optimizing for that it shouldn't? (e.g., optimizing for flexibility when the system needs predictability)
+- **Misplaced priorities** — What is the design prioritizing that it shouldn't? (e.g., prioritizing extensibility over operational simplicity)
+- **Correct optimization targets** — What should the design optimize for instead? Provide concrete recommendations.
+- **Correct priorities** — What should the design prioritize instead? Explain why the suggested priorities better serve the system's actual needs.
 
 ---
 
@@ -633,9 +657,9 @@ Only include this section when the changes are substantial enough to warrant a r
 
 ### Report
 
-Use [assets/spec-review-output.md](../assets/spec-review-output.md) for the report structure.
+Use [spec-review-output.md](../assets/spec-review-output.md) for the report structure.
 
-Save the report to the reviews directory defined in [config.md](../config.md) File Paths, using the review filename pattern (`YYYY-MM-DD-<architecture>-review.md`). Create the directory if it doesn't exist. The `<architecture>` slug should be a short, kebab-case identifier for the system or component under review (e.g., `2025-03-11-auth-gateway-review.md`).
+Save the report to the reviews directory defined in [config.md](../../pmp/config.md) File Paths, using the review filename pattern (`YYYY-MM-DD-<architecture>-review.md`). Create the directory if it doesn't exist. The `<architecture>` slug should be a short, kebab-case identifier for the system or component under review (e.g., `2025-03-11-auth-gateway-review.md`).
 
 - Produce findings across all phases
 - If the same issue appears across multiple phases, report once with all relevant phase references

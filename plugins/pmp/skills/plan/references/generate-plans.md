@@ -218,13 +218,13 @@ Walk through every acceptance criterion and confirm it has an E2E test case dire
 ### 6. Save the Plan
 
 - **Bootstrap the directory:** `mkdir -p docs/plans` (create if it doesn't exist)
-- Save using filename pattern from [config.md](../config.md) File Paths
-- **Frontmatter (MANDATORY):** Every plan MUST include YAML frontmatter as the very first content in the file (see [config.md](../config.md) Plan Frontmatter). Set `status: draft` and `created_at` to the current UTC timestamp. All other fields are left blank.
-- **GitHub Issues Mode:** Include the pre-filled GitHub Issues table (see [assets/github-issues-table.md](../assets/github-issues-table.md)) in the plan file. Add `**Source:** GitHub Epic #<number>` to the plan header.
+- Save using filename pattern from [config.md](../../pmp/config.md) File Paths
+- **Frontmatter (MANDATORY):** Every plan MUST include YAML frontmatter as the very first content in the file (see [config.md](../../pmp/config.md) Plan Frontmatter). Set `status: draft` and `created_at` to the current UTC timestamp. All other fields are left blank.
+- **GitHub Issues Mode:** Include the pre-filled GitHub Issues table (see [assets/github-issues-table.md](../../pmp/assets/github-issues-table.md)) in the plan file. Add `**Source:** GitHub Epic #<number>` to the plan header.
 
 After saving, use AskQuestion: "Plan saved to docs/plans/. Ready to move to the review stage?"
 
-Once confirmed, read [review.md](review.md) and follow it. Do NOT skip plan review.
+Once confirmed, read [review.md](../../review/references/review.md) and follow it. Do NOT skip plan review.
 
 ---
 
@@ -307,7 +307,7 @@ Same filename. Preserve existing frontmatter — do NOT reset `status` or timest
 
 Use [assets/plan.md](../assets/plan.md) for the overall plan structure. For each feature section within the plan, use [assets/feature.md](../assets/feature.md).
 
-If the plan was generated from GitHub Issues, include a [assets/github-issues-table.md](../assets/github-issues-table.md) section.
+If the plan was generated from GitHub Issues, include a [assets/github-issues-table.md](../../pmp/assets/github-issues-table.md) section.
 
 ### Plan Rules
 

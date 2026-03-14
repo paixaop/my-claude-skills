@@ -120,7 +120,7 @@ These principles apply across all execution models:
 - **Specs, not code:** Plans describe WHAT to build/test, never HOW (no code snippets)
 - **Structural traceability:** Every AC has its E2E test case directly beneath it — no cross-references needed
 - **Two-stage commits:** Implementation commits after unit/integration tests pass. E2E test commits after E2E tests pass. Each feature produces two commits.
-- **Fix loop ceiling:** see [config.md](../config.md) Thresholds for max attempts per feature
+- **Fix loop ceiling:** see [config.md](../../pmp/config.md) Thresholds for max attempts per feature
 - **Test isolation:** Each feature's tests handle their own setup/teardown, runnable independently
 - **No hardcoded conventions:** Integration branch, CI command, test directory all come from project detection (recorded in the plan header)
 
@@ -128,7 +128,7 @@ These principles apply across all execution models:
 
 ## Context Management
 
-Read [config.md](../config.md) Context Management before starting. The rules below are critical for preventing context window exhaustion during execution.
+Read [config.md](../../pmp/config.md) Context Management before starting. The rules below are critical for preventing context window exhaustion during execution.
 
 ### Batch Controllers
 
@@ -164,7 +164,7 @@ On failure, read only the **last 50 lines** of output to identify the failing te
 
 ### Subagent Returns
 
-All subagents MUST use the structured return format defined in [config.md](../config.md) Context Management. The controller should extract only the structured fields and discard verbose prose.
+All subagents MUST use the structured return format defined in [config.md](../../pmp/config.md) Context Management. The controller should extract only the structured fields and discard verbose prose.
 
 ### Fix Loop Context
 
@@ -240,7 +240,7 @@ Continue from the next uncompleted feature in the plan. Re-read the plan file an
 ## Before Starting
 
 1. **Read the plan completely**
-2. **Update frontmatter:** Set `status: executing` and `execution_started_at` to the current UTC timestamp in the plan file (see [config.md](../config.md) Plan Frontmatter)
+2. **Update frontmatter:** Set `status: executing` and `execution_started_at` to the current UTC timestamp in the plan file (see [config.md](../../pmp/config.md) Plan Frontmatter)
 3. **Read integration branch** from the plan header:
    ```
    git checkout <branch> && git pull && git checkout -b feat/<name>
@@ -285,7 +285,7 @@ When creating tasks with `TaskCreate`, always set up dependency chains with `Tas
 4. **Include full context in each agent's prompt** — parallel agents share nothing. Each prompt must contain all file paths, decisions, and constraints it needs. Never assume an agent can see another agent's output.
 5. **Consolidate after parallel waves** — after a parallel wave completes, review all outputs for conflicts before launching the next wave.
 6. **Lean prompts** — include only the file paths, task-specific decisions, and constraints each agent needs. Point to `CLAUDE.md` for project conventions instead of inlining them. Never dump the full plan into every agent prompt.
-7. **Demand structured returns** — every agent MUST return in the structured format defined in [config.md](../config.md) Context Management. Extract only the structured fields from agent returns — discard prose.
+7. **Demand structured returns** — every agent MUST return in the structured format defined in [config.md](../../pmp/config.md) Context Management. Extract only the structured fields from agent returns — discard prose.
 8. **Use fast model for reviewers** — spec compliance and code quality reviewers are focused tasks that benefit from `model: fast`.
 
 Never launch parallel agents that write to the same files or where one agent's output is another's input. When in doubt, serialize.
@@ -327,7 +327,7 @@ For each feature in dependency order:
 
 #### A3: Fix Loop (Unit Tests)
 
-**Hard ceiling: see [config.md](../config.md) Thresholds for fix loop ceiling.**
+**Hard ceiling: see [config.md](../../pmp/config.md) Thresholds for fix loop ceiling.**
 
 Same classification and fix protocol as the E2E fix loop (see Task B below), applied to unit/integration test failures.
 
@@ -336,7 +336,7 @@ Same classification and fix protocol as the E2E fix loop (see Task B below), app
 Only after all unit/integration tests pass:
 
 - Stage implementation code + unit/integration test files
-- Commit: `feat(<scope>): <feature>` (see [config.md](../config.md) Commit Conventions)
+- Commit: `feat(<scope>): <feature>` (see [config.md](../../pmp/config.md) Commit Conventions)
 - Run the project CI command (from plan header)
 - If CI fails, fix and amend the commit
 - **Comment on Task A Issue** (if GitHub Issues exist for this plan): `gh issue comment <task-A-number> --body "Implemented in <commit-sha>"`
@@ -359,7 +359,7 @@ Runs after Task A commits successfully.
 
 #### B3: Fix Loop (E2E Tests)
 
-**Hard ceiling: see [config.md](../config.md) Thresholds for fix loop ceiling.**
+**Hard ceiling: see [config.md](../../pmp/config.md) Thresholds for fix loop ceiling.**
 
 If any test fails:
 
@@ -380,7 +380,7 @@ If any test fails:
 
 **e. Increment the attempt counter** (regardless of which category)
 
-**f. If ceiling reached (see [config.md](../config.md) Thresholds):** STOP. Report concisely:
+**f. If ceiling reached (see [config.md](../../pmp/config.md) Thresholds):** STOP. Report concisely:
 - Which test(s) are failing (name + 1-line error)
 - Failure classification per attempt (1 line each)
 - What was tried (1 line per attempt)
@@ -392,7 +392,7 @@ Ask the user for help before proceeding.
 Only after ALL E2E tests pass:
 
 - Stage E2E test files only
-- Commit: `test(<scope>): e2e tests for <feature>` (see [config.md](../config.md) Commit Conventions)
+- Commit: `test(<scope>): e2e tests for <feature>` (see [config.md](../../pmp/config.md) Commit Conventions)
 - Run the project CI command (from plan header)
 - If CI fails, fix and amend the commit
 - **Comment on Task B Issue** (if GitHub Issues exist for this plan): `gh issue comment <task-B-number> --body "E2E tests in <commit-sha>"` — do NOT close; the PR will close it on merge
@@ -403,7 +403,7 @@ When using agent teams (Task tool) for implementation, run a two-stage review af
 
 **Stage 1: Spec Compliance Review**
 
-Dispatch a spec reviewer using [spec-reviewer-prompt.md](spec-reviewer-prompt.md):
+Dispatch a spec reviewer using [spec-reviewer-prompt.md](../../pmp/references/spec-reviewer-prompt.md):
 - Reviewer reads actual code — does NOT trust the implementer's report
 - Verifies: nothing missing, nothing extra, nothing misunderstood
 - If issues found: implementer fixes, spec reviewer re-reviews. Loop until approved.
@@ -470,7 +470,7 @@ Agent-driven tests are expensive (each action = MCP call + snapshot). Use a tier
 
 #### B3: Fix Loop
 
-Same hard ceiling (see [config.md](../config.md) Thresholds) and classification as code-file model, with adjustments:
+Same hard ceiling (see [config.md](../../pmp/config.md) Thresholds) and classification as code-file model, with adjustments:
 
 - **FLAKY**: Add explicit `browser_wait_for` calls before assertions in the test spec
 - **SPEC MISMATCH**: Update both the test spec file and the plan
@@ -481,9 +481,9 @@ Same hard ceiling (see [config.md](../config.md) Thresholds) and classification 
 Only after the new suite passes AND the smoke check passes:
 
 - Stage test spec files only
-- Commit: `test(<scope>): e2e test specs for <feature>` (see [config.md](../config.md) Commit Conventions)
+- Commit: `test(<scope>): e2e test specs for <feature>` (see [config.md](../../pmp/config.md) Commit Conventions)
 - Run project CI command if applicable
-- **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../config.md) GitHub Conventions — do NOT close; the PR will close it on merge
+- **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../../pmp/config.md) GitHub Conventions — do NOT close; the PR will close it on merge
 - **Two-stage review:** Same as code-file model Task B, Step B5 (spec compliance then code quality) when using agent teams
 - Mark feature complete in TodoWrite
 
@@ -570,17 +570,17 @@ Total           | 12/12     | ALL PASS
    - Update the `## GitHub Issues` table in the plan file — set all statuses to `Closes via PR #<number>`
    - **Do NOT** manually run `gh issue close` — GitHub auto-closes all listed issues when the PR merges
 6. **If yes — no GitHub Issues:** Create PR normally with `gh pr create` summarizing features and E2E results
-7. **Update frontmatter (MANDATORY):** Update the plan file's YAML frontmatter (see [config.md](../config.md) Plan Frontmatter):
+7. **Update frontmatter (MANDATORY):** Update the plan file's YAML frontmatter (see [config.md](../../pmp/config.md) Plan Frontmatter):
    - Set `status: implemented`
    - Set `completed_at` to the current UTC timestamp
    - Set `pr: "#<number>"` (the PR number just created, or blank if user declined PR)
    - Preserve all other frontmatter fields from prior stages
-8. **Archive the plan:** Move the plan file from plans directory to completed plans directory `docs/plans/implemented/` (see [config.md](../config.md) File Paths; create directory if it doesn't exist):
+8. **Archive the plan:** Move the plan file from plans directory to completed plans directory `docs/plans/implemented/` (see [config.md](../../pmp/config.md) File Paths; create directory if it doesn't exist):
    ```bash
    mkdir -p docs/plans/implemented
    mv docs/plans/<plan-file>.md docs/plans/implemented/<plan-file>.md
    ```
-9. **Announce** with completion message from [config.md](../config.md) Stage Announcements
+9. **Announce** with completion message from [config.md](../../pmp/config.md) Stage Announcements
 
 ---
 
@@ -615,7 +615,7 @@ Project detection details (type, conventions, monorepo) are in the plan header �
 
 STOP immediately and ask the user when:
 
-- Deterministic E2E test failure persists after fix loop ceiling (see [config.md](../config.md) Thresholds)
+- Deterministic E2E test failure persists after fix loop ceiling (see [config.md](../../pmp/config.md) Thresholds)
 - New feature breaks a previously-passing E2E suite and the regression fix is non-obvious
 - Missing infrastructure (DB, service, API key) that can't be mocked or substituted
 - Ambiguous requirement that affects test correctness and can't be resolved from the plan

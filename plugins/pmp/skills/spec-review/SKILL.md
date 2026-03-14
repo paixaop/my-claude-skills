@@ -14,10 +14,13 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [spec-review.md](../pmp/references/spec-review.md) and follow it completely — it contains the full 15-phase analysis methodology
+2. Read [spec-review.md](references/spec-review.md) and follow it completely — it contains the full 15-phase analysis methodology
 3. Loops on discussion until user says "done"
 
 ## Key References
 
-- Report template: [spec-review-output.md](../pmp/assets/spec-review-output.md)
+- Report template: [spec-review-output.md](assets/spec-review-output.md)
+
+## Shared Resources
+
 - Full lifecycle overview: [overview.md](../pmp/references/overview.md)
