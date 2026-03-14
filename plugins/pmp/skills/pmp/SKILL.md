@@ -1,6 +1,6 @@
 ---
 name: pmp
-version: "1.4.0"
+version: "1.5.0"
 description: "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams. Includes E2E dev loop for roadmap-driven code-test-fix cycles. Also provides standalone architecture & spec review for deep system analysis — architectural simplification, consistency analysis, determinism evaluation, configuration validation, threat modeling, AI red team attack analysis, failure modes, scalability, performance optimization, and operability. Use when user says 'plan', 'brainstorm', 'design this', 'create a plan', 'review plan', 'execute plan', 'plan from roadmap', 'plan from issues', 'plan from epic', 'e2e loop', 'code-test-fix', 'run e2e tests', 'extend plans', 'create issues', 'publish to GitHub', 'make an epic', 'update issues', 'sync issues', 'review specs', 'review specifications', 'spec review', 'architecture review', 'design review', 'threat model', 'red team', 'find inconsistencies', 'simplify architecture', or discusses feature ideas, implementation specs, or roadmaps."
 ---
 
@@ -117,16 +117,21 @@ stateDiagram-v2
         SetupInfra --> FeatureLoop
 
         state FeatureLoop {
-            [*] --> Implement
-            Implement --> WriteE2E
-            WriteE2E --> RunTests
-            RunTests --> FixLoop : tests fail
-            RunTests --> Commit : all pass
-            FixLoop --> RunTests : fix applied
-            FixLoop --> Blocked : ceiling reached
-            Commit --> CommentOnIssue : if GH issues exist
+            [*] --> TaskA_Impl : Task A
+            TaskA_Impl --> RunUnitTests
+            RunUnitTests --> UnitFixLoop : tests fail
+            RunUnitTests --> CommitImpl : all pass
+            UnitFixLoop --> RunUnitTests : fix applied
+            UnitFixLoop --> Blocked : ceiling reached
+            CommitImpl --> TaskB_E2E : Task B
+            TaskB_E2E --> RunE2ETests
+            RunE2ETests --> E2EFixLoop : tests fail
+            RunE2ETests --> CommitE2E : all pass
+            E2EFixLoop --> RunE2ETests : fix applied
+            E2EFixLoop --> Blocked : ceiling reached
+            CommitE2E --> CommentOnIssue : if GH issues exist
             CommentOnIssue --> [*]
-            Commit --> [*] : no GH issues
+            CommitE2E --> [*] : no GH issues
         }
 
         FeatureLoop --> FeatureLoop : next feature
@@ -351,9 +356,10 @@ If the user says yes, or if they explicitly requested GitHub issues at any point
 3. **Source context:** For each Issue created, include the verbatim excerpt from the plan file (the feature spec, AC, or task description) that generated it in the Source Context section
 4. **Annotate the plan file** — after all issues are created, embed issue references throughout the plan:
    - **Header:** Add `**Epic:** #<number>` to the plan header
-   - **GitHub Issues table:** Add/update the `## GitHub Issues` section (see [assets/github-issues-table.md](assets/github-issues-table.md))
+   - **GitHub Issues table:** Add/update the `## GitHub Issues` section with 3-level hierarchy (see [assets/github-issues-table.md](assets/github-issues-table.md))
    - **Feature Dependency Graph:** Append `(#<number>)` to each feature entry
    - **Feature headings:** Change `## Feature N: [Name]` to `## Feature N: [Name] · #<number>`
+   - **Feature Tasks tables:** Fill in task issue numbers in each feature's Tasks table
    - This makes every section of the plan directly clickable to its corresponding issue
 5. **Ask:** "Issues created and plan annotated. Ready to start implementation?" — wait for confirmation before Execute
 
@@ -361,8 +367,8 @@ If the user says yes, or if they explicitly requested GitHub issues at any point
 
 When GitHub Issues exist for a plan (check for `## GitHub Issues` section in the plan file):
 
-- **Per feature commit:** Comment on the issue linking the commit: `gh issue comment <number> --body "Implemented in <commit-sha>"` — do NOT close it
-- **On PR creation:** Include `Closes #N` for every sub-issue AND the epic in the PR body — GitHub auto-closes all of them when the PR merges
+- **Per task commit:** Comment on the task issue linking the commit: `gh issue comment <task-number> --body "Implemented in <commit-sha>"` — do NOT close it
+- **On PR creation:** Include `Closes #N` for every task issue, feature issue, AND the epic in the PR body — GitHub auto-closes all of them when the PR merges
 - **Never manually close issues** — let the PR merge handle it. If the PR is rejected or reverted, issues stay open correctly
 
 ## Announcements
@@ -395,7 +401,7 @@ These are non-negotiable. No exceptions.
 - **Plans location:** see [config.md](config.md) File Paths
 - **Branching:** Branch from detected integration branch (see E2E Project Detection), PR back to it. NEVER commit to `main` unless it IS the integration branch
 - **Security in every plan:** Input validation, auth boundaries, secret handling, injection risks, attack surface
-- **Tests with every change:** Every atomic change includes tests. Coverage >= see [config.md](config.md) Thresholds
+- **Tests with every change:** Implementation commits include unit/integration tests. E2E tests follow in a separate commit per feature. Coverage >= see [config.md](config.md) Thresholds
 - **CI gate:** Detected CI command must pass clean before any commit (see E2E Project Detection)
 - **Commits:** see [config.md](config.md) Commit Conventions
 - **Complexity ceiling:** Enforce project-appropriate complexity limits (e.g., `gocyclo` for Go, ESLint complexity rule for JS/TS, Pylint for Python)
@@ -438,7 +444,7 @@ Never launch parallel agents that write to the same files or where one agent's o
 
 - **Specs, not code:** Plans describe WHAT to build/test, never HOW (no code snippets)
 - **Structural traceability:** Every AC has its E2E test case directly beneath it — no cross-references needed
-- **Deferred commits:** Do NOT commit until all E2E tests pass for a feature
+- **Two-stage commits:** Implementation commits after unit/integration tests pass. E2E test commits after E2E tests pass. Each feature produces two commits.
 - **Fix loop ceiling:** see [config.md](config.md) Thresholds for max attempts per feature
 - **Test isolation:** Each feature's tests handle their own setup/teardown, runnable independently
 - **No hardcoded conventions:** Integration branch, CI command, test directory all come from project detection
@@ -469,7 +475,8 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [spec-review-output.md](assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
 | [issue-simple.md](assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
 | [issue-epic.md](assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
-| [issue-sub-issue.md](assets/issue-sub-issue.md) | Sub-issue body | github-planning.md |
+| [issue-sub-issue.md](assets/issue-sub-issue.md) | Feature issue body (sub-issue of epic) | github-planning.md |
+| [issue-task.md](assets/issue-task.md) | Task issue body (sub-issue of feature) | github-planning.md |
 | [pr-body.md](assets/pr-body.md) | Pull request body | execute-loop.md |
 | [e2e-test-spec.md](assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
 | [security-analysis-output.md](assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
@@ -497,6 +504,16 @@ All constants (paths, thresholds, labels, announcements, commit conventions, **c
 - Skill overview and quick start: [overview.md](references/overview.md)
 
 ## Changelog
+
+### 1.5.0
+
+- **Two-task execution model:** Each feature now produces two separate commits — Task A (implementation + unit tests) and Task B (E2E tests). Halves per-task cognitive load.
+- **3-level GitHub mapping:** Plan → Epic, Feature → Issue, Task → Sub-issue. Clean 1:1 mapping with consistent terminology throughout.
+- **Task issue template:** New `assets/issue-task.md` for task-level sub-issues under feature issues.
+- **Feature template update:** `assets/feature.md` now includes explicit Tasks table with Task A/B and issue references.
+- **Terminology cleanup:** Complexity tiers use "features" not "tasks". Labels use `type:feature` for feature issues, `type:task` for task sub-issues.
+- **Updated commit conventions:** `feat(<scope>): <feature>` for implementation, `test(<scope>): e2e tests for <feature>` for E2E.
+- **Implementer scope reduction:** Implementer agents no longer write E2E tests — only unit/integration tests.
 
 ### 1.4.0
 

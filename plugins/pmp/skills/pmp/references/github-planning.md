@@ -132,13 +132,14 @@ gh api graphql -f query='...' -f body="$BODY" ...
 
 ### Issue Body Templates
 
-Each tier uses a specific template for issue bodies. Read the template, fill in values from the plan.
+Each tier uses specific templates for issue bodies. Read the template, fill in values from the plan. See [config.md](../config.md) Plan ↔ GitHub Mapping for the full hierarchy.
 
-| Tier | Template | Label |
+| Level | Template | Label |
 |------|----------|-------|
-| SIMPLE | [assets/issue-simple.md](../assets/issue-simple.md) | `type:task,priority:medium` |
-| STANDARD (epic) | [assets/issue-epic.md](../assets/issue-epic.md) | `type:epic,priority:high` |
-| STANDARD/COMPLEX (sub-issue) | [assets/issue-sub-issue.md](../assets/issue-sub-issue.md) | `type:task` |
+| SIMPLE (single feature) | [assets/issue-simple.md](../assets/issue-simple.md) | `type:feature,priority:medium` |
+| Epic (plan) | [assets/issue-epic.md](../assets/issue-epic.md) | `type:epic,priority:high` |
+| Feature (sub-issue of epic) | [assets/issue-sub-issue.md](../assets/issue-sub-issue.md) | `type:feature` |
+| Task (sub-issue of feature) | [assets/issue-task.md](../assets/issue-task.md) | `type:task` |
 
 ### SIMPLE Tier
 
@@ -191,7 +192,7 @@ gh issue create \
 rm /tmp/epic-body.md
 ```
 
-**3. Create Native Sub-Issues using [assets/issue-sub-issue.md](../assets/issue-sub-issue.md):**
+**3. Create Feature Issues using [assets/issue-sub-issue.md](../assets/issue-sub-issue.md):**
 
 ```bash
 # Get Epic node ID first
@@ -205,14 +206,14 @@ EPIC_ID=$(gh api graphql -f query='
   }
 ' -f owner="<owner>" -f repo="<repo>" -F number=<epic-number> --jq '.data.repository.issue.id')
 
-# Write sub-issue body from template to temp file
-cat > /tmp/sub-issue-N-body.md << 'SUB_ISSUE_BODY'
+# Write feature issue body from template to temp file
+cat > /tmp/feature-N-body.md << 'FEATURE_BODY'
 # ... fill in assets/issue-sub-issue.md with plan data ...
-SUB_ISSUE_BODY
+FEATURE_BODY
 
-# Create sub-issue with native parent relationship
-BODY=$(cat /tmp/sub-issue-N-body.md)
-gh api graphql -f query='
+# Create feature issue with native parent relationship to Epic
+BODY=$(cat /tmp/feature-N-body.md)
+FEATURE_ID=$(gh api graphql -f query='
   mutation($repositoryId: ID!, $title: String!, $body: String!, $parentId: ID!) {
     createIssue(input: {
       repositoryId: $repositoryId
@@ -221,47 +222,104 @@ gh api graphql -f query='
       parentIssueId: $parentId
     }) {
       issue {
+        id
         number
         url
       }
     }
   }
 ' -f repositoryId="<repo-id>" \
-  -f title="<task-name>" \
+  -f title="Feature N: <feature-name>" \
   -f body="$BODY" \
-  -f parentId="$EPIC_ID"
+  -f parentId="$EPIC_ID" \
+  --jq '.data.createIssue.issue.id')
 
-rm /tmp/sub-issue-N-body.md
+rm /tmp/feature-N-body.md
 ```
 
-**Alternative: REST API for sub-issues (if GraphQL unavailable):**
+**Alternative: REST API for feature issues (if GraphQL unavailable):**
 ```bash
-# Write body from template to temp file (same template)
-cat > /tmp/sub-issue-N-body.md << 'SUB_ISSUE_BODY'
+cat > /tmp/feature-N-body.md << 'FEATURE_BODY'
 # ... fill in assets/issue-sub-issue.md with plan data ...
-SUB_ISSUE_BODY
+FEATURE_BODY
 
 gh issue create \
-  --title "<task-name>" \
-  --label "type:task" \
+  --title "Feature N: <feature-name>" \
+  --label "type:feature" \
   --milestone "<milestone-name>" \
-  --body-file /tmp/sub-issue-N-body.md
+  --body-file /tmp/feature-N-body.md
 
-rm /tmp/sub-issue-N-body.md
+rm /tmp/feature-N-body.md
 
 # Then link via API:
-gh api repos/{owner}/{repo}/issues/<sub-issue>/sub_issues \
+gh api repos/{owner}/{repo}/issues/<feature-issue>/sub_issues \
   --method POST \
   -f parent_issue_id=<epic-id>
 ```
 
-**4. Set up Projects v2 board** — Proceed to [Projects v2 Setup](#projects-v2-setup-standard--complex) section (STANDARD configuration: Status field + Board view only).
+**4. Create Task Sub-Issues for each Feature using [assets/issue-task.md](../assets/issue-task.md):**
+
+Each feature gets exactly 2 task sub-issues: Task A (implementation) and Task B (E2E tests).
+
+```bash
+# For each feature issue, create Task A and Task B as sub-issues
+
+# Task A: Implementation
+cat > /tmp/task-N-A-body.md << 'TASK_BODY'
+# ... fill in assets/issue-task.md with Task A data ...
+TASK_BODY
+
+BODY=$(cat /tmp/task-N-A-body.md)
+gh api graphql -f query='
+  mutation($repositoryId: ID!, $title: String!, $body: String!, $parentId: ID!) {
+    createIssue(input: {
+      repositoryId: $repositoryId
+      title: $title
+      body: $body
+      parentIssueId: $parentId
+    }) {
+      issue { number url }
+    }
+  }
+' -f repositoryId="<repo-id>" \
+  -f title="Task A: Implement <feature-name>" \
+  -f body="$BODY" \
+  -f parentId="$FEATURE_ID"
+
+rm /tmp/task-N-A-body.md
+
+# Task B: E2E Tests
+cat > /tmp/task-N-B-body.md << 'TASK_BODY'
+# ... fill in assets/issue-task.md with Task B data ...
+TASK_BODY
+
+BODY=$(cat /tmp/task-N-B-body.md)
+gh api graphql -f query='
+  mutation($repositoryId: ID!, $title: String!, $body: String!, $parentId: ID!) {
+    createIssue(input: {
+      repositoryId: $repositoryId
+      title: $title
+      body: $body
+      parentIssueId: $parentId
+    }) {
+      issue { number url }
+    }
+  }
+' -f repositoryId="<repo-id>" \
+  -f title="Task B: E2E tests for <feature-name>" \
+  -f body="$BODY" \
+  -f parentId="$FEATURE_ID"
+
+rm /tmp/task-N-B-body.md
+```
+
+**5. Set up Projects v2 board** — Proceed to [Projects v2 Setup](#projects-v2-setup-standard--complex) section (STANDARD configuration: Status field + Board view only).
 
 ### COMPLEX Tier
 
-Create Epic + native sub-Issues + Projects v2 board with automation rules.
+Create Epic + feature issues + task sub-issues + Projects v2 board with automation rules.
 
-**1. Create Epic and Sub-Issues** (same as STANDARD)
+**1. Create Epic, Feature Issues, and Task Sub-Issues** (same as STANDARD steps 1-4)
 
 **2. Set up Projects v2 board** — Proceed to [Projects v2 Setup](#projects-v2-setup-standard--complex) section (full COMPLEX configuration: all fields, all views, automation rules).
 
@@ -713,10 +771,11 @@ Adapted from Auto-Claude planning concepts. See CREDITS.md.
 - [ ] Create Milestone (if feature is time-boxed)
 - [ ] Create Epic Issue FIRST using [assets/issue-epic.md](../assets/issue-epic.md) with type:epic label
 - [ ] Embed the FULL implementation plan in the Epic body (collapsible `<details>` section)
-- [ ] Create each sub-Issue using [assets/issue-sub-issue.md](../assets/issue-sub-issue.md) with native parent relationship (GraphQL)
-- [ ] Each sub-Issue Plan Reference points to the Epic (not the plan file) for the full plan
+- [ ] Create each Feature Issue using [assets/issue-sub-issue.md](../assets/issue-sub-issue.md) with type:feature label and native parent relationship to Epic (GraphQL)
+- [ ] Create Task A and Task B sub-issues for each Feature using [assets/issue-task.md](../assets/issue-task.md) with type:task label and native parent relationship to Feature
+- [ ] Each Feature Issue Plan Reference points to the Epic (not the plan file) for the full plan
 - [ ] If native sub-issues unavailable: use REST fallback with manual linking
-- [ ] Verify bidirectional linking (epic <-> sub-issues) visible in GitHub UI
+- [ ] Verify bidirectional linking (epic <-> features <-> tasks) visible in GitHub UI
 - [ ] Add all issues to milestone
 
 ### For STANDARD + COMPLEX (Projects v2):
@@ -724,7 +783,7 @@ Adapted from Auto-Claude planning concepts. See CREDITS.md.
 - [ ] If existing project selected, verified project accessible
 - [ ] Skipped project creation steps if using existing project
 - [ ] Create or select Projects v2 board
-- [ ] Add Epic and ALL sub-Issues to Project
+- [ ] Add Epic and ALL feature/task Issues to Project
 - [ ] Verify all Issues appear in Project
 
 ### For STANDARD Tier (Projects v2 — simplified config):
@@ -741,10 +800,11 @@ Adapted from Auto-Claude planning concepts. See CREDITS.md.
 ### Plan Annotation (after all issues created):
 - [ ] **Update frontmatter:** Set `status: issues_created`, `issues_created_at` to current UTC timestamp, and `epic: "#<number>"` (see [config.md](../config.md) Plan Frontmatter)
 - [ ] Add `**Epic:** #<number>` to the plan header
-- [ ] Add/update the `## GitHub Issues` table in the plan file
+- [ ] Add/update the `## GitHub Issues` table in the plan file (3-level: Epic > Feature > Task)
 - [ ] Annotate Feature Dependency Graph: append `(#<number>)` to each feature
 - [ ] Annotate every feature heading: `## Feature N: [Name]` → `## Feature N: [Name] · #<number>`
-- [ ] Verify every feature in the plan has its issue number inline
+- [ ] Annotate every feature's Tasks table with task issue numbers
+- [ ] Verify every feature and task in the plan has its issue number inline
 
 ### Post-Creation:
 - [ ] Output Issue URLs to user

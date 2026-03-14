@@ -35,9 +35,9 @@ Task tool (generalPurpose):
     ## Your Job
 
     1. Implement exactly what the task specifies
-    2. Write tests following TDD (red-green cycle)
+    2. Write unit/integration tests following TDD (red-green cycle). E2E tests are handled separately — do NOT write E2E tests.
     3. Verify: build passes, lint clean, tests pass (use concise output flags)
-    4. Commit with conventional commit message
+    4. Commit with conventional commit message: feat(<scope>): <feature>
     5. Self-review: completeness, quality, YAGNI, test coverage, security
     6. Fix any self-review issues before reporting
     7. Report back using the EXACT format below

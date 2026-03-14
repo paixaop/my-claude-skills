@@ -4,6 +4,35 @@ Central configuration for all PMP constants. Reference files and templates use t
 
 ---
 
+## Plan ↔ GitHub Mapping
+
+Every plan concept maps 1:1 to a GitHub artifact:
+
+| Plan Concept | GitHub Artifact | Label | Template |
+|---|---|---|---|
+| **Plan** | Epic issue | `type:epic` | [issue-epic.md](assets/issue-epic.md) |
+| **Feature** | Issue (sub-issue of Epic) | `type:feature` | [issue-sub-issue.md](assets/issue-sub-issue.md) |
+| **Task** (Task A: impl, Task B: E2E) | Sub-issue (sub-issue of Feature) | `type:task` | [issue-task.md](assets/issue-task.md) |
+
+**Hierarchy:**
+```
+Epic #41 (Plan)
+├── Feature Issue #42 (Feature 1: User Registration)
+│   ├── Task Sub-issue #43 (Task A: Implement registration)
+│   └── Task Sub-issue #44 (Task B: E2E tests for registration)
+├── Feature Issue #45 (Feature 2: Login)
+│   ├── Task Sub-issue #46 (Task A: Implement login)
+│   └── Task Sub-issue #47 (Task B: E2E tests for login)
+```
+
+**Rules:**
+- Every Feature produces exactly 2 Tasks: Task A (implementation + unit tests) and Task B (E2E tests)
+- Task issues are created during GitHub Planning, updated during execution
+- Feature issues close when both child task issues close
+- Epic closes when all feature issues close (via PR `Closes #N`)
+
+---
+
 ## File Paths
 
 | Constant | Value | Used By |
@@ -63,7 +92,7 @@ epic: "#<number>"
 |----------|-------|---------|
 | Fix loop ceiling | **3** attempts per feature | execute-loop |
 | Test coverage minimum | **60%** | SKILL, code-quality-reviewer-prompt |
-| Batch execution size | **3** tasks per batch | execute, write |
+| Batch execution size | **3** features per batch | execute-loop |
 
 ---
 
@@ -120,11 +149,11 @@ MINOR: none | [bullet list with file:line]
 
 ## Complexity Tiers
 
-| Tier | Task Count | Artifacts |
+| Tier | Feature Count | Artifacts |
 |------|-----------|-----------|
-| SIMPLE | 1–3 tasks, no sub-teams | Single issue with checklist |
-| STANDARD | 4–10 tasks, clear feature groups | Epic + native sub-issues + milestone + Projects v2 board |
-| COMPLEX | 10+ tasks, multiple teams/milestones | Epic + sub-issues + Projects v2 board + automation rules |
+| SIMPLE | 1–3 features | Single feature issue with task checklist |
+| STANDARD | 4–10 features | Epic + feature issues + task sub-issues + milestone + Projects v2 board |
+| COMPLEX | 10+ features | Epic + feature issues + task sub-issues + Projects v2 board + automation rules |
 
 ---
 
@@ -133,8 +162,9 @@ MINOR: none | [bullet list with file:line]
 | Constant | Value |
 |----------|-------|
 | Format | Conventional Commits — `<type>(<scope>): <description>` |
-| Feature commit (E2E loop) | `feat(<scope>): <feature> with e2e tests` |
-| Feature commit (agent-driven) | `feat(<scope>): <feature> with e2e test specs` |
+| Implementation commit | `feat(<scope>): <feature>` |
+| E2E test commit (code-file) | `test(<scope>): e2e tests for <feature>` |
+| E2E test commit (agent-driven) | `test(<scope>): e2e test specs for <feature>` |
 
 ---
 
@@ -192,7 +222,9 @@ MINOR: none | [bullet list with file:line]
 |------|---------|
 | `/tmp/issue-body.md` | SIMPLE tier issue |
 | `/tmp/epic-body.md` | Epic issue |
-| `/tmp/sub-issue-N-body.md` | Sub-issues (N = 1, 2, ...) |
+| `/tmp/feature-N-body.md` | Feature issues (N = 1, 2, ...) |
+| `/tmp/task-N-A-body.md` | Task A sub-issues (N = feature number) |
+| `/tmp/task-N-B-body.md` | Task B sub-issues (N = feature number) |
 
 ---
 

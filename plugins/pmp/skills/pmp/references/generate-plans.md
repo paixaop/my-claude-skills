@@ -225,7 +225,7 @@ If the plan was generated from GitHub Issues, include a [assets/github-issues-ta
 - NO code snippets -- only behavioral specs
 - Each AC has its E2E test case directly beneath it -- traceability is structural
 - Features ordered by dependency (implement in this order)
-- Each feature is an atomic commit boundary (implementation + E2E tests committed together)
+- Each feature produces two commits: implementation (with unit/integration tests) and E2E tests. The implementation commit is the atomic boundary for the feature's behavior. The E2E commit verifies it.
 - Integration branch and CI command recorded in the header (not hardcoded)
 - Security ACs are E2E-testable assertions, not vague guidelines
 - E2E test cases describe WHAT to verify, not HOW (no test code)

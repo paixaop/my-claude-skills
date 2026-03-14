@@ -25,13 +25,18 @@ epic:
 
 ## GitHub Issues
 
-<!-- Added after issues are created. Maps every feature to its issue. -->
+<!-- Added after issues are created. Maps plan hierarchy to GitHub issues.
+     See config.md Plan-GitHub Mapping for the full hierarchy. -->
 
-| Feature | Issue | Status |
-|---------|-------|--------|
-| Feature 1: [Name] | #<number> | Open |
-| Feature 2: [Name] | #<number> | Open |
-| Epic | #<number> | Open |
+| Level | Name | Issue | Status |
+|-------|------|-------|--------|
+| Epic | [Plan Name] | #<number> | Open |
+| Feature | Feature 1: [Name] | #<number> | Open |
+| Task | Task A: Implement [Name] | #<number> | Open |
+| Task | Task B: E2E tests for [Name] | #<number> | Open |
+| Feature | Feature 2: [Name] | #<number> | Open |
+| Task | Task A: Implement [Name] | #<number> | Open |
+| Task | Task B: E2E tests for [Name] | #<number> | Open |
 
 ---
 

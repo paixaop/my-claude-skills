@@ -21,6 +21,15 @@
 - What other components this touches
 - External dependencies
 
+### Tasks
+
+<!-- Each feature has exactly 2 tasks. Issue references added after GitHub Issues are created. -->
+
+| Task | Description | Issue |
+|------|-------------|-------|
+| Task A: Implementation | Implement feature + unit/integration tests | #<number> |
+| Task B: E2E Tests | Write and verify E2E tests for all ACs | #<number> |
+
 ### Acceptance Criteria
 
 #### AC-N.1: [Criterion]
