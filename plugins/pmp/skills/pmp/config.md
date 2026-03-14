@@ -44,6 +44,9 @@ Epic #41 (Plan)
 | Design doc filename pattern | `YYYY-MM-DD-<topic>-design.md` | brainstorm |
 | Review filename pattern | `YYYY-MM-DD-<architecture>-review.md` | spec-review |
 | Security analysis filename pattern | `YYYY-MM-DD-<name>-security-analysis.md` | security-analysis |
+| Review filename pattern | `YYYY-MM-DD-<plan-name>-review.md` | review (enables re-review to find prior reviews) |
+| Changelog directory | `docs/changelog/` | changelog |
+| Changelog filename pattern | `<plan-name>.md` or `<version>.md` | changelog |
 | Analysis cache directory | `docs/.cache/` | All skills (opt-in) — see [analysis-cache.md](references/analysis-cache.md) |
 
 ---
@@ -239,6 +242,8 @@ MINOR: none | [bullet list with file:line]
 | Discuss Findings | `Walking through review findings...` |
 | GitHub Planning | `Publishing to GitHub...` |
 | Sync Issues | `Syncing plan to GitHub Issues...` |
+| Decompose | `Breaking plan into phases...` |
+| Changelog | `Generating release notes...` |
 | Execute (completion) | `I'm done baby - Skippy the Magnificent` |
 
 ---

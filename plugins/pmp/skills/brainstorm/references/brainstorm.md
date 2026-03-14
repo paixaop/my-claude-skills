@@ -45,6 +45,25 @@ Use agent teams for parallel research when multiple areas need exploration:
 - Address security implications for each approach
 - Consider impact on existing architecture (see CLAUDE.md file layout)
 
+### Structured Comparison Matrix
+
+After describing each approach conversationally, present a comparison table. Pick **4-6 dimensions** most relevant to the decision from: Complexity, Time to deliver, Scalability, Maintainability, Risk, Security surface, Performance, Testability, Migration effort, Team familiarity.
+
+```markdown
+### Approach Comparison
+
+| Dimension        | A: [Name]  | B: [Name]  | C: [Name]  |
+|------------------|------------|------------|------------|
+| Complexity       | Low        | High       | Medium     |
+| Time to deliver  | Fast       | Slow       | Medium     |
+| ...              | ...        | ...        | ...        |
+| **Recommendation** | —        | —          | **Yes**    |
+
+**Why [recommended]:** [1-2 sentences explaining the recommendation]
+```
+
+The comparison table is included in the design doc (see [design-doc.md](../assets/design-doc.md)) and carried forward to plan generation so the plan generator knows which direction was chosen and why.
+
 ## Presenting the Design
 
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced

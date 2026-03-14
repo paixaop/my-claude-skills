@@ -10,7 +10,7 @@ epic:
 source_review: "[path to original review file]"
 ---
 
-# [Review Name] — Fixes
+# [Review Name] — Findings
 
 Spec/doc changes collected from review discussion on [date].
 
@@ -18,7 +18,7 @@ Source review: [path to review file]
 
 ## Goal
 
-Apply [N] fixes identified during review discussion. All changes are spec/documentation updates — no code or test changes.
+Address [N] findings identified during review discussion. All changes are spec/documentation updates — no code or test changes.
 
 ## Features
 
@@ -27,9 +27,9 @@ Apply [N] fixes identified during review discussion. All changes are spec/docume
 **Severity:** [Critical / Important / Minor]
 **Source:** [Section in review where this was found]
 
-**Problem:** [1-2 sentence description of the issue]
+**Finding:** [1-2 sentence description of the issue]
 
-**Fix:** [Concrete spec/doc change to make]
+**Resolution:** [Concrete spec/doc change to make]
 
 **Files to modify:**
 - [file path] — [what to change]

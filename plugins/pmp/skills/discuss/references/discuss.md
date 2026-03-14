@@ -131,9 +131,11 @@ Keep explanations concise — 3-5 sentences. The review already has the full ana
 
 #### 2b. Propose Solutions
 
-Propose **1-2 concrete solutions**:
-- Lead with your recommended approach
+Propose **1 or more concrete solutions**:
+- Lead with your recommended approach and explain why
 - For each solution: what to change in the spec/plan, trade-offs, effort estimate
+- **Evaluate complexity impact** — for every proposed solution, explicitly assess whether it adds complexity to the system. If a solution introduces new abstractions, configuration, or moving parts, call it out
+- **Bias toward simplification** — if a finding can be resolved by removing something (a redundant check, an unnecessary abstraction, an over-engineered pattern), that is almost always the better solution. The best fix often makes the system simpler, not more complex
 - Be specific — "add a timeout to the upstream call" not "consider adding timeouts"
 
 #### 2c. Ask the User
@@ -173,7 +175,7 @@ After all findings are addressed (or user says "done"), present:
 | Deferred | W |
 | Not discussed | V (if stopped early) |
 
-### Findings to Fix
+### Findings to Address
 1. [Title] — [solution summary]
 2. ...
 
@@ -184,15 +186,15 @@ After all findings are addressed (or user says "done"), present:
 
 ---
 
-### Step 4: Generate Plan (if fixes exist)
+### Step 4: Generate Plan (if findings marked Fix)
 
 If any findings were marked **Fix**:
 
 1. Generate a plan file using [discuss-plan.md](../assets/discuss-plan.md) template
 2. Save to `docs/plans/` using the plan filename pattern from [config.md](../../pmp/config.md)
-   - Name pattern: `YYYY-MM-DD-<review-name>-fixes-plan.md`
-   - Example: `2026-03-14-auth-gateway-fixes-plan.md`
-3. Each fix becomes a **feature** in the plan — spec/doc change only, no test tasks
+   - Name pattern: `YYYY-MM-DD-<review-name>-findings-plan.md`
+   - Example: `2026-03-14-auth-gateway-findings-plan.md`
+3. Each finding marked Fix becomes a **feature** in the plan — spec/doc change only, no test tasks
 4. Include deferred findings in a `## Deferred` section at the bottom
 
 Ask the user via `AskQuestion`:
@@ -207,5 +209,6 @@ Ask the user via `AskQuestion`:
 - **DO NOT** modify the review file — it is read-only
 - **DO NOT** skip the AskQuestion step — every finding gets a user decision
 - **DO NOT** auto-advance past Summary — always ask before generating a plan
+- **DO NOT** skip findings of any severity — walk through ALL findings: Critical, Important, AND Minor. Every finding gets discussed, no matter how small. The user decides what to act on, not you.
 - **DO** respect the user saying "done" at any point to stop the walkthrough
 - **DO** track decisions accurately — the plan file must match what the user decided

@@ -57,6 +57,34 @@ You MUST:
 - Look for simpler alternatives
 - Improve weak sections directly — return a better plan, not just feedback
 
+## Re-Review Detection
+
+Before starting the checklist, check the plan's YAML frontmatter for `reviewed_at`. If it has a value, this plan was previously reviewed — enter **re-review mode**:
+
+1. **Load previous review** — look for a matching review file in `docs/reviews/` using the naming convention `YYYY-MM-DD-<plan-name>-review.md`
+2. **Diff the plan** — compare the current plan against the version at the `reviewed_at` timestamp:
+   ```bash
+   # Find the commit closest to reviewed_at
+   git log --before="<reviewed_at>" --format="%H" -1
+   # Diff the plan file
+   git diff <that-commit>..HEAD -- <plan-file-path>
+   ```
+3. **Classify changes:**
+   - **New features** (added since last review) → full review (all checklist items)
+   - **Modified features** (changed sections) → targeted review (only changed sections + their dependencies)
+   - **Unchanged features** → skip (carry forward previous review verdict)
+4. **Check finding resolution** — for each finding from the previous review:
+   - Was the flagged section changed? → Re-evaluate and mark as "Resolved" or "Still present"
+   - Was it unchanged? → Mark as "Unresolved" and carry forward
+5. **Security gate always re-runs fully** — security analysis is never carried forward from a prior review
+6. **Produce delta review** — use the same [review-output.md](../assets/review-output.md) template, but include the `### Previous Finding Resolution` section
+
+### Saving Reviews for Re-Review
+
+After producing any review (first or re-review), save the review output to `docs/reviews/` using a consistent name: `YYYY-MM-DD-<plan-name>-review.md`. This enables future re-reviews to find and diff against it.
+
+---
+
 ## Review Checklist
 
 Create a TodoWrite with these items and check each:

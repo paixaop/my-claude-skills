@@ -5,7 +5,7 @@ description: "Structured walkthrough of review findings — iterates through iss
 
 # PMP: Discuss
 
-Structured walkthrough of review findings. Reads a review file (plan review or spec-review), extracts findings sorted by severity, walks through each one interactively, and collects fix decisions into a plan for execution.
+Structured walkthrough of review findings. Reads a review file (plan review or spec-review), extracts all findings sorted by severity, walks through every one interactively — explaining the issue, proposing solutions (biased toward simplification), and collecting decisions into a plan for execution.
 
 **Always ask before transitioning.** Use AskQuestion. Never auto-advance.
 
@@ -15,12 +15,12 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
 1. Read [config.md](../pmp/config.md) for current constants
 2. Read [discuss.md](references/discuss.md) and follow it completely — it contains the walkthrough algorithm, finding extraction, and plan generation
-3. Loops through findings until all are addressed or user says "done"
-4. If fixes were collected, generates a plan and asks to execute
+3. Loops through ALL findings (Critical, Important, and Minor) until all are addressed or user says "done"
+4. If findings were marked for fixing, generates a plan and asks to execute
 
 ## Key References
 
-- Plan template for fixes: [discuss-plan.md](assets/discuss-plan.md)
+- Plan template for findings: [discuss-plan.md](assets/discuss-plan.md)
 
 ## Shared Resources
 

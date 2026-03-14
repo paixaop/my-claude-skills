@@ -211,6 +211,19 @@ Use the AskQuestion tool. Do NOT proceed with ambiguity:
 
 Follow the Plan Structure below. For each feature, write both the implementation spec and its E2E test cases together.
 
+### 4b. Auto-Phase (5+ Features)
+
+If the plan has **5 or more features**, group them into phases after generating the dependency graph:
+
+1. **Build dependency layers** — features with no dependencies form Phase 1. Features depending only on Phase 1 features form Phase 2, and so on.
+2. **Apply cohesion** — if two features in the same layer are closely related (same domain area, same files), keep them together. If a layer has more than 5 features, split into sub-phases by cohesion.
+3. **Name each phase** — use a descriptive name reflecting the group's purpose (e.g., "Foundation", "Core Logic", "User-Facing Polish").
+4. **Define entry/exit criteria** — entry is the prior phase's exit criteria being met. Exit is all phase features' E2E tests passing + CI green.
+5. **Minimize phase count** — don't create phases for the sake of it. 2-3 phases for 5-7 features, 3-4 for 8-12, 4+ for 12+.
+6. **Insert the `## Phases` section** — between `## Feature Dependency Graph` and the first feature (see [plan.md](../assets/plan.md) template).
+
+For plans with fewer than 5 features, omit the `## Phases` section entirely.
+
 ### 5. Verify Coverage
 
 Walk through every acceptance criterion and confirm it has an E2E test case directly beneath it. If any AC lacks a test, add one before saving.

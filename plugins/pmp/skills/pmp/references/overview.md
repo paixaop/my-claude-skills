@@ -16,7 +16,10 @@ graph LR
     D -->|Skip| F
     E --> F
     F --> G[PR with 'Closes #N']
-    G -->|Merge| H[Issues auto-closed]
+    G --> I{Release Notes?}
+    I -->|Yes| J[Changelog]
+    I -->|Skip| H
+    J --> H[Issues auto-closed on merge]
 ```
 
 Every transition between stages requires user confirmation. The agent never auto-advances.
@@ -162,9 +165,39 @@ stateDiagram-v2
 
     SyncIssues --> [*] : synced
 
+    state Decompose {
+        [*] --> ReadPlanForDecompose
+        ReadPlanForDecompose --> BuildLayers : topological sort
+        BuildLayers --> ApplyCohesion
+        ApplyCohesion --> ProposePhases
+        ProposePhases --> AdjustPhases : user adjusts
+        ProposePhases --> InsertPhases : user approves
+        AdjustPhases --> ProposePhases
+        InsertPhases --> [*]
+    }
+
+    [*] --> Decompose : "decompose" / "phase this plan"
+    Decompose --> [*] : phases inserted
+
+    state Changelog {
+        [*] --> ReadCompletedPlan
+        ReadCompletedPlan --> ExtractFeatures
+        ExtractFeatures --> CrossRefGit
+        CrossRefGit --> GenerateNotes
+        GenerateNotes --> PresentDraft
+        PresentDraft --> SaveChangelog : user approves
+        PresentDraft --> AdjustNotes : user adjusts
+        AdjustNotes --> PresentDraft
+        SaveChangelog --> [*]
+    }
+
+    [*] --> Changelog : "release notes" / "changelog"
+    Execute --> Changelog : user opts in after completion
+
     TestOnly --> [*] : results reported
 
     Execute --> [*] : done
+    Changelog --> [*] : notes saved
 ```
 
 ### Five Entry Points
@@ -184,6 +217,8 @@ Plus standalone modes:
 | "Create issues for this plan" | GitHub Planning only (plan already exists) |
 | "Update issues" / "Sync issues" | Sync Issues — diff plan against live issues, push changes |
 | "Run E2E tests" | Test Only mode (no implementation) |
+| "Decompose this plan" / "Break into phases" | Decompose — add phases to existing plan |
+| "Generate release notes" / "Changelog" | Changelog — release notes from completed plan |
 
 ## The GitHub Integration
 
@@ -291,12 +326,22 @@ pmp/
 │   └── references/
 │       ├── github-planning.md              # Issue/Epic/Project creation
 │       └── sync-issues.md                  # Sync plan changes to existing issues
-└── spec-review/
-    ├── SKILL.md
+├── spec-review/
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── spec-review-output.md           # Architecture & spec review report
+│   └── references/
+│       └── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
+├── decompose/
+│   ├── SKILL.md                            # Standalone plan phasing
+│   └── references/
+│       └── decompose.md                    # Phasing algorithm
+└── changelog/
+    ├── SKILL.md                            # Release notes generation
     ├── assets/
-    │   └── spec-review-output.md           # Architecture & spec review report
+    │   └── changelog-output.md             # Release notes template
     └── references/
-        └── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
+        └── changelog.md                    # Generation algorithm
 ```
 
 ## Assets
@@ -323,6 +368,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [yaml-feature-form.yml](../../github/assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
 | [yaml-bug-form.yml](../../github/assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
 | [yaml-epic-form.yml](../../github/assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
+| [changelog-output.md](../../changelog/assets/changelog-output.md) | Release notes template | changelog.md |
 
 ## Plan File Anatomy
 
@@ -391,6 +437,13 @@ Tell the agent what you want:
 The agent handles the rest — detecting your project type, choosing test frameworks, creating branches, and wiring up GitHub Issues.
 
 ## Changelog
+
+### 1.7.1
+
+- **Plan decomposition:** Auto-phasing for plans with 5+ features groups features into dependency-ordered phases with entry/exit criteria. New `/pmp:decompose` sub-skill for standalone phasing of existing plans. Execute loop uses phase boundaries as batch boundaries when present.
+- **Structured approach comparison:** Brainstorm now produces a comparison matrix (4-6 dimensions) when proposing approaches, included in the design doc for traceability into plan generation.
+- **Review re-run:** When re-reviewing a previously reviewed plan, the review skill loads the prior review, diffs the plan, and focuses on changed/new content. Produces a "Previous Finding Resolution" table tracking which findings were addressed. Security gate always re-runs fully.
+- **`/pmp:changelog` sub-skill:** Generates user-facing release notes from completed plans by cross-referencing plan features against git commit history. Supports input via plan file path or PR number. Execute loop now offers changelog generation after archiving.
 
 ### 1.7.0
 

@@ -6,6 +6,18 @@
 ## Approach
 [Selected approach and reasoning]
 
+### Approach Comparison
+
+<!-- Include the comparison matrix from brainstorming. Pick 4-6 dimensions most relevant to this decision. -->
+
+| Dimension        | A: [Name]  | B: [Name]  | C: [Name]  |
+|------------------|------------|------------|------------|
+| [Dimension 1]    | ...        | ...        | ...        |
+| [Dimension 2]    | ...        | ...        | ...        |
+| **Recommendation** | —        | —          | **Yes**    |
+
+**Why [recommended]:** [1-2 sentences]
+
 ## Design
 [Architecture, components, data flow — scaled to complexity]
 
