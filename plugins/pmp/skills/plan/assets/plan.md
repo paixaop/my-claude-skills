@@ -79,6 +79,25 @@ epic:
 
 ---
 
+## Phases
+
+<!-- Include this section for plans with 5+ features. Group features into phases
+     based on dependency ordering. Features within a phase have no cross-dependencies.
+     Execute loop uses phase boundaries as batch boundaries when present. -->
+
+### Phase 1: [Name]
+**Features:** Feature 1, Feature 2, Feature 3
+**Entry:** Branch created, E2E infrastructure ready
+**Exit:** All Phase 1 E2E tests pass, CI green
+
+### Phase 2: [Name]
+**Features:** Feature 4
+**Depends on:** Phase 1
+**Entry:** Phase 1 exit criteria met
+**Exit:** All Phase 2 E2E tests pass, CI green
+
+---
+
 <!-- Repeat Feature sections using assets/feature.md structure -->
 <!-- After issues are created, feature headings include the issue reference -->
 

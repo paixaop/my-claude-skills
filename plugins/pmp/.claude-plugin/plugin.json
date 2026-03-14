@@ -1,12 +1,12 @@
 {
   "name": "pmp",
   "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "author": {
     "name": "paixaop"
   },
   "homepage": "https://github.com/paixaop/my-claude-skills",
   "repository": "https://github.com/paixaop/my-claude-skills",
   "license": "MIT",
-  "keywords": ["planning", "brainstorm", "github-issues", "e2e-testing", "execution", "review"]
+  "keywords": ["planning", "brainstorm", "github-issues", "e2e-testing", "execution", "review", "decompose", "changelog"]
 }

@@ -134,6 +134,8 @@ Read [config.md](../../pmp/config.md) Context Management before starting. The ru
 
 Do NOT execute the entire plan in a single controller session. Split features into batches of **3** (see config.md Max features per controller session). Each feature has two tasks (Task A: implementation, Task B: E2E tests), so each batch contains up to 6 tasks.
 
+**Phase-aware batching:** If the plan has a `## Phases` section, use phase boundaries as batch boundaries instead of the arbitrary 3-feature cutoff. Each phase becomes a batch (or multiple batches if a phase has more than 3 features). Never split a phase across batches — complete all features in a phase before moving to the next. Phase exit criteria must be met before starting the next phase.
+
 **Per-batch workflow:**
 1. Controller reads the plan once and identifies the next batch of features
 2. Controller dispatches subagents for each feature's tasks in the batch. Task A and Task B are sequential within a feature, but Task B for Feature N can overlap with Task A for Feature N+1 if they don't write to the same files (see Parallel Agent Dispatching rules).
@@ -580,7 +582,8 @@ Total           | 12/12     | ALL PASS
    mkdir -p docs/plans/implemented
    mv docs/plans/<plan-file>.md docs/plans/implemented/<plan-file>.md
    ```
-9. **Announce** with completion message from [config.md](../../pmp/config.md) Stage Announcements
+9. **Offer release notes:** Ask the user: "Want me to generate release notes for this implementation?" If yes, read [changelog.md](../../changelog/references/changelog.md) and follow it — the plan file and PR number are already available from this session.
+10. **Announce** with completion message from [config.md](../../pmp/config.md) Stage Announcements
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: pmp
-version: "1.7.0"
-description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis), pmp:github (issues/projects). This root skill routes to the right stage based on the user's input."
+version: "1.7.1"
+description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis), pmp:github (issues/projects), pmp:decompose (phase breakdown), pmp:changelog (release notes). This root skill routes to the right stage based on the user's input."
 ---
 
 # PMP — Plan
@@ -25,6 +25,8 @@ For direct invocation when you know which stage you need:
 | `/pmp:spec-review` | Deep 15-phase architecture & spec analysis (standalone) |
 | `/pmp:discuss` | Structured walkthrough of review findings, collect fixes into a plan |
 | `/pmp:github` | Publish plan as GitHub Issues/Projects, or sync changes to existing issues |
+| `/pmp:decompose` | Break large plans into dependency-ordered phases |
+| `/pmp:changelog` | Generate user-facing release notes from completed plans |
 
 ## Routing
 
@@ -41,6 +43,8 @@ When the user's intent maps to a specific stage, read the reference for that sta
 | "create issues", "make an epic" | GitHub | [github-planning.md](../github/references/github-planning.md) |
 | "sync issues", "update issues" | GitHub (Sync) | [sync-issues.md](../github/references/sync-issues.md) |
 | "discuss review", "walk through findings", "go through the review" | Discuss | [discuss.md](../discuss/references/discuss.md) |
+| "decompose plan", "break into phases", "phase this plan" | Decompose | [decompose.md](../decompose/references/decompose.md) |
+| "generate release notes", "changelog", "what was built" | Changelog | [changelog.md](../changelog/references/changelog.md) |
 | "run tests", "re-test" | Execute (Test Only) | [execute-loop.md](../execute/references/execute-loop.md) |
 | Existing plan + "extend" | Plan (Extend) | [generate-plans.md](../plan/references/generate-plans.md) |
 
@@ -51,11 +55,15 @@ Workflows 1–4 share a path: each stage hands off to the next with user confirm
 1. **Brainstorm** → asks "Ready to generate the plan?" → **Plan**
 2. **Plan** → asks "Ready for plan review?" → **Review**
 3. **Review** → asks "Publish as GitHub Issues?" → **GitHub** (optional) → **Execute**
-4. **Execute** → implements, creates PR, archives plan
+4. **Execute** → implements, creates PR, archives plan → optionally **Changelog**
 
 Workflow 5 (**Spec Review**) is standalone — produces a report, no execution.
 
 **Discuss** can follow either Review or Spec Review — walks through findings interactively, collects fixes into a plan, then optionally hands off to Execute.
+
+**Decompose** can be invoked on any existing plan with 5+ features to add phase boundaries. Also auto-triggers during plan generation.
+
+**Changelog** can follow Execute or be invoked standalone on any completed plan.
 
 ## Project Rules
 

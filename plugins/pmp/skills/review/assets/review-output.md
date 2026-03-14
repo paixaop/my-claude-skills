@@ -45,3 +45,13 @@
 
 ### Missing Items
 [Items the plan should include but doesn't]
+
+### Previous Finding Resolution (re-review only)
+<!-- Include this section only when re-reviewing a plan that was previously reviewed.
+     Shows the status of each finding from the prior review. -->
+
+| # | Finding | Severity | Status |
+|---|---------|----------|--------|
+| 1 | [Finding description] | Critical | Resolved — [how it was addressed] |
+| 2 | [Finding description] | Important | Unresolved — [still missing] |
+| 3 | [Finding description] | Minor | Resolved |
