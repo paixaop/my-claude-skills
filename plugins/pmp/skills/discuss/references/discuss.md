@@ -206,7 +206,7 @@ Ask the user via `AskQuestion`:
 
 ## Constraints
 
-- **DO NOT** modify the review file — it is read-only
+- **DO NOT** modify the review file during discussion — it is read-only during this stage. The execute skill will update it with a `## Resolution` section after plan execution completes.
 - **DO NOT** skip the AskQuestion step — every finding gets a user decision
 - **DO NOT** auto-advance past Summary — always ask before generating a plan
 - **DO NOT** skip findings of any severity — walk through ALL findings: Critical, Important, AND Minor. Every finding gets discussed, no matter how small. The user decides what to act on, not you.

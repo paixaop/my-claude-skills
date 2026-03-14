@@ -9,13 +9,14 @@ Principal architect review of technical specifications. Reconstructs the system 
 
 Standalone workflow — does not feed into plan generation or execution.
 
-Use agent teams (Task tool) and track progress with TodoWrite throughout.
+Use agent teams (Task tool) ONLY for parallel file reading when the corpus is large. All analysis runs in the main controller context — do not spawn agents for analysis phases (they would re-read all files). Track progress with TodoWrite throughout.
 
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [spec-review.md](references/spec-review.md) and follow it completely — it contains the full 15-phase analysis methodology
-3. Loops on discussion until user says "done"
+2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md). Check `docs/.cache/spec-review/manifest.json`. Load cached summaries for unchanged files, only read changed/new files in full. This is mandatory, not optional.
+3. Read [spec-review.md](references/spec-review.md) and follow it completely — it contains the full 15-phase analysis methodology
+4. Loops on discussion until user says "done"
 
 ## Key References
 

@@ -129,7 +129,7 @@ stateDiagram-v2
    - **Primary specs**: Markdown/text documents defining the system (review targets)
    - **Reference material**: OpenAPI schemas, JSON schemas, ADRs, code comments (use for cross-validation, don't review independently)
 
-3. **Check analysis cache** — see [analysis-cache.md](../../pmp/references/analysis-cache.md)
+3. **Check analysis cache (MANDATORY)** — see [analysis-cache.md](../../pmp/references/analysis-cache.md). This step is not optional — always check the cache before reading files.
    - Check for `docs/.cache/spec-review/manifest.json`
    - If manifest exists: hash each spec file (`shasum -a 256`), compare to manifest
      - **Unchanged files** → load cached summaries instead of reading source
@@ -145,6 +145,35 @@ stateDiagram-v2
    - Note cross-references between documents
    - After reading, produce a structured summary per file using the spec-review extraction template from [analysis-cache.md](../../pmp/references/analysis-cache.md) and write to `docs/.cache/spec-review/summaries/`
    - Write or update `docs/.cache/spec-review/manifest.json`
+
+---
+
+## Context Management
+
+**All analysis phases (1–14) run in the main controller context — do NOT spawn agents for analysis.**
+
+Agents share no context with the main controller. Spawning agents for analysis phases forces each agent to re-read all files, multiplying token cost by the number of agents. Instead:
+
+- **Phase 0 (Discovery):** Use parallel agents ONLY for reading files when the corpus is large (10+ files). Each agent reads a partition of files and returns the content. The main controller collects all file contents.
+- **Phases 1–14 (Analysis):** Run sequentially in the main controller. The controller already has all file contents from Phase 0 — no re-reading needed.
+- **Phase 14 (Remediation):** Naturally cross-references findings from all phases since everything is in one context.
+
+### Large Corpus Fallback: Batched Phases
+
+When the corpus is large enough to risk context overflow (estimated >30 files or >50K words of source), split analysis into batches:
+
+1. **Batch 1:** Phase 0 (Discovery) + Phase 1 (System Reconstruction) + Phases 2-5 (Architecture, Consistency, Invariants, State Machines)
+2. **Batch 2:** Phases 6-7 (Threat Modeling, Attack Simulation) + Phase 13 (AI Red Team, if applicable)
+3. **Batch 3:** Phases 8-12 (Performance, Resources, Failure Modes, Scalability, Operability) + Phase 14 (Remediation)
+
+Between batches, produce a **checkpoint summary**:
+- Key findings from completed phases (structured, ~500 words)
+- The system model from Phase 1 (components, boundaries, state — ~300 words)
+- List of files most relevant to the next batch
+
+Each new batch starts by re-reading the source files + the checkpoint. This means files are re-read 2-3x total instead of N-agents × all-files. The checkpoint ensures cross-phase coherence.
+
+**Batch boundaries are phase-aware:** never split a logically connected pair (e.g., threat modeling + attack simulation stay together).
 
 ---
 

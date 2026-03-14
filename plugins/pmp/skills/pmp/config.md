@@ -149,6 +149,14 @@ MINOR: none | [bullet list with file:line]
 4. **Truncate test output** — pipe test runners through concise output modes. Never pass raw multi-page test output into the controller's context.
 5. **Avoid redundant reads** — subagents should not re-read files they just wrote unless checking something specific.
 
+### Agent Usage Rules
+
+Agents share no context with the main controller — each starts with an empty context window. This means:
+
+- **DO use agents** for parallel file reading (I/O-bound work where each agent reads a different set of files)
+- **DO NOT use agents** for analysis phases that need access to already-read file contents (they would re-read everything, multiplying token cost)
+- **Exception:** An agent is justified only when it needs to read files that are NOT already in the main context (e.g., a targeted deep-dive into files not part of the initial corpus)
+
 ---
 
 ## Complexity Tiers

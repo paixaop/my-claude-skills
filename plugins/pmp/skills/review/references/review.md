@@ -152,12 +152,12 @@ Create a TodoWrite with these items and check each:
 ## Review Process
 
 1. **Read the plan completely**
-2. **Read ALL referenced code files** — use agent teams for parallel reading if many files
+2. **Read ALL referenced code files.** Use parallel agents only for the file reading itself when there are many files (10+) — each agent reads a partition of files and returns content. All subsequent analysis (checklist scoring, security gate, rewriting) runs in the main controller context using the already-loaded file contents. Do NOT spawn agents for analysis — they would re-read all files, wasting tokens.
 3. **Config & data gate:** If the plan adds/modifies config files or database schemas:
    - Verify migrations exist for every schema change, rollback is covered, and new config values have sensible defaults or are flagged as required
    - **Simplification pass:** Review all config keys touched by the plan — flag cryptic names, redundant keys, or structures that increase cognitive load. Propose clearer alternatives and present options to the user
    - **Consolidation pass:** Review all tables touched or created by the plan — identify 1:1 relationships, type-discriminated duplicates, or thin lookup tables that could merge. Present consolidation options to the user with trade-off analysis
-4. **Security gate:** If the plan touches auth, data flows, new endpoints, or secrets — read [security-analysis.md](security-analysis.md) and run the full analysis. Append findings to the review output
+4. **Security gate:** If the plan touches auth, data flows, new endpoints, or secrets — read [security-analysis.md](security-analysis.md) and run the full analysis. The security analysis runs in the main controller context, which already has all code files loaded from Step 2. Do not re-read files for the security gate — work from the file contents already in context. Append findings to the review output
 5. **Score each checklist item** — pass, fail, or needs-work
 6. **For each failure:** explain why and provide a specific fix
 7. **Rewrite weak sections** — don't just flag problems, fix them

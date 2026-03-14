@@ -9,7 +9,7 @@ Skeptical senior-engineer review of implementation plans. Scores against a check
 
 **Always ask before transitioning.** Use AskQuestion. Never auto-advance.
 
-Use agent teams (Task tool) and track progress with TodoWrite throughout.
+Use agent teams (Task tool) ONLY for parallel file reading when the corpus is large. All analysis runs in the main controller context — do not spawn agents for analysis phases (they would re-read all files). Track progress with TodoWrite throughout.
 
 ## Workflow
 
