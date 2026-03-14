@@ -1,6 +1,6 @@
 # Execute Loop
 
-Implements features from the plan and verifies each with its E2E tests in an automated code-test-fix loop.
+Implements features from the plan in a two-task model: Task A (implementation + unit tests) and Task B (E2E tests). Each task gets its own commit, halving the per-task workload while preserving full E2E coverage.
 
 ```mermaid
 stateDiagram-v2
@@ -21,42 +21,75 @@ stateDiagram-v2
     Setup --> FeatureN : for each feature in dependency order
 
     state FeatureN {
-        [*] --> Implement
-        Implement --> WriteE2E
-        WriteE2E --> RunAllTests
+        [*] --> TaskA
 
-        RunAllTests --> FixLoop : any test fails
-        RunAllTests --> Commit : all pass
+        state TaskA {
+            [*] --> Implement
+            Implement --> RunUnitTests
+            RunUnitTests --> UnitFixLoop : unit tests fail
+            RunUnitTests --> CommitImpl : all pass
 
-        state FixLoop {
-            [*] --> ParseFailure
-            ParseFailure --> Classify
+            state UnitFixLoop {
+                [*] --> ParseUnitFailure
+                ParseUnitFailure --> ClassifyUnit
+                ClassifyUnit --> FixUnitImpl
+                FixUnitImpl --> RerunUnit
+                RerunUnit --> UnitCounter
+                UnitCounter --> [*] : tests pass
+                UnitCounter --> ParseUnitFailure : < ceiling
+                UnitCounter --> UnitBlocked : ceiling reached
+            }
 
-            Classify --> FixImpl : DETERMINISTIC BUG
-            Classify --> FixTest : FLAKY
-            Classify --> FixBoth : SPEC MISMATCH
-            Classify --> RestartInfra : INFRASTRUCTURE
+            UnitFixLoop --> CommitImpl : tests pass
+            UnitFixLoop --> AskUser : blocked
 
-            FixImpl --> Rerun
-            FixTest --> Rerun
-            FixBoth --> Rerun
-            RestartInfra --> Rerun
-
-            Rerun --> IncrementCounter
-            IncrementCounter --> [*] : tests pass
-            IncrementCounter --> ParseFailure : tests fail, < ceiling
-            IncrementCounter --> Blocked : ceiling reached
+            CommitImpl --> RunCI_A
+            RunCI_A --> TaskADone : CI pass
+            RunCI_A --> FixCI_A : CI fail
+            FixCI_A --> RunCI_A
+            TaskADone --> [*]
         }
 
-        FixLoop --> Commit : tests pass
-        FixLoop --> AskUser : blocked
+        TaskA --> TaskB
 
-        Commit --> RunCI
-        RunCI --> CommentOnIssue : CI pass + issues exist
-        RunCI --> FeatureDone : CI pass, no issues
-        RunCI --> FixCI : CI fail
-        FixCI --> RunCI
-        CommentOnIssue --> FeatureDone
+        state TaskB {
+            [*] --> WriteE2E
+            WriteE2E --> RunAllE2E
+
+            RunAllE2E --> E2EFixLoop : any test fails
+            RunAllE2E --> CommitE2E : all pass
+
+            state E2EFixLoop {
+                [*] --> ParseE2EFailure
+                ParseE2EFailure --> ClassifyE2E
+                ClassifyE2E --> FixE2EImpl : DETERMINISTIC BUG
+                ClassifyE2E --> FixE2ETest : FLAKY
+                ClassifyE2E --> FixE2EBoth : SPEC MISMATCH
+                ClassifyE2E --> RestartInfra : INFRASTRUCTURE
+
+                FixE2EImpl --> RerunE2E
+                FixE2ETest --> RerunE2E
+                FixE2EBoth --> RerunE2E
+                RestartInfra --> RerunE2E
+
+                RerunE2E --> E2ECounter
+                E2ECounter --> [*] : tests pass
+                E2ECounter --> ParseE2EFailure : < ceiling
+                E2ECounter --> E2EBlocked : ceiling reached
+            }
+
+            E2EFixLoop --> CommitE2E : tests pass
+            E2EFixLoop --> AskUser : blocked
+
+            CommitE2E --> RunCI_B
+            RunCI_B --> Review : CI pass
+            RunCI_B --> FixCI_B : CI fail
+            FixCI_B --> RunCI_B
+            Review --> TaskBDone
+            TaskBDone --> [*]
+        }
+
+        TaskB --> FeatureDone
         FeatureDone --> [*]
     }
 
@@ -80,17 +113,30 @@ stateDiagram-v2
     Completion --> [*] : done
 ```
 
+## E2E Principles
+
+These principles apply across all execution models:
+
+- **Specs, not code:** Plans describe WHAT to build/test, never HOW (no code snippets)
+- **Structural traceability:** Every AC has its E2E test case directly beneath it — no cross-references needed
+- **Two-stage commits:** Implementation commits after unit/integration tests pass. E2E test commits after E2E tests pass. Each feature produces two commits.
+- **Fix loop ceiling:** see [config.md](../config.md) Thresholds for max attempts per feature
+- **Test isolation:** Each feature's tests handle their own setup/teardown, runnable independently
+- **No hardcoded conventions:** Integration branch, CI command, test directory all come from project detection (recorded in the plan header)
+
+---
+
 ## Context Management
 
 Read [config.md](../config.md) Context Management before starting. The rules below are critical for preventing context window exhaustion during execution.
 
 ### Batch Controllers
 
-Do NOT execute the entire plan in a single controller session. Split features into batches of **3** (see config.md Max features per controller session).
+Do NOT execute the entire plan in a single controller session. Split features into batches of **3** (see config.md Max features per controller session). Each feature has two tasks (Task A: implementation, Task B: E2E tests), so each batch contains up to 6 tasks.
 
 **Per-batch workflow:**
 1. Controller reads the plan once and identifies the next batch of features
-2. Controller dispatches subagents for each feature in the batch (sequentially — features have dependencies)
+2. Controller dispatches subagents for each feature's tasks in the batch. Task A and Task B are sequential within a feature, but Task B for Feature N can overlap with Task A for Feature N+1 if they don't write to the same files (see Parallel Agent Dispatching rules).
 3. After the batch completes, controller writes a **checkpoint summary**:
    ```
    BATCH: [N] of [total]
@@ -200,9 +246,9 @@ Continue from the next uncompleted feature in the plan. Re-read the plan file an
    git checkout <branch> && git pull && git checkout -b feat/<name>
    ```
 4. **Read CI command** from the plan header
-5. **Check for GitHub Issues:** Look for a `## GitHub Issues` section in the plan. If present, note the feature→issue mapping — you'll comment on issues as features are committed and include `Closes #N` in the PR body
+5. **Check for GitHub Issues:** Look for a `## GitHub Issues` section in the plan. If present, note the 3-level mapping (epic → feature issues → task issues). You'll comment on task issues as tasks are committed and include `Closes #N` for all issues in the PR body.
 6. **Create TodoWrite** with all features from the plan
-7. **Determine batch boundaries** — split features into batches of 3 (see Context Management above). Only execute the first batch in this session.
+7. **Determine batch boundaries** — split features into batches of 3 (see Context Management above). Each feature has 2 tasks (implementation + E2E), so each batch has up to 6 tasks. Only execute the first batch in this session.
 8. **Set up E2E test infrastructure** (ALWAYS the first task):
    - Follow the plan's "E2E Test Infrastructure" section
    - Install framework, configure test runner, set up environment
@@ -238,6 +284,9 @@ When creating tasks with `TaskCreate`, always set up dependency chains with `Tas
 3. **Split into waves** — group independent tasks into waves. Launch wave N+1 only after wave N completes. Never launch dependent work speculatively.
 4. **Include full context in each agent's prompt** — parallel agents share nothing. Each prompt must contain all file paths, decisions, and constraints it needs. Never assume an agent can see another agent's output.
 5. **Consolidate after parallel waves** — after a parallel wave completes, review all outputs for conflicts before launching the next wave.
+6. **Lean prompts** — include only the file paths, task-specific decisions, and constraints each agent needs. Point to `CLAUDE.md` for project conventions instead of inlining them. Never dump the full plan into every agent prompt.
+7. **Demand structured returns** — every agent MUST return in the structured format defined in [config.md](../config.md) Context Management. Extract only the structured fields from agent returns — discard prose.
+8. **Use fast model for reviewers** — spec compliance and code quality reviewers are focused tasks that benefit from `model: fast`.
 
 Never launch parallel agents that write to the same files or where one agent's output is another's input. When in doubt, serialize.
 
@@ -257,28 +306,58 @@ This loop does NOT replace unit-level TDD. Within step 1 (IMPLEMENT) of each fea
 
 ## Per-Feature Loop (Code-File Model)
 
+Each feature has two tasks. Task A (implementation + unit tests) and Task B (E2E tests) each get their own commit.
+
 For each feature in dependency order:
 
-### Step 1: IMPLEMENT
+### Task A: IMPLEMENT
+
+#### A1: Implement
 
 - Read the feature spec from the plan
 - Implement the feature (apply unit TDD if project uses it)
 - Run existing unit tests to verify no regressions
 - Do NOT commit yet
 
-### Step 2: WRITE E2E TEST
+#### A2: Run Unit/Integration Tests
+
+- Execute the project's unit test command with concise output flags
+- On success: note pass count only
+- On failure: read only the last 50 lines to identify failing test and error
+
+#### A3: Fix Loop (Unit Tests)
+
+**Hard ceiling: see [config.md](../config.md) Thresholds for fix loop ceiling.**
+
+Same classification and fix protocol as the E2E fix loop (see Task B below), applied to unit/integration test failures.
+
+#### A4: Commit Implementation
+
+Only after all unit/integration tests pass:
+
+- Stage implementation code + unit/integration test files
+- Commit: `feat(<scope>): <feature>` (see [config.md](../config.md) Commit Conventions)
+- Run the project CI command (from plan header)
+- If CI fails, fix and amend the commit
+- **Comment on Task A Issue** (if GitHub Issues exist for this plan): `gh issue comment <task-A-number> --body "Implemented in <commit-sha>"`
+
+### Task B: E2E TESTS
+
+Runs after Task A commits successfully.
+
+#### B1: Write E2E Tests
 
 - Read the E2E test cases under the current feature's acceptance criteria
 - Write the E2E test file to the test directory following the specs exactly
 - Do NOT commit yet
 
-### Step 3: RUN ALL E2E TESTS
+#### B2: Run All E2E Tests
 
-- Execute the test runner command with concise output flags (runs ALL suites, not just the new one)
+- Execute the test runner command with concise output flags (runs ALL E2E suites, not just the new one)
 - On success: note pass count only (do NOT capture full output into context)
 - On failure: read only the last 50 lines to identify failing test and error
 
-### Step 4: FIX LOOP
+#### B3: Fix Loop (E2E Tests)
 
 **Hard ceiling: see [config.md](../config.md) Thresholds for fix loop ceiling.**
 
@@ -299,7 +378,7 @@ If any test fails:
 
 **d. Re-run ALL E2E tests**
 
-**e. Increment the feature attempt counter** (regardless of which category)
+**e. Increment the attempt counter** (regardless of which category)
 
 **f. If ceiling reached (see [config.md](../config.md) Thresholds):** STOP. Report concisely:
 - Which test(s) are failing (name + 1-line error)
@@ -308,19 +387,19 @@ If any test fails:
 
 Ask the user for help before proceeding.
 
-### Step 5: COMMIT
+#### B4: Commit E2E Tests
 
 Only after ALL E2E tests pass:
 
-- Stage implementation code + E2E test file together
-- Commit using format from [config.md](../config.md) Commit Conventions
+- Stage E2E test files only
+- Commit: `test(<scope>): e2e tests for <feature>` (see [config.md](../config.md) Commit Conventions)
 - Run the project CI command (from plan header)
 - If CI fails, fix and amend the commit
-- **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../config.md) GitHub Conventions — do NOT close; the PR will close it on merge
+- **Comment on Task B Issue** (if GitHub Issues exist for this plan): `gh issue comment <task-B-number> --body "E2E tests in <commit-sha>"` — do NOT close; the PR will close it on merge
 
-### Step 5.5: TWO-STAGE REVIEW (Subagent Mode)
+#### B5: Two-Stage Review (Subagent Mode)
 
-When using agent teams (Task tool) for implementation, run a two-stage review after each feature's commit. Skip this step if implementing directly (no subagents).
+When using agent teams (Task tool) for implementation, run a two-stage review after Task B commits. Skip this step if implementing directly (no subagents). The review covers both the implementation (Task A) and E2E tests (Task B) together.
 
 **Stage 1: Spec Compliance Review**
 
@@ -339,9 +418,13 @@ Both reviewers use `model: fast` (focused read-and-compare tasks). See the promp
 
 - Mark feature complete in TodoWrite
 
-### Step 6: NEXT FEATURE OR BATCH HANDOFF
+### Parallelism Opportunity
 
-If more features remain in the current batch: go to Step 1 for the next feature.
+Task B for Feature N can overlap with Task A for Feature N+1 **if they don't write to the same files**. Apply the existing file-ownership rules from the Parallel Agent Dispatching section. When in doubt, serialize.
+
+### Next Feature or Batch Handoff
+
+If more features remain in the current batch: go to Task A for the next feature.
 
 If the current batch is complete but more features remain in the plan:
 1. Write a checkpoint summary (see Context Management above)
@@ -354,20 +437,24 @@ If all features are done: proceed to Completion.
 
 ## Per-Feature Loop (Agent-Driven Model)
 
-For web apps using Playwright MCP instead of code-file tests.
+For web apps using Playwright MCP instead of code-file tests. Same two-task structure as the code-file model.
 
-### Step 1: IMPLEMENT
+### Task A: IMPLEMENT
 
-Same as code-file model: implement feature, apply unit TDD if applicable. Do NOT commit yet.
+Same as code-file model Task A: implement feature with unit TDD if applicable, run unit tests, fix loop, commit implementation.
 
-### Step 2: WRITE TEST SPEC
+### Task B: E2E TESTS (Agent-Driven)
+
+Runs after Task A commits successfully.
+
+#### B1: Write Test Spec
 
 - Read the E2E test cases under the current feature's acceptance criteria
 - Write the test spec file to the PROJECT's test directory: `<test-dir>/<feature>-tests.md`
   (e.g., `e2e/providers-tests.md` -- inside the project, NOT inside the skill directory)
 - Do NOT commit yet
 
-### Step 3: EXECUTE TESTS VIA PLAYWRIGHT MCP
+#### B2: Execute Tests via Playwright MCP
 
 Agent-driven tests are expensive (each action = MCP call + snapshot). Use a tiered strategy:
 
@@ -381,7 +468,7 @@ Agent-driven tests are expensive (each action = MCP call + snapshot). Use a tier
 
 **c. Record results** for all executed test cases.
 
-### Step 4: FIX LOOP
+#### B3: Fix Loop
 
 Same hard ceiling (see [config.md](../config.md) Thresholds) and classification as code-file model, with adjustments:
 
@@ -389,20 +476,20 @@ Same hard ceiling (see [config.md](../config.md) Thresholds) and classification 
 - **SPEC MISMATCH**: Update both the test spec file and the plan
 - **Re-runs**: Only re-execute the failing suite(s), not the full smoke check again
 
-### Step 5: COMMIT
+#### B4: Commit E2E Tests
 
 Only after the new suite passes AND the smoke check passes:
 
-- Stage implementation code + test spec files together
-- Commit using format from [config.md](../config.md) Commit Conventions
+- Stage test spec files only
+- Commit: `test(<scope>): e2e test specs for <feature>` (see [config.md](../config.md) Commit Conventions)
 - Run project CI command if applicable
 - **Comment on GitHub Issue** (if issues exist for this plan) using format from [config.md](../config.md) GitHub Conventions — do NOT close; the PR will close it on merge
-- **Two-stage review:** Same as code-file model Step 5.5 (spec compliance then code quality) when using agent teams
+- **Two-stage review:** Same as code-file model Task B, Step B5 (spec compliance then code quality) when using agent teams
 - Mark feature complete in TodoWrite
 
-### Step 6: NEXT FEATURE OR BATCH HANDOFF
+### Parallelism and Batch Handoff
 
-Same as code-file model Step 6: continue within batch, or write checkpoint and hand off to fresh session.
+Same as code-file model: Task B for Feature N can overlap with Task A for Feature N+1 if no file conflicts. Continue within batch, or write checkpoint and hand off to fresh session.
 
 ---
 
@@ -410,11 +497,11 @@ Same as code-file model Step 6: continue within batch, or write checkpoint and h
 
 When the plan uses hybrid execution (code-file for API, agent-driven for UI):
 
-- Each feature may have API tests and/or UI tests (noted per AC in the plan)
-- In Step 2: write code-file tests for API suites, write spec files for UI suites
-- In Step 3: run code-file test runner for API suites, then execute agent-driven specs for UI suites
-- In Step 4: apply fixes and re-run only the failing model's tests
-- In Step 5: commit all (implementation + test files + test specs) together
+- Task A: implement feature with unit tests, commit implementation
+- Task B: write code-file E2E tests for API suites AND agent-driven spec files for UI suites
+- In B2: run code-file test runner for API suites, then execute agent-driven specs for UI suites
+- In B3: apply fixes and re-run only the failing model's tests
+- In B4: commit all E2E artifacts (test files + test specs) together
 
 ---
 
@@ -455,7 +542,7 @@ Total           | 12/12     | ALL PASS
 4. **Ask the user:** "All features pass and CI is clean. Want me to create a PR?"
 5. **If yes — build PR body with closing keywords** (if GitHub Issues exist for this plan):
    - Read the `## GitHub Issues` table from the plan file
-   - Collect ALL issue numbers (sub-issues AND epic)
+   - Collect ALL issue numbers at all levels (task issues, feature issues, AND epic)
    - Create the PR with `Closes #N` for every issue:
    ```bash
    gh pr create --title "feat: <feature-set-name>" --body "$(cat <<'EOF'
@@ -463,9 +550,12 @@ Total           | 12/12     | ALL PASS
    <summary of all implemented features>
 
    ## Closes
-   Closes #<sub-issue-1>
-   Closes #<sub-issue-2>
-   Closes #<sub-issue-N>
+   Closes #<task-A-1>
+   Closes #<task-B-1>
+   Closes #<feature-1>
+   Closes #<task-A-2>
+   Closes #<task-B-2>
+   Closes #<feature-2>
    Closes #<epic>
 
    ## E2E Test Results
@@ -491,6 +581,33 @@ Total           | 12/12     | ALL PASS
    mv docs/plans/<plan-file>.md docs/plans/implemented/<plan-file>.md
    ```
 9. **Announce** with completion message from [config.md](../config.md) Stage Announcements
+
+---
+
+## Test Only Mode
+
+When the user just wants to re-run E2E tests (no new coding):
+
+1. Read the plan's E2E Test Infrastructure section to find the test runner command (code-file) or test spec files (agent-driven)
+2. Execute all E2E test suites
+3. Report results in a summary table:
+
+```
+Suite           | Tests   | Status
+────────────────┼─────────┼───────
+Suite 1         | 5/5     | PASS
+Suite 2         | 3/3     | PASS
+────────────────┼─────────┼───────
+Total           | 8/8     | ALL PASS
+```
+
+4. If failures found, offer to enter fix mode (fix loop from the per-feature loop above)
+
+For agent-driven tests, the user can specify which suites to run:
+- No arguments: run all suites
+- Suite names: run only those suites
+
+Project detection details (type, conventions, monorepo) are in the plan header — no need to re-detect.
 
 ---
 
