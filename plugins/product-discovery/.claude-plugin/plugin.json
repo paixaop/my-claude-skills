@@ -1,0 +1,21 @@
+{
+  "name": "product-discovery",
+  "description": "Multi-agent product discovery — orchestrates 8 specialized agents in parallel to produce a comprehensive product blueprint covering market validation, technical architecture, brand strategy, growth, support, UX, project planning, and domain-specific analysis.",
+  "version": "1.0.1",
+  "author": {
+    "name": "paixaop"
+  },
+  "homepage": "https://github.com/paixaop/my-claude-skills",
+  "repository": "https://github.com/paixaop/my-claude-skills",
+  "license": "MIT",
+  "keywords": [
+    "product-discovery",
+    "multi-agent",
+    "blueprint",
+    "market-validation",
+    "architecture",
+    "brand-strategy",
+    "growth",
+    "orchestration"
+  ]
+}
