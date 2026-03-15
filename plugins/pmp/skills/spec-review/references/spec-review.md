@@ -129,22 +129,53 @@ stateDiagram-v2
    - **Primary specs**: Markdown/text documents defining the system (review targets)
    - **Reference material**: OpenAPI schemas, JSON schemas, ADRs, code comments (use for cross-validation, don't review independently)
 
-3. **Check analysis cache (MANDATORY)** — see [analysis-cache.md](../../pmp/references/analysis-cache.md). This step is not optional — always check the cache before reading files.
+3. **Collect prior review annotations**
+   - Scan all primary spec files for GitHub blockquote alerts (`> [!WARNING]`, `> [!NOTE]`, `> [!CAUTION]`) that contain `**Reviewed`
+   - Parse each annotation into: `{ date, finding_title, decision (acknowledged/skipped), reason, file, line }`
+   - Build a **prior decisions registry** — a lookup table of previously reviewed findings
+   - Report: `Found N prior review annotations across M files`
+   - These annotations are produced by the `/pmp:discuss` skill and will be cross-referenced during analysis phases to avoid blindly re-raising resolved findings (see "Using Prior Review Annotations" below)
+
+4. **Check analysis cache (MANDATORY)** — see [analysis-cache.md](../../pmp/references/analysis-cache.md). This step is not optional — always check the cache before reading files.
    - Check for `docs/.cache/spec-review/manifest.json`
    - If manifest exists: hash each spec file (`shasum -a 256`), compare to manifest
      - **Unchanged files** → load cached summaries instead of reading source
      - **Changed files** → read source, regenerate summary, update cache
      - **New files** → read source, generate summary, add to cache
      - **Deleted files** → remove from manifest and delete summary
-   - If no manifest: proceed to step 4 (full read), then build cache afterward
+   - If no manifest: proceed to step 5 (full read), then build cache afterward
    - Report cache status: `X cached, Y changed, Z new, W deleted`
 
-4. **Read documents** (full read on cold cache, changed/new only on warm cache)
+5. **Read documents** (full read on cold cache, changed/new only on warm cache)
    - Read every uncached spec file before beginning analysis
    - Track key terms, states, field names, and identifiers as you read
    - Note cross-references between documents
    - After reading, produce a structured summary per file using the spec-review extraction template from [analysis-cache.md](../../pmp/references/analysis-cache.md) and write to `docs/.cache/spec-review/summaries/`
    - Write or update `docs/.cache/spec-review/manifest.json`
+
+6. **Corpus Health Assessment**
+
+   After reading all files, compute organization health signals to determine whether the corpus would benefit from reorganization via `/pmp:arc42`:
+
+   | Signal | Metric | Threshold |
+   |--------|--------|-----------|
+   | **Concern scatter** | How many files share the same primary concern | >2 files per concern = scattered |
+   | **Duplicate density** | % of sections with near-identical content in other files | >15% = high duplication |
+   | **Cross-reference density** | Avg internal links per file | >5 = tangled dependencies |
+   | **Orphan content** | Sections that don't fit the file's primary concern | >20% of sections = misplaced content |
+   | **File count vs concern count** | Ratio of files to distinct concerns | >2:1 = over-fragmented |
+
+   **If 2+ signals exceed thresholds**, include a `## Corpus Health Advisory` section in the report (see template) recommending `/pmp:arc42`. This is informational only — proceed with the full review regardless.
+
+#### Using Prior Review Annotations
+
+During all analysis phases (1–14), before reporting a finding, check if it matches a prior annotation from the registry built in Phase 0 step 3. Match by title similarity or by referring to the same spec file section where an annotation exists.
+
+- **`[!CAUTION]` or `[!WARNING]` match (Acknowledged):** Still include the finding in the report, but prefix it with `[Previously acknowledged YYYY-MM-DD: "reason"]`. Reduce its effective severity by one level (Critical stays Critical; Important becomes Minor; Minor is omitted unless circumstances have materially changed since the annotation date).
+- **`[!NOTE]` match (Skipped):** Include the finding normally — skipped means "not decided", so it should get a fresh evaluation. Add a note: `[Previously skipped YYYY-MM-DD]`.
+- **No match:** Report normally.
+
+This ensures acknowledged findings appear with context rather than being blindly re-raised, while skipped findings get a fresh evaluation.
 
 ---
 

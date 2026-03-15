@@ -252,6 +252,7 @@ Agents share no context with the main controller — each starts with an empty c
 | Sync Issues | `Syncing plan to GitHub Issues...` |
 | Decompose | `Breaking plan into phases...` |
 | Changelog | `Generating release notes...` |
+| Arc42 | `Reorganizing specs into arc42 structure...` |
 | Execute (completion) | `I'm done baby - Skippy the Magnificent` |
 
 ---

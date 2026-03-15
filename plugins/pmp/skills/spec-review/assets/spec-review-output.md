@@ -23,6 +23,23 @@
 
 ---
 
+## Corpus Health Advisory
+<!-- OPTIONAL: Include when corpus health signals exceed thresholds (2+ signals). Delete if corpus is well-organized. -->
+
+**Recommendation:** Run `/pmp:arc42` before or after addressing review findings.
+
+| Signal | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| Concern scatter | [N] files share concerns | >2 | [WARN/OK] |
+| Duplicate density | [N]% | >15% | [WARN/OK] |
+| Cross-reference density | [N] avg links/file | >5 | [WARN/OK] |
+| Orphan content | [N]% of sections | >20% | [WARN/OK] |
+| File:concern ratio | [N]:1 | >2:1 | [WARN/OK] |
+
+**Rationale:** [1-2 sentences explaining why reorganization would improve the corpus]
+
+---
+
 ## System Model
 
 ### Components

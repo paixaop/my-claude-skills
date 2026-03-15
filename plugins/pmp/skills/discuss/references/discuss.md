@@ -34,17 +34,20 @@ stateDiagram-v2
     }
 
     WalkFindings --> Summary
-    Summary --> GeneratePlan : fixes exist
-    Summary --> Done : no fixes
+    Summary --> AnnotateAndPlan : findings discussed
+    Summary --> Done : nothing discussed
 
-    state GeneratePlan {
-        [*] --> WritePlanFile
+    state AnnotateAndPlan {
+        [*] --> AnnotateSpecs
+        AnnotateSpecs --> WritePlanFile : fixes exist
+        AnnotateSpecs --> AnnotateDone : no fixes
         WritePlanFile --> AskExecute
         AskExecute --> Execute : yes
         AskExecute --> SaveAndDone : no
+        AnnotateDone --> [*]
     }
 
-    GeneratePlan --> [*]
+    AnnotateAndPlan --> [*]
     Done --> [*]
 ```
 
@@ -186,21 +189,69 @@ After all findings are addressed (or user says "done"), present:
 
 ---
 
-### Step 4: Generate Plan (if findings marked Fix)
+### Step 4: Annotate Specs and Generate Plan
+
+Run this step if **any** findings were discussed (Fix, Acknowledge, or Skip — at least one finding resolved).
+
+#### 4a. Annotate Spec Files (Acknowledged and Skipped findings)
+
+For each finding marked **Acknowledge** or **Skip**:
+
+1. **Identify the spec file** where the finding originates (from the `source_section` and recommendation in the finding)
+2. **Locate the relevant section** in the spec file (the paragraph, table, or heading the finding refers to)
+3. **Insert a GitHub blockquote alert immediately after** the relevant section:
+
+   For **Critical severity Acknowledged** findings:
+   ```markdown
+   > [!CAUTION]
+   > **Reviewed YYYY-MM-DD:** [finding title] — **Acknowledged:** [user's reason]
+   ```
+
+   For **non-Critical Acknowledged** findings:
+   ```markdown
+   > [!WARNING]
+   > **Reviewed YYYY-MM-DD:** [finding title] — **Acknowledged:** [user's reason]
+   ```
+
+   For **Skipped** findings:
+   ```markdown
+   > [!NOTE]
+   > **Reviewed YYYY-MM-DD:** [finding title] — **Skipped:** [user's reason or "No reason given"]
+   ```
+
+4. If the finding refers to **missing content** (not a specific section), place the annotation at the top of the most relevant spec file, after any frontmatter and the first heading
+
+#### 4b. Generate Plan File (if any findings marked Fix)
 
 If any findings were marked **Fix**:
 
 1. Generate a plan file using [discuss-plan.md](../assets/discuss-plan.md) template
-2. Save to `docs/plans/` using the plan filename pattern from [config.md](../../pmp/config.md)
-   - Name pattern: `YYYY-MM-DD-<review-name>-findings-plan.md`
-   - Example: `2026-03-14-auth-gateway-findings-plan.md`
-3. Each finding marked Fix becomes a **feature** in the plan — spec/doc change only, no test tasks
-4. Include deferred findings in a `## Deferred` section at the bottom
+2. **CRITICAL — Plan file naming:** Save to `docs/plans/` using the Write tool with an **explicit filename**. The filename MUST follow this exact pattern:
+
+   ```
+   docs/plans/YYYY-MM-DD-<review-name>-findings-plan.md
+   ```
+
+   Where `<review-name>` is derived from the review file's name (e.g., review file `2026-03-14-auth-gateway-review.md` produces plan `2026-03-14-auth-gateway-findings-plan.md`).
+
+   **DO NOT** use Claude Code's auto-generated plan names (like `quirky-strolling-harbor.md`). **DO NOT** use plan mode to create this file. Use the Write tool directly with the full path.
+
+3. Each finding marked **Fix** becomes a **Feature** in the plan — spec/doc change only, no test tasks
+4. Include **Deferred** findings in the `## Deferred` section
+5. Include **Acknowledged** and **Skipped** findings in the `## Acknowledged & Skipped` section (audit trail — these are already annotated in the spec files from step 4a)
 
 Ask the user via `AskQuestion`:
 
 - **Execute now** — tell the user to invoke `/pmp:execute` on the generated plan
 - **Save for later** — plan file is written, done
+
+#### 4c. No-Fix Path (all findings Acknowledged/Skipped/Deferred)
+
+If **no** findings were marked Fix (all were Acknowledged, Skipped, or Deferred):
+
+1. Still annotate spec files per step 4a above
+2. **Do NOT** generate a plan file (no spec changes to execute)
+3. Report: "All findings were resolved without spec changes. Annotations have been added to the spec files."
 
 ---
 
@@ -210,5 +261,8 @@ Ask the user via `AskQuestion`:
 - **DO NOT** skip the AskQuestion step — every finding gets a user decision
 - **DO NOT** auto-advance past Summary — always ask before generating a plan
 - **DO NOT** skip findings of any severity — walk through ALL findings: Critical, Important, AND Minor. Every finding gets discussed, no matter how small. The user decides what to act on, not you.
+- **DO NOT** use Claude Code plan mode or auto-generated filenames for the findings plan — always use the Write tool with the explicit `YYYY-MM-DD-<review-name>-findings-plan.md` path
+- **DO** annotate spec files for ALL Acknowledged and Skipped findings — this prevents them from resurfacing in future spec-review runs
+- **DO** include ALL findings in the plan file (Fix as Features, Acknowledged/Skipped in audit trail table, Deferred in deferred table) — nothing should be lost
 - **DO** respect the user saying "done" at any point to stop the walkthrough
 - **DO** track decisions accurately — the plan file must match what the user decided

@@ -589,7 +589,7 @@ Total           | 12/12     | ALL PASS
    - Read the source review file
    - Append a `## Resolution` section documenting:
      - **Fixed:** Which findings were fixed, with a brief description of what was done
-     - **Acknowledged:** Which findings were acknowledged, with the rationale
+     - **Acknowledged:** Which findings were acknowledged, with the rationale (spec files were annotated with GitHub blockquote alerts during discussion)
      - **Deferred:** Which findings were deferred, with the reason
      - **Decisions:** Key decisions made during discussion and execution, with explanations
      - **Date:** Resolution date and link to the PR (if created)

@@ -36,6 +36,7 @@ stateDiagram-v2
     [*] --> GitHubPlanning : "create issues" / "make epic"
     [*] --> SyncIssues : "update issues" / "sync issues"
     [*] --> TestOnly : "run tests" / "re-test"
+    [*] --> Arc42 : "organize specs" / "arc42"
 
     state FetchIssues {
         [*] --> IdentifyEpic : issue URL / number
@@ -108,6 +109,25 @@ stateDiagram-v2
     }
 
     SpecReview --> [*] : report delivered
+
+    state Arc42 {
+        [*] --> MapCorpusArc42
+        MapCorpusArc42 --> ClassifyIntoSections
+        ClassifyIntoSections --> DetectDuplicatesArc42
+        DetectDuplicatesArc42 --> ProposeStructure
+        ProposeStructure --> AskUserArc42
+
+        AskUserArc42 --> ExecuteReorg : user approves
+        AskUserArc42 --> AdjustStructure : user adjusts
+        AskUserArc42 --> AbortReorg : user rejects
+
+        AdjustStructure --> ProposeStructure
+        ExecuteReorg --> VerifyReorg
+        VerifyReorg --> [*]
+        AbortReorg --> [*]
+    }
+
+    Arc42 --> [*] : reorganized
 
     state GitHubPlanning {
         [*] --> DetermineTier
@@ -219,6 +239,7 @@ Plus standalone modes:
 | "Run E2E tests" | Test Only mode (no implementation) |
 | "Decompose this plan" / "Break into phases" | Decompose — add phases to existing plan |
 | "Generate release notes" / "Changelog" | Changelog — release notes from completed plan |
+| "Organize specs" / "Arc42" | Arc42 — reorganize spec files into arc42 standard structure |
 
 ## The GitHub Integration
 
@@ -332,6 +353,13 @@ pmp/
 │   │   └── spec-review-output.md           # Architecture & spec review report
 │   └── references/
 │       └── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
+├── arc42/
+│   ├── SKILL.md                            # Arc42 spec reorganization
+│   ├── assets/
+│   │   └── reorganization-report.md        # Reorganization proposal template
+│   └── references/
+│       ├── arc42.md                        # Reorganization algorithm
+│       └── arc42-guide.md                  # Arc42 section guidance and tips
 ├── decompose/
 │   ├── SKILL.md                            # Standalone plan phasing
 │   └── references/
@@ -369,6 +397,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [yaml-bug-form.yml](../../github/assets/yaml-bug-form.yml) | GitHub Issue form: bug | github-planning.md |
 | [yaml-epic-form.yml](../../github/assets/yaml-epic-form.yml) | GitHub Issue form: epic | github-planning.md |
 | [changelog-output.md](../../changelog/assets/changelog-output.md) | Release notes template | changelog.md |
+| [reorganization-report.md](../../arc42/assets/reorganization-report.md) | Arc42 reorganization proposal template | arc42.md |
 
 ## Plan File Anatomy
 
@@ -437,6 +466,11 @@ Tell the agent what you want:
 The agent handles the rest — detecting your project type, choosing test frameworks, creating branches, and wiring up GitHub Issues.
 
 ## Changelog
+
+### 1.7.4
+
+- **`/pmp:arc42` sub-skill:** Reorganize spec/architecture files into the arc42 standard structure. Reads all files, classifies content into arc42's 12 sections, detects duplicates and contradictions, proposes a directory structure (one directory per section, one file per concern), and executes after user approval. Includes arc42-guide.md with per-section tips from the official arc42 documentation. Preserves all review annotations, adds provenance comments, and produces a verification report. Uses analysis cache for efficient re-runs.
+- **Spec-review corpus health assessment:** Phase 0 (Discovery) now computes organization health signals (concern scatter, duplicate density, cross-reference density, orphan content, fragmentation ratio). If 2+ signals exceed thresholds, the review report includes a "Corpus Health Advisory" recommending `/pmp:arc42`.
 
 ### 1.7.1
 

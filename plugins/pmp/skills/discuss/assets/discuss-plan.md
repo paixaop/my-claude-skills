@@ -45,3 +45,11 @@ Findings marked for later consideration. Not included in this plan's scope.
 | Finding | Severity | Reason |
 |---------|----------|--------|
 | [title] | [severity] | [reason if given, or "No reason specified"] |
+
+## Acknowledged & Skipped
+
+Findings resolved during discussion without spec changes. GitHub blockquote alerts have been added to the relevant spec files.
+
+| Finding | Severity | Decision | Reason | Annotated In |
+|---------|----------|----------|--------|--------------|
+| [title] | [severity] | Acknowledged / Skipped | [reason] | [spec file path] |
