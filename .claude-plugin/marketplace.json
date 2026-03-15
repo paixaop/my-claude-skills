@@ -18,6 +18,13 @@
       "description": "Offensive security analysis suite with multi-phase penetration testing, exploit development, and remediation planning",
       "version": "1.0.0",
       "author": { "name": "paixaop" }
+    },
+    {
+      "name": "product-discovery",
+      "source": "./plugins/product-discovery",
+      "description": "Multi-agent product discovery — orchestrates 8 specialized agents in parallel to produce a comprehensive product blueprint covering market validation, technical architecture, brand strategy, growth, support, UX, project planning, and domain-specific analysis",
+      "version": "1.0.1",
+      "author": { "name": "paixaop" }
     }
   ]
 }
