@@ -1,6 +1,6 @@
 ---
 name: pmp
-version: "1.7.4"
+version: "1.7.5"
 description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis), pmp:github (issues/projects), pmp:decompose (phase breakdown), pmp:changelog (release notes). This root skill routes to the right stage based on the user's input."
 ---
 

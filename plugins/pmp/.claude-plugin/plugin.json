@@ -1,7 +1,7 @@
 {
   "name": "pmp",
   "description": "Full planning lifecycle: brainstorm, write plans, review, publish to GitHub Issues, and execute with agent teams",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "author": {
     "name": "paixaop"
   },
