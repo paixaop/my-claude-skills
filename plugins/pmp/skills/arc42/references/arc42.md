@@ -191,8 +191,30 @@ Rules:
 
 - **Review annotations** (`> [!CAUTION]`, `> [!WARNING]`, `> [!NOTE]`): Keep attached to their surrounding content. When content moves, the annotation moves with it.
 - **YAML frontmatter**: Preserve if present in source files. The target file gets merged frontmatter (union of fields, flagging conflicts).
-- **Cross-references**: Links between source files that reference each other by path will need updating. Track all internal links for the cross-reference pass.
+- **Cross-references**: Links between source files that reference each other by path will need updating. Track all internal links for the cross-reference pass. See **Cross-Reference Format Rules** below.
 - **Images and diagrams**: If files reference images, note the references but don't move image files.
+
+##### Cross-Reference Format Rules
+
+All links between arc42 files MUST use **relative paths** from the file containing the link. Never use absolute paths or root-relative paths.
+
+| From | To | Format |
+|------|----|--------|
+| Master `README.md` | Section overview | `[Section Name](NN-section-name/README.md)` |
+| Section `README.md` | Master index | `[← Back to overview](../README.md)` |
+| Section `README.md` | Concern file in same section | `[Concern](concern-name.md)` |
+| Concern file | Section overview (same section) | `[← Back to section](README.md)` |
+| Concern file | Concern file in **same** section | `[Other Concern](other-concern.md)` |
+| Concern file | Concern file in **different** section | `[Other Concern](../NN-section-name/other-concern.md)` |
+| Concern file | Section overview in **different** section | `[Section Name](../NN-section-name/README.md)` |
+| Any file | Specific heading in another file | Append `#heading-slug` to the path (e.g., `[Auth Flow](../06-runtime-view/authentication-flow.md#token-refresh)`) |
+
+**Rules:**
+- Always use relative paths (`../`) — never absolute paths from repo root
+- Always include the filename — never link to a bare directory
+- Heading anchors use GitHub-style slugs: lowercase, spaces → hyphens, strip punctuation (e.g., `## Quality Goals` → `#quality-goals`)
+- When source content had a cross-reference to another source file, rewrite it to the new target path where that content landed
+- When merging content creates new implicit relationships (e.g., a concept in Section 5 references a term defined in Section 12), add cross-reference links
 
 ---
 
