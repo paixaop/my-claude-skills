@@ -184,6 +184,7 @@ Rules:
 - Only create directories for arc42 sections that have content
 - One file per concern within each section directory
 - Descriptive filenames: `<concern-slug>.md` (e.g., `authentication.md`, `data-model.md`)
+- **All links to section directories MUST include `README.md`** — use `[Section Name](NN-section-name/README.md)`, never `[Section Name](NN-section-name/)`. Directory-only links break in most renderers.
 - Preserve the parent directory location (reorganize within the same root)
 
 #### 2e. Handle Special Content
@@ -272,7 +273,7 @@ For each concern file within a section directory:
    > **Contradiction (unresolved):** [description]. Source A ([file:section]) says "[statement A]". Source B ([file:section]) says "[statement B]".
    ```
 
-6. **Update internal cross-references**: Rewrite any `[text](old-path.md)` or `[text](old-path.md#section)` links to point to the new file locations.
+6. **Update internal cross-references**: Rewrite any `[text](old-path.md)` or `[text](old-path.md#section)` links to point to the new file locations. When linking to a section directory, always link to its `README.md` (e.g., `[Building Block View](05-building-block-view/README.md)`) — never use bare directory paths.
 
 #### 4c. Create Master Index
 
@@ -287,8 +288,8 @@ Organized following the [arc42](https://arc42.org) template.
 
 | # | Section | Description |
 |---|---------|-------------|
-| 1 | [Introduction & Goals](01-introduction-and-goals/) | [1-sentence description] |
-| 5 | [Building Block View](05-building-block-view/) | [1-sentence description] |
+| 1 | [Introduction & Goals](01-introduction-and-goals/README.md) | [1-sentence description] |
+| 5 | [Building Block View](05-building-block-view/README.md) | [1-sentence description] |
 | ... | | |
 
 ---
