@@ -18,9 +18,9 @@
 
 ## Section Assignment Table
 
-| Source File | Source Section | Arc42 Section | Concern | Word Count |
-|-------------|---------------|---------------|---------|------------|
-| [file] | [heading] | [1-12 or 99] | [concern name] | [count] |
+| Source File | Source Section | Arc42 Section | Concern | Word Count | Est. Lines |
+|-------------|---------------|---------------|---------|------------|------------|
+| [file] | [heading] | [1-12 or 99] | [concern name] | [count] | [lines] |
 
 ---
 
@@ -32,13 +32,15 @@
 ├── NN-section-name/
 │   ├── README.md
 │   ├── concern-a.md
-│   └── concern-b.md
+│   ├── concern-b-overview.md        ← split (est. 800 lines)
+│   ├── concern-b-sub-topic.md       ← split
+│   └── concern-c.md
 └── ...
 ```
 
-| # | Section Directory | Concern Files | Source Files | Estimated Words |
-|---|-------------------|---------------|-------------|-----------------|
-| 1 | `01-introduction-and-goals/` | [file list] | [source-a.md, source-b.md] | [count] |
+| # | Section Directory | Concern Files | Source Files | Estimated Words | Split? |
+|---|-------------------|---------------|-------------|-----------------|--------|
+| 1 | `01-introduction-and-goals/` | [file list] | [source-a.md, source-b.md] | [count] | No |
 
 ---
 
