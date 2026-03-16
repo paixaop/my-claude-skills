@@ -15,7 +15,8 @@ You are a technical writer and information architect consolidating a documentati
 3. **Preserve review annotations** — all `> [!CAUTION]`, `> [!WARNING]`, `> [!NOTE]` blocks must survive intact, attached to their relevant content
 4. **Flag contradictions, don't resolve them** — when two sources say conflicting things, include both with a `> [!WARNING]` annotation and let the user decide
 5. **Simplify structure** — bias toward fewer, cleaner files within each section directory
-6. **Audit trail** — every piece of content traces back to its source file and section
+6. **File size limit** — no concern file should exceed 500 lines; split large concerns into multiple files by sub-heading
+7. **Audit trail** — every piece of content traces back to its source file and section
 
 ## Inputs
 
@@ -127,11 +128,13 @@ Within each arc42 section, identify distinct **concerns** — logical groupings 
 
 Build a **section assignment table**:
 
-| Source File | Source Section | Arc42 Section | Concern | Word Count |
-|-------------|---------------|---------------|---------|------------|
-| [file] | [heading] | [1-12] | [concern name] | [count] |
+| Source File | Source Section | Arc42 Section | Concern | Word Count | Est. Lines |
+|-------------|---------------|---------------|---------|------------|------------|
+| [file] | [heading] | [1-12] | [concern name] | [count] | [lines] |
 
 Content that doesn't map to any arc42 section → assign to section `99` (Appendix).
+
+Estimate lines per concern: `Est. Lines ≈ Word Count / 5` (accounts for headings, lists, code blocks, and whitespace).
 
 Report the assignment table to the user.
 
@@ -187,6 +190,47 @@ Rules:
 - **All links to section directories MUST include `README.md`** — use `[Section Name](NN-section-name/README.md)`, never `[Section Name](NN-section-name/)`. Directory-only links break in most renderers.
 - Preserve the parent directory location (reorganize within the same root)
 
+#### File Splitting Rules
+
+When a concern's estimated line count exceeds **500 lines**, split it into multiple files within the same section directory:
+
+1. **Identify split boundaries** — use the concern's top-level sub-headings (`##` within the concern) as split points. Each sub-heading group becomes its own file.
+
+2. **Naming convention** — flat files with pattern `<concern>-<sub-topic>.md`:
+   ```
+   05-building-block-view/
+   ├── README.md
+   ├── authentication-overview.md        ← split from authentication
+   ├── authentication-flows.md           ← split
+   ├── authentication-token-management.md ← split
+   ├── data-model.md                     ← not split (under 500 lines)
+   └── api-gateway.md
+   ```
+
+3. **Overview file** — the first split file (`<concern>-overview.md`) starts with a navigation index:
+   ```markdown
+   ## Authentication
+
+   > This concern is split across multiple files:
+   > - [Overview](authentication-overview.md) (this file)
+   > - [Authentication Flows](authentication-flows.md)
+   > - [Token Management](authentication-token-management.md)
+   ```
+
+4. **Section README grouping** — list split files grouped under their parent concern:
+   ```markdown
+   ## Contents
+   - **Authentication**
+     - [Overview](authentication-overview.md)
+     - [Flows](authentication-flows.md)
+     - [Token Management](authentication-token-management.md)
+   - [Data Model](data-model.md)
+   ```
+
+5. **Minimum split size** — don't create split files under 50 lines. Merge small sub-heading sections with adjacent ones.
+
+6. **Fallback** — if the concern has no `##` sub-headings, split at ~400-line paragraph boundaries: `<concern>-part-1.md`, `<concern>-part-2.md`.
+
 #### 2e. Handle Special Content
 
 - **Review annotations** (`> [!CAUTION]`, `> [!WARNING]`, `> [!NOTE]`): Keep attached to their surrounding content. When content moves, the annotation moves with it.
@@ -208,6 +252,8 @@ All links between arc42 files MUST use **relative paths** from the file containi
 | Concern file | Concern file in **different** section | `[Other Concern](../NN-section-name/other-concern.md)` |
 | Concern file | Section overview in **different** section | `[Section Name](../NN-section-name/README.md)` |
 | Any file | Specific heading in another file | Append `#heading-slug` to the path (e.g., `[Auth Flow](../06-runtime-view/authentication-flow.md#token-refresh)`) |
+| Split file | Other split file in **same** concern | `[Sub-Topic](concern-sub-topic.md)` |
+| Split file | Overview file of same concern | `[← Concern Overview](concern-overview.md)` |
 
 **Rules:**
 - Always use relative paths (`../`) — never absolute paths from repo root
@@ -298,6 +344,12 @@ For each concern file within a section directory:
 
 6. **Update internal cross-references**: Rewrite any `[text](old-path.md)` or `[text](old-path.md#section)` links to point to the new file locations. When linking to a section directory, always link to its `README.md` (e.g., `[Building Block View](05-building-block-view/README.md)`) — never use bare directory paths.
 
+7. **Handle split files**: When writing a concern marked for splitting in Phase 2d:
+   - Create each split file with standard header, provenance, content assembly, annotations, and cross-references
+   - Add the concern navigation index to the overview file (first split file)
+   - Ensure cross-references between split files use relative paths within the same directory
+   - Each split file's provenance comment lists only the source sections it contains
+
 #### 4c. Create Master Index
 
 Create a top-level `README.md` in the target directory:
@@ -362,6 +414,7 @@ Present to the user:
 | Duplicates merged | D |
 | Contradictions flagged | C |
 | Review annotations preserved | A |
+| Concerns split (>500 lines) | S |
 | Broken cross-references | B |
 
 ### Arc42 Structure Created

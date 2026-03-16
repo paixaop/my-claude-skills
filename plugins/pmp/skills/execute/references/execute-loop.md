@@ -107,9 +107,13 @@ stateDiagram-v2
         CreatePR --> UpdateFrontmatter : no GH issues
         PRClosesIssues --> UpdateFrontmatter
         UpdateFrontmatter --> ArchivePlan : move to docs/plans/implemented/
-        ArchivePlan --> UpdateReview : if source_review exists
-        ArchivePlan --> [*] : no source_review
-        UpdateReview --> [*]
+        ArchivePlan --> CommitPlanArchive
+        CommitPlanArchive --> UpdatePRWithPlan : PR was created
+        CommitPlanArchive --> UpdateReview : no PR
+        UpdatePRWithPlan --> UpdateReview : if source_review exists
+        UpdatePRWithPlan --> OfferRelease : no source_review
+        UpdateReview --> OfferRelease
+        OfferRelease --> [*]
     }
 
     Completion --> [*] : done
@@ -585,7 +589,23 @@ Total           | 12/12     | ALL PASS
    mkdir -p docs/plans/implemented
    mv docs/plans/<plan-file>.md docs/plans/implemented/<plan-file>.md
    ```
-9. **Update source review file (if applicable):** Check if the plan has a `source_review` field in its frontmatter (set by discuss-generated plans). If yes:
+9. **Commit and push plan archive:**
+   ```bash
+   git add docs/plans/ docs/plans/implemented/
+   git commit -m "chore(<scope>): archive plan <plan-name>"
+   git push
+   ```
+10. **Update PR with plan link (if PR was created):**
+    Append a "Plan" section to the PR body linking to the archived plan file:
+    ```bash
+    gh pr edit <pr-number> --body "$(gh pr view <pr-number> --json body -q .body)
+
+    ## Plan
+
+    [<plan-name>](docs/plans/implemented/<plan-file>.md)"
+    ```
+    Skip this step if the user declined PR creation.
+11. **Update source review file (if applicable):** Check if the plan has a `source_review` field in its frontmatter (set by discuss-generated plans). If yes:
    - Read the source review file
    - Append a `## Resolution` section documenting:
      - **Fixed:** Which findings were fixed, with a brief description of what was done
@@ -594,8 +614,8 @@ Total           | 12/12     | ALL PASS
      - **Decisions:** Key decisions made during discussion and execution, with explanations
      - **Date:** Resolution date and link to the PR (if created)
    - This creates a complete audit trail from review → discussion → resolution
-10. **Offer release notes:** Ask the user: "Want me to generate release notes for this implementation?" If yes, read [changelog.md](../../changelog/references/changelog.md) and follow it — the plan file and PR number are already available from this session.
-11. **Announce** with completion message from [config.md](../../pmp/config.md) Stage Announcements
+12. **Offer release notes:** Ask the user: "Want me to generate release notes for this implementation?" If yes, read [changelog.md](../../changelog/references/changelog.md) and follow it — the plan file and PR number are already available from this session.
+13. **Announce** with completion message from [config.md](../../pmp/config.md) Stage Announcements
 
 ---
 
