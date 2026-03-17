@@ -1,7 +1,7 @@
 ---
 name: pmp
 version: "1.7.5"
-description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis), pmp:github (issues/projects), pmp:decompose (phase breakdown), pmp:changelog (release notes). This root skill routes to the right stage based on the user's input."
+description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis orchestrator), pmp:spec-architecture (architecture quality), pmp:spec-security (threat modeling), pmp:spec-operations (performance/scalability), pmp:spec-implementability (coding-readiness gate), pmp:github (issues/projects), pmp:decompose (phase breakdown), pmp:changelog (release notes). This root skill routes to the right stage based on the user's input."
 ---
 
 # PMP — Plan
@@ -22,7 +22,11 @@ For direct invocation when you know which stage you need:
 | `/pmp:plan` | Generate implementation plan from spec, roadmap, or GitHub Issues |
 | `/pmp:review` | Skeptical senior-engineer review of an existing plan |
 | `/pmp:execute` | Code-test-fix loop, implements plan with agent teams. Also: test-only mode |
-| `/pmp:spec-review` | Deep 15-phase architecture & spec analysis (standalone) |
+| `/pmp:spec-review` | Full architecture & spec analysis — orchestrates all sub-reviews (standalone) |
+| `/pmp:spec-architecture` | Architecture quality: simplicity, consistency, invariants, state machines |
+| `/pmp:spec-security` | Security: STRIDE threat modeling, attack simulation, AI red team |
+| `/pmp:spec-operations` | Operations: performance, resources, failure modes, scalability, operability |
+| `/pmp:spec-implementability` | Implementability: 11-criteria production-readiness gate |
 | `/pmp:discuss` | Structured walkthrough of review findings, collect fixes into a plan |
 | `/pmp:github` | Publish plan as GitHub Issues/Projects, or sync changes to existing issues |
 | `/pmp:decompose` | Break large plans into dependency-ordered phases |
@@ -40,7 +44,11 @@ When the user's intent maps to a specific stage, read the reference for that sta
 | GitHub issue URL, epic number, "plan from issues" | Plan (Issues Mode) | [generate-plans.md](../plan/references/generate-plans.md) |
 | Existing plan file, "review this" | Review | [review.md](../review/references/review.md) |
 | "execute plan", "implement", "start coding" | Execute | [execute-loop.md](../execute/references/execute-loop.md) |
-| "review specs", "architecture review", "threat model" | Spec Review | [spec-review.md](../spec-review/references/spec-review.md) |
+| "review specs", "architecture review", "full spec review" | Spec Review (full) | [spec-review.md](../spec-review/references/spec-review.md) |
+| "review architecture", "simplicity", "consistency check" | Spec Architecture | [spec-architecture.md](../spec-architecture/references/spec-architecture.md) |
+| "threat model", "security review", "red team" | Spec Security | [spec-security.md](../spec-security/references/spec-security.md) |
+| "operations review", "performance review", "scalability" | Spec Operations | [spec-operations.md](../spec-operations/references/spec-operations.md) |
+| "implementability", "ready to code", "spec completeness" | Spec Implementability | [spec-implementability.md](../spec-implementability/references/spec-implementability.md) |
 | "create issues", "make an epic" | GitHub | [github-planning.md](../github/references/github-planning.md) |
 | "sync issues", "update issues" | GitHub (Sync) | [sync-issues.md](../github/references/sync-issues.md) |
 | "discuss review", "walk through findings", "go through the review" | Discuss | [discuss.md](../discuss/references/discuss.md) |

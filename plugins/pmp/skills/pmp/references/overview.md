@@ -347,12 +347,37 @@ pmp/
 │   └── references/
 │       ├── github-planning.md              # Issue/Epic/Project creation
 │       └── sync-issues.md                  # Sync plan changes to existing issues
-├── spec-review/
+├── spec-review/                              # Orchestrator — runs discovery, dispatches sub-commands
 │   ├── SKILL.md
 │   ├── assets/
-│   │   └── spec-review-output.md           # Architecture & spec review report
+│   │   └── spec-review-output.md           # Consolidated report template
 │   └── references/
-│       └── spec-review.md                  # Architecture & spec review — 15-phase deep analysis
+│       ├── spec-review.md                  # Orchestrator logic — discovery + routing + remediation
+│       └── discovery.md                    # Shared Phase 0-1 + context management
+├── spec-architecture/                        # Sub-command: architecture quality
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── spec-architecture-output.md     # Architecture report template
+│   └── references/
+│       └── spec-architecture.md            # Simplicity, consistency, invariants, state machines
+├── spec-security/                            # Sub-command: security analysis
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── spec-security-output.md         # Security report template
+│   └── references/
+│       └── spec-security.md                # STRIDE, attack simulation, AI red team
+├── spec-operations/                          # Sub-command: operations analysis
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── spec-operations-output.md       # Operations report template
+│   └── references/
+│       └── spec-operations.md              # Performance, resources, failures, scalability, operability
+├── spec-implementability/                    # Sub-command: coding-readiness gate
+│   ├── SKILL.md
+│   ├── assets/
+│   │   └── spec-implementability-output.md # Implementability report template
+│   └── references/
+│       └── spec-implementability.md        # 11-criteria production-readiness assessment
 ├── arc42/
 │   ├── SKILL.md                            # Arc42 spec reorganization
 │   ├── assets/

@@ -1,25 +1,36 @@
 ---
 name: spec-review
-description: "Deep architecture and specification review — a principal architect analyzing system design. Use when the user says 'review specs', 'spec review', 'architecture review', 'design review', 'review documentation', 'check specs', 'threat model', 'red team', 'find inconsistencies', 'simplify architecture', or wants a thorough analysis of an existing system's specifications. Runs 15-phase analysis: architectural simplicity, consistency, determinism, configuration validation, invariants, state machines, threat modeling, AI red team (for AI systems), performance, resource utilization, failure modes, scalability, operability, and remediation. Standalone workflow — produces a report, does not feed into plan generation or execution."
+description: "Orchestrator for deep architecture & spec analysis — runs discovery once, then dispatches to spec-architecture, spec-security, spec-operations, and spec-implementability sub-commands. Produces a consolidated report. Use when the user says 'review specs', 'spec review', 'architecture review', 'design review', 'review documentation', 'check specs', 'full spec review', or wants a thorough analysis of an existing system's specifications. For focused analysis, invoke sub-commands directly: pmp:spec-architecture (simplicity, consistency, invariants), pmp:spec-security (threat modeling, attack simulation), pmp:spec-operations (performance, scalability, operability), pmp:spec-implementability (coding-readiness gate). Standalone workflow — produces a report, does not feed into plan generation or execution."
 ---
 
-# PMP: Spec Review
+# PMP: Spec Review — Orchestrator
 
-Principal architect review of technical specifications. Reconstructs the system model, then runs a 15-phase deep analysis producing a comprehensive report.
+Full architecture & specification review. Runs discovery once, dispatches four focused sub-commands, consolidates findings into remediation, and produces a unified report.
 
 Standalone workflow — does not feed into plan generation or execution.
 
-Use agent teams (Task tool) ONLY for parallel file reading when the corpus is large. All analysis runs in the main controller context — do not spawn agents for analysis phases (they would re-read all files). Track progress with TodoWrite throughout.
+## Sub-Commands
+
+For focused analysis, invoke sub-commands directly:
+
+| Sub-Command | Focus |
+|-------------|-------|
+| `/pmp:spec-architecture` | Simplicity, consistency, determinism, invariants, state machines |
+| `/pmp:spec-security` | STRIDE threat modeling, attack simulation, AI red team |
+| `/pmp:spec-operations` | Performance, resources, failure modes, scalability, operability |
+| `/pmp:spec-implementability` | 11-criteria production-readiness gate |
 
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md). Check `docs/.cache/spec-review/manifest.json`. Load cached summaries for unchanged files, only read changed/new files in full. This is mandatory, not optional.
-3. Read [spec-review.md](references/spec-review.md) and follow it completely — it contains the full 15-phase analysis methodology
+2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md)
+3. Read [spec-review.md](references/spec-review.md) and follow it — orchestrates discovery, sub-commands, remediation, and report
 4. Loops on discussion until user says "done"
 
 ## Key References
 
+- Orchestration logic: [spec-review.md](references/spec-review.md)
+- Shared discovery: [discovery.md](references/discovery.md)
 - Report template: [spec-review-output.md](assets/spec-review-output.md)
 
 ## Shared Resources
