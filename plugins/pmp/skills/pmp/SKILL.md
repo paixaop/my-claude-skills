@@ -93,4 +93,6 @@ Non-negotiable across all modes:
 
 All constants (paths, thresholds, labels, commits, context management) live in [config.md](config.md). Read it before any stage.
 
+For spec file formatting and linking rules (one file per concept, summary blocks, cross-references, naming, deduplication): [single-source-of-truth.md](references/single-source-of-truth.md).
+
 For lifecycle diagrams, file tree, assets table, and changelog: [overview.md](references/overview.md).

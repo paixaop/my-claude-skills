@@ -17,13 +17,15 @@ Use agent teams (Task tool) ONLY for parallel file reading when the corpus is la
 
 1. Read [config.md](../pmp/config.md) for current constants
 2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md). Check `docs/.cache/arc42/manifest.json`. Load cached summaries for unchanged files, only read changed/new files in full. This is mandatory, not optional.
-3. Read [arc42.md](references/arc42.md) and follow it completely — it contains the full reorganization algorithm
-4. Present reorganization proposal to user for approval/adjustment
-5. Execute approved reorganization
-6. Verify no content was lost
+3. Read [single-source-of-truth.md](../pmp/references/single-source-of-truth.md) — all reorganized files must follow these formatting and linking rules
+4. Read [arc42.md](references/arc42.md) and follow it completely — it contains the full reorganization algorithm
+5. Present reorganization proposal to user for approval/adjustment
+6. Execute approved reorganization
+7. Verify no content was lost
 
 ## Key References
 
+- Spec file formatting and linking rules: [single-source-of-truth.md](../pmp/references/single-source-of-truth.md)
 - Arc42 section guidance and tips: [arc42-guide.md](references/arc42-guide.md)
 - Reorganization report template: [reorganization-report.md](assets/reorganization-report.md)
 
