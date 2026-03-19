@@ -312,7 +312,7 @@ For each arc42 section that has content:
 
 For each concern file within a section directory:
 
-1. **Write the header**: Title heading matching the concern name, plus provenance:
+1. **Write the file using the SSoT file format** from [single-source-of-truth.md](../../pmp/references/single-source-of-truth.md#file-format): provenance comment, H1 concept name, summary paragraph, `Depends on` links, `Key sections` list, then `---` before full content. Plus provenance:
    ```markdown
    <!-- Consolidated from: source-a.md, source-b.md on YYYY-MM-DD -->
    ```
