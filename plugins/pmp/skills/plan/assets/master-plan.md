@@ -98,3 +98,9 @@ epic:
 > | Review a sub-plan | `pmp:plan-review` | Point at specific sub-plan file |
 > | Execute Phase 1 | `pmp:execute` | Point at Phase 1 sub-plan file |
 > | Generate test harness | `pmp:test-harness` | If not yet generated |
+
+<!-- Include only when generated as master-plan-only (no sub-plans yet) -->
+
+> **Reminder:** This master plan was generated without detailed sub-plans.
+> To generate sub-plans and begin implementation, run `pmp:execute` pointed at this file.
+> The execute loop will generate each phase's sub-plan before implementing it.

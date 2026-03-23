@@ -221,9 +221,32 @@ Use the AskQuestion tool. Do NOT proceed with ambiguity:
 - Clarify any unclear requirements
 - Confirm feature priority/ordering if not specified in the roadmap
 
+### 3b. Plan Depth Choice
+
+After all clarifying questions are resolved and the plan has **5 or more features**, ask the user with AskQuestion:
+
+> "How detailed should this plan be?"
+> 1. **Master plan only** — phase overview with dependency graph and feature summaries. Detailed sub-plans are generated later during execution.
+> 2. **Full plan with sub-plans** — master plan + detailed sub-plan files for each phase, ready for immediate execution.
+
+**Rules:**
+- For plans with < 5 features (no phases): skip this question — generate the single detailed plan as today
+- For plans with 5+ features: always ask this question
+- When the spec corpus has 50+ files (per [config.md](../../pmp/config.md) Large Spec Threshold), recommend the full plan: "This is a large specification (N files). I recommend the full plan with sub-plans."
+- Record the user's choice — it controls Phase 4 and Phase 6 behavior
+
 ### 4. Generate the Plan
 
 Follow the Plan Structure below. For each feature, write both the implementation spec and its E2E test cases together.
+
+**If master plan only was chosen in step 3b:**
+- Generate only the master plan using [master-plan.md](../assets/master-plan.md) template
+- Feature entries in the Spec Coverage Summary show feature names, spec sources, and affected files — but skip full AC detail, task tables, and task dependency graphs
+- Skip sub-plan file generation entirely
+
+**If full plan with sub-plans was chosen in step 3b:**
+- Generate master plan using [master-plan.md](../assets/master-plan.md) template
+- Generate one sub-plan per phase — each is a normal plan file scoped to that phase's features (see Large-Spec Plan Decomposition below)
 
 ### 4b. Auto-Phase (5+ Features)
 
@@ -249,84 +272,17 @@ Walk through every acceptance criterion and confirm it has an E2E test case dire
 - **Frontmatter (MANDATORY):** Every plan MUST include YAML frontmatter as the very first content in the file (see [config.md](../../pmp/config.md) Plan Frontmatter). Set `status: draft` and `created_at` to the current UTC timestamp. All other fields are left blank.
 - **GitHub Issues Mode:** Include the pre-filled GitHub Issues table (see [assets/github-issues-table.md](../../pmp/assets/github-issues-table.md)) in the plan file. Add `**Source:** GitHub Epic #<number>` to the plan header.
 
+**If full plan or single plan (< 5 features):**
 After saving, use AskQuestion: "Plan saved to docs/plans/. Ready to move to the review stage?"
+
+**If master plan only (chosen in step 3b):**
+After saving, use AskQuestion: "Master plan saved to docs/plans/. Detailed sub-plans will be generated when you execute this plan with `/pmp:execute`. Ready for plan review?"
 
 Once confirmed, read [review.md](../../plan-review/references/review.md) and follow it. Do NOT skip plan review.
 
 ---
 
-## Extend Mode
-
-When a plan already exists and the user provides an updated roadmap:
-
-### 1. Read Existing Plan
-
-Read the plan completely.
-
-### 2. Classify Roadmap Items
-
-For each item in the new/updated roadmap:
-
-- **New feature**: doesn't exist in current plan
-- **Modified feature**: changes behavior of an existing feature
-- **Removed feature**: no longer needed (user must confirm removal)
-
-### 3. Apply Changes
-
-**New features:**
-- Append with next sequential feature number (implementation spec + E2E tests together)
-- Add dependency links to existing features where applicable
-
-**Modified features:**
-- Update the existing feature spec in-place
-- Mark with `**Updated: YYYY-MM-DD**`
-- Update the E2E test cases under that feature to match the new behavior
-
-**Removed features:**
-- Mark as `**Removed: YYYY-MM-DD**` (don't delete -- audit trail)
-- Mark the E2E test cases as skipped
-
-### 4. Re-verify Coverage
-
-Walk through every active (non-removed) feature and confirm all ACs have test cases.
-
-### 5. Present Change Summary
-
-Before saving, present a structured diff summary to the user for confirmation:
-
-```
-## Plan Changes: [Plan Name]
-
-### Added
-| Feature | Dependencies | ACs | E2E Tests |
-|---------|-------------|-----|-----------|
-| Feature N: [Name] | [deps] | [count] | [count] |
-
-### Modified
-| Feature | What Changed |
-|---------|-------------|
-| Feature K: [Name] | [sections changed — e.g., "AC-K.2 updated, new affected file"] |
-
-### Removed
-| Feature | Reason |
-|---------|--------|
-| Feature J: [Name] | [reason from user or roadmap] |
-
-### Unchanged
-- Feature 1, Feature 2, ...
-```
-
-Use AskQuestion: "Here are the planned changes. Apply them?"
-
-### 6. Save Updated Plan
-
-Same filename. Preserve existing frontmatter — do NOT reset `status` or timestamps from prior stages. Add a changelog section below the frontmatter/header:
-
-```markdown
-## Changelog
-
-- **YYYY-MM-DD**: Added Feature N, Feature M. Modified Feature K. Removed Feature J.
-```
+See [extend-mode.md](extend-mode.md) for the complete Extend Mode workflow (updating existing plans with new roadmap items).
 
 ---
 
@@ -494,15 +450,16 @@ If the test passes immediately in RED, the test is wrong — it tests existing b
 
 ### Large-Spec Plan Decomposition
 
-When the spec corpus has 50+ files (per [config.md](../../pmp/config.md) Large Spec Threshold):
+When the user chose **full plan with sub-plans** in step 3b (plans with 5+ features):
 
-1. **Announce:** "This is a large specification (N files). I'll generate a master plan with sub-plans per phase."
-2. **Group specs** by architectural concern (building blocks, runtime, crosscutting, deployment, etc.)
-3. **Build dependency graph** between groups
-4. **Propose phases** to user — each phase = one group or set of tightly coupled groups. Use AskQuestion: "I've identified P phases: [list]. Does this grouping look right?"
-5. **Generate master plan** using [master-plan.md](../assets/master-plan.md) template — contains spec coverage summary, phase dependency graph, cross-phase traceability
-6. **Generate one sub-plan per phase** — each is a normal plan file scoped to that phase's spec files. Filename: per [config.md](../../pmp/config.md) Sub-Plan Filename Pattern
-7. **Announce progress:** "Phase N sub-plan generated (M features). Moving to Phase N+1."
+1. **Group specs** by architectural concern (building blocks, runtime, crosscutting, deployment, etc.)
+2. **Build dependency graph** between groups
+3. **Propose phases** to user — each phase = one group or set of tightly coupled groups. Use AskQuestion: "I've identified P phases: [list]. Does this grouping look right?"
+4. **Generate master plan** using [master-plan.md](../assets/master-plan.md) template — contains spec coverage summary, phase dependency graph, cross-phase traceability
+5. **Generate one sub-plan per phase** — each is a normal plan file scoped to that phase's spec files. Filename: per [config.md](../../pmp/config.md) Sub-Plan Filename Pattern
+6. **Announce progress:** "Phase N sub-plan generated (M features). Moving to Phase N+1."
+
+If the user chose **master plan only** in step 3b, skip this section — the master plan was already generated in Phase 4.
 
 Sub-plans include:
 - `**Master Plan:** [link]` in header
@@ -510,35 +467,4 @@ Sub-plans include:
 - Spec traceability (subset of master)
 - Test harness references (subset of harness for this phase's components)
 
-### Orchestrator Agent Execution Model
-
-Plans are structured for a three-tier execution model:
-
-```
-Controller (session, max 3 features per batch)
-  └── Feature Orchestrator Agent (one per feature)
-      ├── Dispatches single-file task agents (parallel where dependencies allow)
-      ├── Waits for dependency resolution, dispatches next wave
-      ├── After all impl tasks: runs spec review inline
-      ├── Dispatches test task agents (parallel where independent)
-      ├── Verifies Red-Green-Refactor: each test MUST fail before passing
-      ├── After all tests: runs code quality review inline
-      └── Reports structured summary to controller
-```
-
-The orchestrator does NOT implement code — it only dispatches, reviews, and coordinates. Implementation agents are fresh subagents per task.
-
-Features with no mutual dependencies (per feature dependency matrix) execute as parallel orchestrators.
-
-### SSoT Compliance Rules
-
-When the project has spec files with SSoT conventions, every plan MUST follow these rules so the executing agent maintains spec integrity:
-
-- **Reference canonical sources** — Every feature that implements a spec-defined behavior must link to the canonical spec file (from the SSoT index). Never reference duplicates, summaries, or inline copies.
-- **One concept = one file** — If a feature adds a new architectural concept, the plan must include a task to create its canonical spec file. No new concepts defined only in code comments or inline docs.
-- **Update specs alongside code** — If a feature changes spec-owned behavior, the plan must include an explicit task to update the canonical spec file. Code changes without spec updates are incomplete.
-- **No duplication** — Plan tasks must never instruct the agent to duplicate spec content into other files. Cross-reference with section-level links (`file.md#section`) instead.
-- **Update the SSoT index** — If the plan creates or removes spec files, include a task to update `spec-index.md`.
-- **Stable anchors** — If a plan task renames a heading in a spec file, it must include updating all inbound cross-reference links. Use grep to find them.
-- **Section-level links** — All cross-references in plan tasks must use `file.md#section` format, not bare file links, so the executing agent links to the exact location.
-- **No magic numbers** — Numeric literals in plan tasks (thresholds, limits, timeouts) must reference a named setting from the settings catalog. If the setting doesn't exist yet, include a task to add it.
+See [execution-model.md](execution-model.md) for the orchestrator agent execution model and SSoT compliance rules.
