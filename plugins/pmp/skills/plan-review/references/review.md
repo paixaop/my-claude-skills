@@ -150,6 +150,17 @@ Create a TodoWrite with these items and check each:
 - [ ] Migration is idempotent or guarded against re-runs
 - [ ] Rollback plan tested — down migration restores previous state without data loss
 
+### Spec Fidelity
+- [ ] Every feature has a Spec Source field linking to the exact spec section(s)
+- [ ] Every AC quotes or paraphrases the spec requirement — not rewritten generically in the agent's own words
+- [ ] Normative language preserved: spec's MUST stays MUST, SHOULD stays SHOULD — never downgraded
+- [ ] Spec Traceability section exists and covers all spec sections
+- [ ] No uncovered spec sections without explicit "intentional" justification
+- [ ] No gold-plated features without spec source
+- [ ] Error responses specify HTTP status, body schema, error code — not "returns an error"
+- [ ] Thresholds reference named settings from the settings catalog — not "rejects large requests"
+- [ ] State transitions specify from/to/trigger/side-effects — not "updates the status"
+
 ### SSoT Compliance (when project has spec files)
 - [ ] SSoT index was consulted — plan features reference canonical spec files, not duplicates or summaries
 - [ ] Features that implement spec-defined behavior link to the canonical source (`file.md#section`)
@@ -160,6 +171,24 @@ Create a TodoWrite with these items and check each:
 - [ ] If plan renames a heading in a spec file, it includes updating all inbound cross-reference links
 - [ ] Numeric literals (thresholds, limits, timeouts) reference named settings from the settings catalog
 - [ ] All cross-references use `file.md#section` format, not bare file links
+
+### Testing Completeness
+- [ ] Every feature explicitly lists which testing layers apply (unit/module/integration/E2E) with rationale for each
+- [ ] Module tests exist for self-contained components (auth, policy engine, config loader)
+- [ ] Integration tests exist for features touching multiple components
+- [ ] Performance test plan section exists when spec defines latency/throughput/concurrency targets
+- [ ] Resilience test plan section exists when spec defines failure handling/retry/circuit breakers
+- [ ] Fuzz test plan section exists when features include parsers or protocol decoders
+- [ ] When test harness exists: ACs reference harness test IDs, not invented test cases
+- [ ] All ACs structured as Red-Green-Refactor (RED: test fails → GREEN: minimal impl → REFACTOR: clean up)
+
+### Parallelism & Task Structure
+- [ ] Every task targets exactly one file (no multi-file tasks)
+- [ ] Task dependency column populated for every task
+- [ ] Task dependency graph (ASCII) present for every feature
+- [ ] Feature dependency matrix present at plan level
+- [ ] Independent features marked as parallelizable
+- [ ] No circular dependencies in task or feature graphs
 
 ### Agent Readability
 - [ ] Every step has exactly one interpretation — no "should", "might", "consider", "as needed" without defining what that means

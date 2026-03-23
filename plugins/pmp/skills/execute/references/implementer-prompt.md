@@ -32,14 +32,25 @@ Task tool (generalPurpose):
 
     If you have questions about requirements, approach, or dependencies — ask now.
 
+    ## Scope
+
+    You are implementing exactly ONE file: [file path]
+    Action: [Create | Modify]
+
     ## Your Job
 
-    1. Implement exactly what the task specifies
-    2. Write unit/integration tests following TDD (red-green cycle). E2E tests are handled separately — do NOT write E2E tests.
-    3. Verify: build passes, lint clean, tests pass (use concise output flags)
-    4. Commit with conventional commit message: feat(<scope>): <feature>
-    5. Self-review: completeness, quality, YAGNI, test coverage, security
-    6. Fix any self-review issues before reporting
+    1. Implement exactly what the task specifies for THIS FILE ONLY — do not touch other files
+    2. **Red-Green-Refactor for test files:**
+       - Write the test FIRST
+       - Run it and verify it FAILS (RED) — this proves the test catches the missing feature
+       - Write minimal implementation to make the test pass (GREEN)
+       - Run it and verify it PASSES
+       - Refactor if needed, verify tests STILL PASS (REFACTOR)
+       - If the test passes immediately in RED, the test is wrong — fix it before proceeding
+    3. **For implementation files:** Write the code, then verify the corresponding test (if already written by a prior task agent) passes
+    4. Verify: build passes, lint clean, tests pass (use concise output flags)
+    5. Commit with conventional commit message: feat(<scope>): <feature>
+    6. Self-review: does this match the spec requirements quoted in the AC?
     7. Report back using the EXACT format below
 
     While working: if you encounter something unexpected, ask — don't guess.
@@ -55,8 +66,10 @@ Task tool (generalPurpose):
     ## Report Format (MANDATORY — use this exact structure)
 
     ```
-    FILES: [comma-separated list of changed file paths]
+    FILE: [the single file path this task targeted]
+    ACTION: [Created | Modified]
     TESTS: [N passed, M failed]
+    RGR: [RED: test failed as expected | SKIP: not a test task] → [GREEN: test passes] → [REFACTOR: still passes | SKIP: no refactor needed]
     COMMIT: [short SHA]
     ISSUES: none | [1-sentence description per issue, max 3]
     BLOCKED: no | [1-sentence reason]

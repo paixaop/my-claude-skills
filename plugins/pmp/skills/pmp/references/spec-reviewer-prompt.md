@@ -40,6 +40,12 @@ Task tool (generalPurpose, readonly: true, model: fast):
 
     Read the implementation code and verify:
 
+    **Spec fidelity:**
+    - Does the implementation match the spec requirements QUOTED in the plan's ACs?
+    - Does the code use the exact setting names from the settings catalog (no magic numbers)?
+    - Do error responses match the HTTP status, body schema, and error codes specified in the AC?
+    - Do state transitions match the from/to/trigger/side-effects specified?
+
     **Missing requirements:**
     - Everything requested was implemented?
     - Requirements skipped or missed?
@@ -51,10 +57,16 @@ Task tool (generalPurpose, readonly: true, model: fast):
     **Misunderstandings:**
     - Requirements interpreted differently than intended?
 
+    **Red-Green-Refactor compliance (for test tasks):**
+    - Did the test agent's report show RED (test failed) before GREEN (test passed)?
+    - If RGR shows "test passed immediately" — flag as non-compliant
+
     ## Report Format (MANDATORY — use this exact structure)
 
     ```
     VERDICT: ✅ compliant | ❌ issues found
+    SPEC_MATCH: ✅ matches quoted requirements | ❌ deviates [brief description]
+    RGR_CHECK: ✅ RED confirmed | ⬜ not a test task | ❌ test passed without RED
     MISSING: none | [bullet per item with file:line]
     EXTRA: none | [bullet per item with file:line]
     MISUNDERSTOOD: none | [bullet per item with file:line]

@@ -4,6 +4,13 @@
 
 **Behavior:** [What it does, user-visible outcomes]
 
+**Spec Source:** [file.md#section](file.md#section), [file2.md#section](file2.md#section)
+
+**Spec Requirements:**
+> - [Quoted requirement from spec using normative language]
+> - [e.g., "The middleware MUST reject requests without a valid JWT token with HTTP 401"]
+> - [e.g., "Rate limiting MUST use the `settings.security.rate_limit_rpm` setting"]
+
 **Affected Files:**
 - Create: `path/to/new_file.ext`
 - Modify: `path/to/existing.ext`
@@ -12,7 +19,7 @@
 - Endpoint / CLI command / function signature
 - Inputs (with types and validation rules)
 - Outputs (with types and status codes)
-- Error cases
+- Error cases (specific HTTP status, error body schema, error code)
 
 **Data Model** (if applicable):
 - Schema changes, new tables/columns, migrations
@@ -21,50 +28,73 @@
 - What other components this touches
 - External dependencies
 
+**Depends On:** [Feature X, Feature Y] or None
+
 ### Tasks
 
-<!-- Each feature has exactly 2 tasks. Issue references added after GitHub Issues are created. -->
+<!-- One task per file. Dependencies determine execution order and parallelism. -->
 
-| Task | Description | Issue |
-|------|-------------|-------|
-| Task A: Implementation | Implement feature + unit/integration tests | #<number> |
-| Task B: E2E Tests | Write and verify E2E tests for all ACs | #<number> |
+| Task | File | Action | Dependencies | Parallel |
+|------|------|--------|-------------|----------|
+| TN.1 | `path/to/impl.go` | Create | None | Yes |
+| TN.2 | `path/to/impl_test.go` | Create | TN.1 | No |
+| TN.3 | `path/to/other.go` | Modify | None | Yes (with TN.1) |
+| TN.4 | `path/to/other_test.go` | Create | TN.3 | No |
+| TN.5 | `path/to/handler.go` | Modify | TN.1, TN.3 | No |
+| TN.6 | `tests/e2e/feature_test.go` | Create | All impl tasks | After impl |
+
+### Task Dependencies
+
+<!-- ASCII diagram showing parallel lanes -->
+
+```
+TN.1 ──→ TN.2
+   ↘
+    TN.5 → TN.6
+   ↗
+TN.3 ──→ TN.4
+```
+
+### Testing Layers
+
+<!-- Explicitly state which layers apply to this feature -->
+
+| Layer | Applies | Rationale |
+|-------|---------|-----------|
+| Unit tests | Yes | Always — validators, parsers, state transitions |
+| Module tests | [Yes/No] | [Why — e.g., "Self-contained auth module with mockable deps"] |
+| Integration tests | [Yes/No] | [Why — e.g., "Touches auth + policy + handler chain"] |
+| E2E tests | [Yes/No] | [Why — e.g., "New endpoint exposed at system boundary"] |
 
 ### Acceptance Criteria
 
-#### AC-N.1: [Criterion]
+#### AC-N.1: [Criterion — use normative language from spec]
 
-**E2E Test: [Scenario Name]**
-- **Test File:** `path/to/featureN_e2e_test.ext` (code-file) or `<test-dir>/featureN-tests.md` (agent-driven)
-- **Setup:** [Data/state to create before this test]
-- **Steps:**
-  1. [Action -- e.g., "Send POST /api/users with body {name, email}"]
-  2. [Action -- e.g., "Send GET /api/users/{id}"]
-- **Assertions:**
-  - [Expected outcome -- e.g., "Response status 201, body contains id"]
-  - [Expected outcome -- e.g., "GET returns the created user"]
-- **Teardown:** [Cleanup if needed]
-- **Pass Criteria:** [One sentence summary]
+**Test Harness:** `[layer]/[file].json` → `[TEST_ID]` (if harness exists)
 
-#### AC-N.2: [Criterion]
+**RED — Write failing test first:**
+- File: `path/to/test_file.ext`
+- [What the test does — e.g., "Send request without Authorization header"]
+- Assert: [Expected outcome — e.g., "Response status 401, body `{\"error\": \"missing_auth_token\"}`"]
+- **Run test → MUST FAIL** (feature not yet implemented)
 
-**E2E Test: [Scenario Name]**
-- **Steps:** ...
-- **Assertions:** ...
-- **Pass Criteria:** ...
+**GREEN — Minimal implementation:**
+- File: `path/to/impl_file.ext`
+- [What to implement — only enough to make the test pass]
+- **Run test → MUST PASS**
 
-#### AC-N.E1: [Error/Edge Case Criterion]
+**REFACTOR — Clean up:**
+- [Optional cleanup — extract helpers, improve names]
+- **Run test → MUST STILL PASS**
 
-**E2E Test: [Error Scenario]**
-- **Steps:**
-  1. [Action triggering error path]
-- **Assertions:**
-  - [Expected error response/behavior]
+#### AC-N.E1: [Error/Edge Case — use normative language]
 
-#### AC-N.S1: [Security Criterion]
+**RED:** [Failing test for error path]
+**GREEN:** [Implementation of error handling]
+**REFACTOR:** [Cleanup]
 
-**E2E Test: [Security Scenario]**
-- **Steps:**
-  1. [Action attempting exploit -- e.g., "Send POST with SQL injection in name field"]
-- **Assertions:**
-  - [Expected rejection -- e.g., "Response status 400, validation error, no DB corruption"]
+#### AC-N.S1: [Security Criterion — use normative language]
+
+**RED:** [Failing test for security scenario]
+**GREEN:** [Implementation of security control]
+**REFACTOR:** [Cleanup]

@@ -1,6 +1,34 @@
 # Execute Loop
 
-Implements features from the plan in a two-task model: Task A (implementation + unit tests) and Task B (E2E tests). Each task gets its own commit, halving the per-task workload while preserving full E2E coverage.
+Implements features using single-file tasks with parallel agent dispatch. Each feature gets an orchestrator agent that manages its task agents, reviews spec compliance, and enforces Red-Green-Refactor.
+
+## Execution Architecture
+
+```
+Controller (session, max 3 features per batch)
+  └── Feature Orchestrator Agent (one per feature)
+      ├── Read feature task list + dependency graph from plan
+      ├── Dispatch independent impl tasks as parallel agents (one file per agent)
+      ├── Wait for dependency resolution, dispatch next wave
+      ├── After all impl tasks: run spec review (does code match spec requirements quoted in ACs?)
+      ├── Dispatch test task agents (parallel where independent)
+      ├── Verify Red-Green-Refactor: each test MUST fail (RED) before passing (GREEN)
+      ├── After all tests: run code quality review
+      └── Report structured summary to controller
+```
+
+**Key principles:**
+- Orchestrator does NOT implement code — only dispatches, reviews, coordinates
+- Each task agent creates/modifies exactly ONE file
+- Tasks on the same dependency level run as parallel agents
+- Features with no mutual dependencies (per feature dependency matrix) run as parallel orchestrators
+- Red-Green-Refactor: test agents must demonstrate RED (failure) before GREEN (pass)
+
+**Master plan execution:** Sub-plans execute in phase order. Each phase is a separate controller session. Phase N+1 starts only after Phase N exit criteria are met.
+
+## Legacy Two-Task Model (fallback)
+
+For plans that use the older two-task format (Task A: all implementation, Task B: all E2E), the following execution model applies:
 
 ```mermaid
 stateDiagram-v2
@@ -138,7 +166,11 @@ Read [config.md](../../pmp/config.md) Context Management before starting. The ru
 
 ### Batch Controllers
 
-Do NOT execute the entire plan in a single controller session. Split features into batches of **3** (see config.md Max features per controller session). Each feature has two tasks (Task A: implementation, Task B: E2E tests), so each batch contains up to 6 tasks.
+Do NOT execute the entire plan in a single controller session. Split features into batches of **3** (see config.md Max features per controller session).
+
+**With single-file task model:** The controller dispatches up to 3 feature orchestrators per batch. Each orchestrator manages its own task agents. Independent features (per the feature dependency matrix) run as parallel orchestrators.
+
+**With legacy two-task model:** Each feature has two tasks (Task A: implementation, Task B: E2E tests), so each batch contains up to 6 tasks.
 
 **Phase-aware batching:** If the plan has a `## Phases` section, use phase boundaries as batch boundaries instead of the arbitrary 3-feature cutoff. Each phase becomes a batch (or multiple batches if a phase has more than 3 features). Never split a phase across batches — complete all features in a phase before moving to the next. Phase exit criteria must be met before starting the next phase.
 

@@ -18,6 +18,8 @@ epic:
 **Integration Branch:** [Detected branch name]
 **CI Command:** [Detected CI command]
 **Epic:** [#<number> — added after GitHub Issues are created]
+**Spec Corpus:** [N files | "Inline spec" | "GitHub Issues"]
+**Master Plan:** [No | `path/to/master-plan.md`]
 
 > **To execute this plan:** run `/pmp execute` and point it at this file.
 
@@ -79,6 +81,29 @@ epic:
 
 ---
 
+## Feature Dependencies
+
+<!-- Execution parallelism matrix. Controller uses this to dispatch parallel feature orchestrators. -->
+
+| Feature | Depends On | Can Parallel With |
+|---------|-----------|-------------------|
+| Feature 1: [Name] | None | Feature 2, Feature 3 |
+| Feature 2: [Name] | None | Feature 1, Feature 3 |
+| Feature 3: [Name] | Feature 1 | Feature 2 |
+
+---
+
+## Spec Traceability
+
+<!-- Every spec section maps to a feature + AC. Uncovered sections are flagged. -->
+
+| Spec File | Section | Feature | AC | Status |
+|-----------|---------|---------|----|----|
+| [file.md](file.md) | #section | Feature 1 | AC-1.1 | Covered |
+| [file2.md](file2.md) | #section | — | — | Not covered — intentional (deferred to v3) |
+
+---
+
 ## Phases
 
 <!-- Include this section for plans with 5+ features. Group features into phases
@@ -104,6 +129,35 @@ epic:
 ## Feature 1: [Name] · #<number>
 
 ...
+
+---
+
+## Performance Test Plan
+
+<!-- Include when spec defines performance targets. Omit if N/A. -->
+
+**Targets:** [From spec — P95 latency, throughput, concurrency]
+**Workload:** [Request volume, payload size, concurrency level]
+**Duration:** [Warmup + test duration]
+**Validation:** [P95 < Xms, memory < Y MB, CPU < Z%]
+
+## Resilience Test Plan
+
+<!-- Include when spec defines failure handling. Omit if N/A. -->
+
+**Scenarios:**
+- [Dependency X outage → expected system behavior]
+- [Config reload under traffic → expected behavior]
+**Validation:** [What to assert per scenario]
+
+## Fuzz Test Plan
+
+<!-- Include when feature includes parsers/decoders. Omit if N/A. -->
+
+**Targets:** [Which parsers/inputs to fuzz]
+**Corpus:** [Seed inputs]
+**Duration:** [Minimum fuzz duration]
+**Validation:** [No panics, no memory corruption, graceful error handling]
 
 ---
 

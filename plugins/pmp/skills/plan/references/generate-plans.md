@@ -338,18 +338,197 @@ If the plan was generated from GitHub Issues, include a [assets/github-issues-ta
 
 ### Plan Rules
 
-- NO code snippets -- only behavioral specs
-- Each AC has its E2E test case directly beneath it -- traceability is structural
-- Features ordered by dependency (implement in this order)
-- Each feature produces two commits: implementation (with unit/integration tests) and E2E tests. The implementation commit is the atomic boundary for the feature's behavior. The E2E commit verifies it.
+- NO code snippets — only behavioral specs with normative language from the spec
+- Each AC structured as Red-Green-Refactor (not Setup → Steps → Assertions)
+- Features ordered by dependency; feature dependency matrix enables parallel execution
+- **One task per file** — each task creates or modifies exactly one file. Dependencies between tasks are explicit.
+- Testing layers per feature: unit (always), module (self-contained components), integration (cross-module), E2E (system boundary). Each feature explicitly lists which apply with rationale.
 - Integration branch and CI command recorded in the header (not hardcoded)
-- Security ACs are E2E-testable assertions, not vague guidelines
-- E2E test cases describe WHAT to verify, not HOW (no test code)
+- Security ACs are testable assertions with specific HTTP status, error codes, and behaviors — not vague guidelines
+- Test cases describe WHAT to verify using Red-Green-Refactor format
 - Each feature's tests are self-contained with their own setup/teardown
 - Error/edge cases and security scenarios are explicit ACs with tests, not afterthoughts
-- Test runner command must be a single command that runs ALL E2E tests (code-file model)
+- Test runner command must be a single command that runs ALL tests (code-file model)
 - For hybrid model: note execution model (code-file or agent-driven) per AC test
-- **Group changes by file** -- units of work should group changes by file if at all possible. When a task touches a file, all related changes to that file belong in the same task. This prevents parallel agents from conflicting on the same file and makes diffs reviewable.
+- **Spec traceability** — every spec section maps to a feature + AC; uncovered sections are flagged
+- **Test harness** — when available, ACs reference harness test IDs instead of inventing tests
+
+### Spec Fidelity Rules
+
+Plans MUST follow specs to the letter. Generic descriptions cause coding agents to drift from the spec.
+
+**Spec Anchoring:**
+- Every feature MUST have a `**Spec Source:** [file.md#section](file.md#section)` field linking to the exact spec section(s) it implements
+- Every AC MUST quote or paraphrase the spec requirement it validates — not rewrite it in the agent's own words
+- Use normative language from the spec: if the spec says "MUST", the AC says "MUST". If the spec says "SHOULD", the AC says "SHOULD". Never downgrade "MUST" to "should" or "handles."
+
+**Traceability Matrix:**
+- After generating all features, produce a `## Spec Traceability` section that maps every spec section to the feature + AC that covers it
+- Any spec section without coverage MUST be flagged as "Not covered — intentional (reason)" or added as a feature
+- Any plan feature without a spec source MUST be flagged as "Gold-plating — not in spec" and removed unless the user explicitly approves it
+
+**Precision Rules — no vague language:**
+- Error responses: specify HTTP status, error body schema, error code, and log level — not "returns an error"
+- Thresholds: specify the exact value and the setting name from the settings catalog — not "rejects large requests"
+- State transitions: specify from-state, to-state, trigger, and side effects — not "updates the status"
+- Config keys: use the exact setting name from the settings catalog — not "the timeout setting"
+- Timeouts: specify the duration and the setting key — not "with appropriate timeout"
+
+### Test Harness Integration
+
+Before generating features, check for a structured test harness:
+
+1. Look for test harness files in the project:
+   - `specs/test-specs/master_spec.json` (JSON format — per [config.md](../../pmp/config.md))
+   - `specs/test-specs/system-testing-spec.md` (Markdown format)
+   - Or any directory the user points to
+2. **If found:** ask the user with AskQuestion:
+
+> Found existing test harness at `<directory>` ([N] test files, [M] total tests).
+> Do you want to use it for plan generation?
+> 1. **Yes** — I'll reference these test specs in the plan's ACs
+> 2. **No, regenerate** — I'll run `/pmp:test-harness` to create a fresh one
+> 3. **No, skip** — I'll generate test cases inline without a harness
+
+   If option 1: read the master spec, resume plan generation with harness references
+   If option 2: run `/pmp:test-harness`, then resume
+   If option 3: continue with inline test generation
+
+3. **If NOT found:** ask the user with AskQuestion:
+
+> No test harness found. A test harness is a structured testing specification (JSON or Markdown) that defines every test — purpose, inputs, assertions, oracle — so the plan doesn't invent tests from scratch.
+>
+> **Options:**
+> 1. **Point me to an existing test harness** — if you already have test specs somewhere else
+> 2. **Generate a test harness now** — I'll run `/pmp:test-harness` to create one from your system specs (you may need to customize the generator prompt for your project)
+> 3. **Continue without a test harness** — I'll generate test cases inline in each AC (less structured, higher risk of gaps)
+
+4. If option 1: user provides path, read it, resume plan generation
+5. If option 2: run `/pmp:test-harness`, then resume plan generation
+6. If option 3: continue with inline test generation (current behavior)
+
+**Important:** The test harness generator prompts (`testing-harness-prompt.md` and `test-spec-generator-prompt.md`) are templates. They may need project-specific customization — invariant IDs, component names, language-specific test conventions — before they produce useful output. The `/pmp:test-harness` sub-command handles this by reading the project's specs and adapting the prompt.
+
+**When a test harness exists (any format):**
+- Each AC links to the specific test from the harness: `**Test Harness:** module/module_auth_policy.json → AUTH_001` (JSON) or `**Test Harness:** module-testing.md § Auth Module Tests` (Markdown)
+- Test tasks implement the tests defined in the harness — the harness is the contract, not a suggestion
+- After generating all features, cross-reference spec traceability against harness coverage matrix — any gap = missing test coverage
+- Performance/Resilience/Fuzz plan sections are populated from harness categories, not invented
+- If the harness defines invariant IDs (e.g., INV-PIPE-001), ACs reference them for traceability
+
+### Single-File Task Granularity
+
+Each task in the plan MUST target exactly ONE file. When a feature creates or modifies multiple files, decompose into one task per file.
+
+**Task table format:**
+
+```markdown
+| Task | File | Action | Dependencies | Parallel |
+|------|------|--------|-------------|----------|
+| T1.1 | `internal/auth/middleware.go` | Create | None | Yes |
+| T1.2 | `internal/auth/middleware_test.go` | Create | T1.1 | No |
+| T1.3 | `internal/policy/evaluator.go` | Modify | None | Yes (with T1.1) |
+| T1.4 | `internal/policy/evaluator_test.go` | Create | T1.3 | No |
+| T1.5 | `internal/server/handler.go` | Modify | T1.1, T1.3 | No |
+| T1.6 | `tests/e2e/auth_test.go` | Create | T1.5 | After all impl |
+```
+
+**Rules:**
+- Each task targets exactly ONE file (create or modify)
+- Test file tasks depend on their implementation file task
+- Tasks with no mutual dependencies CAN run as parallel agents
+- The Dependencies column is the execution contract — the orchestrator uses it to decide parallelism
+- Every feature MUST include a task dependency graph showing parallel lanes
+
+**Task dependency graph per feature:**
+
+```
+T1.1 ──→ T1.2
+   ↘
+    T1.5 → T1.6
+   ↗
+T1.3 ──→ T1.4
+```
+
+### Feature Dependency Matrix
+
+Each phase MUST include a feature dependency matrix so the controller can parallelize feature orchestrators:
+
+```markdown
+## Feature Dependencies
+
+| Feature | Depends On | Can Parallel With |
+|---------|-----------|-------------------|
+| Feature 1: Auth Middleware | None | Feature 2, Feature 3 |
+| Feature 2: Policy Engine | None | Feature 1, Feature 3 |
+| Feature 3: Config Loader | None | Feature 1, Feature 2 |
+| Feature 4: Request Pipeline | Feature 1, Feature 2 | None (blocked) |
+```
+
+### Red-Green-Refactor Testing
+
+All test ACs MUST be structured as Red-Green-Refactor cycles, not Setup → Steps → Assertions.
+
+**AC format:**
+
+```markdown
+#### AC-1.1: Auth middleware MUST reject requests without valid JWT
+
+**RED — Write failing test first:**
+- File: `internal/auth/middleware_test.go`
+- Test sends request without Authorization header
+- Assert: response is 401 with body `{"error": "missing_auth_token"}`
+- **Run test → MUST FAIL** (middleware not yet implemented)
+
+**GREEN — Minimal implementation:**
+- File: `internal/auth/middleware.go`
+- Implement JWT validation — only enough to make this test pass
+- **Run test → MUST PASS**
+
+**REFACTOR — Clean up:**
+- Extract JWT validation into reusable helper if pattern repeats
+- **Run test → MUST STILL PASS**
+```
+
+If the test passes immediately in RED, the test is wrong — it tests existing behavior, not the new requirement. The agent must fix the test before proceeding.
+
+### Large-Spec Plan Decomposition
+
+When the spec corpus has 50+ files (per [config.md](../../pmp/config.md) Large Spec Threshold):
+
+1. **Announce:** "This is a large specification (N files). I'll generate a master plan with sub-plans per phase."
+2. **Group specs** by architectural concern (building blocks, runtime, crosscutting, deployment, etc.)
+3. **Build dependency graph** between groups
+4. **Propose phases** to user — each phase = one group or set of tightly coupled groups. Use AskQuestion: "I've identified P phases: [list]. Does this grouping look right?"
+5. **Generate master plan** using [master-plan.md](../assets/master-plan.md) template — contains spec coverage summary, phase dependency graph, cross-phase traceability
+6. **Generate one sub-plan per phase** — each is a normal plan file scoped to that phase's spec files. Filename: per [config.md](../../pmp/config.md) Sub-Plan Filename Pattern
+7. **Announce progress:** "Phase N sub-plan generated (M features). Moving to Phase N+1."
+
+Sub-plans include:
+- `**Master Plan:** [link]` in header
+- Feature dependency matrix (for parallel execution within the phase)
+- Spec traceability (subset of master)
+- Test harness references (subset of harness for this phase's components)
+
+### Orchestrator Agent Execution Model
+
+Plans are structured for a three-tier execution model:
+
+```
+Controller (session, max 3 features per batch)
+  └── Feature Orchestrator Agent (one per feature)
+      ├── Dispatches single-file task agents (parallel where dependencies allow)
+      ├── Waits for dependency resolution, dispatches next wave
+      ├── After all impl tasks: runs spec review inline
+      ├── Dispatches test task agents (parallel where independent)
+      ├── Verifies Red-Green-Refactor: each test MUST fail before passing
+      ├── After all tests: runs code quality review inline
+      └── Reports structured summary to controller
+```
+
+The orchestrator does NOT implement code — it only dispatches, reviews, and coordinates. Implementation agents are fresh subagents per task.
+
+Features with no mutual dependencies (per feature dependency matrix) execute as parallel orchestrators.
 
 ### SSoT Compliance Rules
 

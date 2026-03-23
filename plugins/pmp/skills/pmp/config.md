@@ -318,14 +318,48 @@ Agents share no context with the main controller — each starts with an empty c
 
 ## Task Granularity Rule
 
-Each plan task step MUST be one atomic action (2-5 minutes):
-- "Write the failing test" — step
-- "Run it to make sure it fails" — step
-- "Implement the minimal code to make the test pass" — step
-- "Run the tests and make sure they pass" — step
-- "Commit" — step
+**One task = one file.** Each task creates or modifies exactly one file. Multi-file features decompose into one task per file with explicit dependencies.
 
-Steps that bundle multiple actions ("implement and test the feature") MUST be split.
+Within each task, the Red-Green-Refactor cycle applies:
+- "Write the failing test" (RED)
+- "Run it to make sure it fails"
+- "Implement the minimal code to make the test pass" (GREEN)
+- "Run the tests and make sure they pass"
+- "Refactor if needed, verify tests still pass" (REFACTOR)
+- "Commit"
+
+---
+
+## Large Spec Thresholds
+
+| Constant | Value | Used By |
+|---|---|---|
+| Large spec threshold | **50** files | generate-plans (triggers master/sub-plan mode) |
+| Sub-plan filename pattern | `YYYY-MM-DD-<system>-phase-N-<name>-plan.md` | generate-plans |
+| Master plan filename pattern | `YYYY-MM-DD-<system>-master-plan.md` | generate-plans |
+
+---
+
+## Test Harness
+
+| Constant | Value | Used By |
+|---|---|---|
+| Test harness directory | `specs/test-specs/` | test-harness, generate-plans, execute-loop |
+| Test harness master spec | `master_spec.json` | test-harness, generate-plans |
+
+---
+
+## Testing Layers
+
+| Layer | Task | When |
+|---|---|---|
+| Unit | Always (with implementation) | Parsers, validators, transformations, state transitions |
+| Module | Per-feature (if applicable) | Self-contained components with mockable dependencies |
+| Integration | Per-feature (if applicable) | Cross-module data flow, context propagation |
+| E2E | Per-feature (if applicable) | User-visible behavior at system boundary |
+| Performance | Plan-level section | Spec defines latency/throughput/concurrency targets |
+| Resilience | Plan-level section | Spec defines failure handling, retry, circuit breakers |
+| Fuzz | Plan-level section | Features include parsers, protocol decoders, config parsing |
 
 ---
 
