@@ -76,6 +76,7 @@ For focused analysis, invoke sub-commands directly:
 
 - Orchestration logic: [spec-review.md](references/spec-review.md)
 - Shared discovery: [discovery.md](references/discovery.md)
+- Spec index generator: [spec-index-generator.md](../spec-index/references/spec-index-generator.md)
 - Report template: [spec-review-output.md](assets/spec-review-output.md)
 
 ## Shared Resources

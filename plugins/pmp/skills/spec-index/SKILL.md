@@ -22,7 +22,7 @@ Scans a spec directory, reads every file's SSoT header and summary block, and pr
 1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants
 2. **REQUIRED:** Read [spec-index-generator.md](references/spec-index-generator.md) and follow it completely
 3. Present the generated index to the user for review
-4. Save to the spec directory root as `ssot-index.md`
+4. Save to the spec directory root as `spec-index.md`
 
 ## Key References
 

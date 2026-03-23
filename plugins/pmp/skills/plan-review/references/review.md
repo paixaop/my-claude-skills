@@ -156,7 +156,7 @@ Create a TodoWrite with these items and check each:
 - [ ] Features that change spec-owned behavior include an explicit task to update the canonical spec file
 - [ ] Features that add new architectural concepts include a task to create the canonical spec file
 - [ ] No plan task instructs the agent to duplicate spec content — cross-references use section-level links
-- [ ] If plan creates or removes spec files, it includes a task to update `ssot-index.md`
+- [ ] If plan creates or removes spec files, it includes a task to update `spec-index.md`
 - [ ] If plan renames a heading in a spec file, it includes updating all inbound cross-reference links
 - [ ] Numeric literals (thresholds, limits, timeouts) reference named settings from the settings catalog
 - [ ] All cross-references use `file.md#section` format, not bare file links

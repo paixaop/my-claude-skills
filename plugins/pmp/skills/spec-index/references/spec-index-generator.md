@@ -15,7 +15,7 @@ The spec directory path. If not provided, ask the user. Common locations:
 
 Recursively find all `.md` files in the spec directory. Exclude:
 - `README.md` files (these are section indexes, not concept files)
-- `ssot-index.md` itself (the output file)
+- `spec-index.md` itself (the output file)
 - Files in hidden directories (`.cache/`, `.git/`)
 
 ### 2. Extract Ownership from Each File
@@ -65,7 +65,7 @@ Produce a markdown file with this structure:
 
 **Sorting:** Group by section directory, then alphabetically within each section.
 
-**Link format:** Relative paths from the ssot-index.md location.
+**Link format:** Relative paths from the spec-index.md location.
 
 ### 5. Report Issues
 
@@ -83,7 +83,7 @@ If any issues were detected in step 3, append an issues section:
 ### 6. Present and Save
 
 Present the generated index and issues to the user. Ask:
-1. **Save as-is** — write `ssot-index.md` to the spec directory root
+1. **Save as-is** — write `spec-index.md` to the spec directory root
 2. **Fix issues first** — address the reported issues before saving
 3. **Cancel** — don't save
 

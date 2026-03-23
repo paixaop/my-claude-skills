@@ -93,11 +93,14 @@ stateDiagram-v2
 
 1. Read [config.md](../../pmp/config.md) for current constants
 2. Read [discovery.md](discovery.md) and execute **Phase 0 (Discovery)** and **Phase 1 (System Reconstruction)**
-3. **Load SSoT index** — look for `ssot-index.md` in the spec directory root. If found:
-   - Use it to map concepts to canonical files (skip scanning for ownership)
-   - Validate the index is current: check that every file listed still exists and every spec file is listed
-   - Flag stale entries (files that no longer exist) and unlisted files as findings
-   - If not found: note in the report and suggest running `/pmp:spec-index` after the review
+3. **Generate SSoT index** — always generate a fresh `spec-index.md` as part of discovery. Read [spec-index-generator.md](../../spec-index/references/spec-index-generator.md) and follow its scan/extract/detect process:
+   - Scan every spec file for SSoT headers, extract ownership declarations
+   - Detect issues: duplicate ownership, missing headers, orphan files, overlapping scope
+   - If an existing `spec-index.md` is found, diff against it — report new files, removed files, and changed ownership
+   - If no existing index, generate from scratch
+   - Write the generated index to the spec directory root as `spec-index.md`
+   - Use the generated index for all subsequent steps (canonical file lookups, cross-reference validation)
+   - Include index generation issues (duplicates, missing headers, orphans) in the final report
 4. **Check SSoT compliance** — verify spec files follow [single-source-of-truth.md](../../pmp/references/single-source-of-truth.md) formatting rules (summary blocks, cross-references, naming, deduplication). Flag violations as findings in the report.
 5. Dispatch sub-commands sequentially. Each sub-command runs its analysis phases using the system model and file contents already in context:
 
