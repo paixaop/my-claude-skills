@@ -119,3 +119,16 @@
 | Issue | Type | Description | Risk |
 |-------|------|-------------|------|
 | [issue] | missing transition / undefined state / race condition / cancellation gap / retry loop | [description] | Critical / High / Medium / Low |
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Return results to the spec review orchestrator or run sibling analyses.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Consolidated spec review | `pmp:spec-review` | Combine with other sub-command results into a full report |
+> | Run security analysis | `pmp:spec-security` | Assess threats, STRIDE, attack simulation |
+> | Run operations analysis | `pmp:spec-operations` | Assess performance, failure modes, scalability |
+> | Run implementability check | `pmp:spec-implementability` | Assess coding readiness of specs |

@@ -18,7 +18,7 @@ For focused analysis, invoke sub-commands directly:
 | `/pmp:spec-architecture` | Simplicity, consistency, determinism, invariants, state machines |
 | `/pmp:spec-security` | STRIDE threat modeling, attack simulation, AI red team |
 | `/pmp:spec-operations` | Performance, resources, failure modes, scalability, operability |
-| `/pmp:spec-implementability` | 11-criteria production-readiness gate |
+| `/pmp:spec-implementability` | 12-criteria production-readiness gate |
 
 ## Workflow
 

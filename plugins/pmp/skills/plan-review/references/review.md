@@ -10,9 +10,14 @@ Critically review implementation plans. Treat every plan as if submitted by a ju
 stateDiagram-v2
     [*] --> ReadPlan
     ReadPlan --> ReadAllCode
-    ReadAllCode --> ConfigDataGate : plan touches config/DB
-    ReadAllCode --> SecurityGate : plan touches auth/endpoints
-    ReadAllCode --> ScoreChecklist : neither
+    ReadAllCode --> SpecAlignmentGate : spec source available
+    ReadAllCode --> ConfigDataGate : no spec, plan touches config/DB
+    ReadAllCode --> SecurityGate : no spec, plan touches auth/endpoints
+    ReadAllCode --> ScoreChecklist : no spec, neither
+
+    SpecAlignmentGate --> ConfigDataGate : plan touches config/DB
+    SpecAlignmentGate --> SecurityGate : plan touches auth/endpoints
+    SpecAlignmentGate --> ScoreChecklist : neither
 
     ConfigDataGate --> SimplificationPass
     SimplificationPass --> ConsolidationPass
@@ -96,6 +101,15 @@ Create a TodoWrite with these items and check each:
 - [ ] No circular dependency risks
 - [ ] Changes fit the existing file layout
 
+### Spec Alignment (when spec source available)
+- [ ] Plan's `Source:` field points to a valid, readable spec file or directory
+- [ ] Every spec requirement maps to at least one plan feature (no gaps)
+- [ ] Every plan feature traces back to a spec requirement (no gold-plating)
+- [ ] No plan feature contradicts a spec requirement
+- [ ] Ambiguous spec areas are flagged explicitly (not silently interpreted)
+- [ ] Feature "Affected Files" lists are complete for each spec requirement
+- [ ] Acceptance criteria cover spec requirements (not just implementation details)
+
 ### Security
 - [ ] Input validation addressed for every new input
 - [ ] Auth boundaries properly defined
@@ -153,15 +167,22 @@ Create a TodoWrite with these items and check each:
 
 1. **Read the plan completely**
 2. **Read ALL referenced code files.** Use parallel agents only for the file reading itself when there are many files (10+) — each agent reads a partition of files and returns content. All subsequent analysis (checklist scoring, security gate, rewriting) runs in the main controller context using the already-loaded file contents. Do NOT spawn agents for analysis — they would re-read all files, wasting tokens.
-3. **Config & data gate:** If the plan adds/modifies config files or database schemas:
+3. **Spec alignment gate:** If the plan has a `Source:` field pointing to a local file or directory:
+   - Read all spec files from the source location
+   - Build a requirements-to-feature traceability matrix following [spec-alignment.md](spec-alignment.md)
+   - Detect: unaddressed requirements, contradictions, silent ambiguity interpretations, incomplete "Affected Files" lists, gold-plating
+   - Feed findings into the "Spec Alignment Analysis" and "Changes by File" sections of the review output
+   - If `Source:` is missing, `"Inline spec"`, or non-local (GitHub URL, issue number): skip this gate and note `Spec alignment: skipped (no local spec source)` in the output
+4. **Config & data gate:** If the plan adds/modifies config files or database schemas:
    - Verify migrations exist for every schema change, rollback is covered, and new config values have sensible defaults or are flagged as required
    - **Simplification pass:** Review all config keys touched by the plan — flag cryptic names, redundant keys, or structures that increase cognitive load. Propose clearer alternatives and present options to the user
    - **Consolidation pass:** Review all tables touched or created by the plan — identify 1:1 relationships, type-discriminated duplicates, or thin lookup tables that could merge. Present consolidation options to the user with trade-off analysis
-4. **Security gate:** If the plan touches auth, data flows, new endpoints, or secrets — read [security-analysis.md](security-analysis.md) and run the full analysis. The security analysis runs in the main controller context, which already has all code files loaded from Step 2. Do not re-read files for the security gate — work from the file contents already in context. Append findings to the review output
-5. **Score each checklist item** — pass, fail, or needs-work
-6. **For each failure:** explain why and provide a specific fix
-7. **Rewrite weak sections** — don't just flag problems, fix them
-8. **Produce the improved plan** or list of required changes
+5. **Security gate:** If the plan touches auth, data flows, new endpoints, or secrets — read [security-analysis.md](security-analysis.md) and run the full analysis. The security analysis runs in the main controller context, which already has all code files loaded from Step 2. Do not re-read files for the security gate — work from the file contents already in context. Append findings to the review output
+6. **Score each checklist item** — pass, fail, or needs-work
+7. **For each failure:** explain why and provide a specific fix
+8. **Build the "Changes by File" view** — collect all issues from every section (spec alignment, architecture, security, testing, config, completeness) and group them by target file path. Each file entry lists: issue, severity, source section, and specific action needed. Include spec requirements and plan features that touch each file. This view enables parallel agent execution during plan updates.
+9. **Rewrite weak sections** — don't just flag problems, fix them
+10. **Produce the improved plan** or list of required changes
 
 ## Output Format
 

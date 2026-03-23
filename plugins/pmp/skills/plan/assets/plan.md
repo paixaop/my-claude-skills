@@ -114,3 +114,14 @@ epic:
 - **Secret handling:** [How secrets are protected]
 - **Injection risks:** [SQL, command injection vectors]
 - **Attack surface:** [New endpoints, inputs, or trust boundaries]
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Get the plan reviewed before execution.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Review this plan | `pmp:plan-review` | Validate completeness, security, and feasibility |
+> | Decompose into phases | `pmp:decompose` | Break a large plan (5+ features) into ordered phases |

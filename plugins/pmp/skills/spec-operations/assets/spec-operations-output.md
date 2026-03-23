@@ -68,3 +68,16 @@
 | Problem | Area | Description | Recommendation |
 |---------|------|-------------|----------------|
 | [problem] | config / rollout / compatibility / schema evolution / upgrades | [description] | [recommendation] |
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Return results to the spec review orchestrator or run sibling analyses.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Consolidated spec review | `pmp:spec-review` | Combine with other sub-command results into a full report |
+> | Run architecture analysis | `pmp:spec-architecture` | Assess simplicity, boundaries, consistency |
+> | Run security analysis | `pmp:spec-security` | Assess threats, STRIDE, attack simulation |
+> | Run implementability check | `pmp:spec-implementability` | Assess coding readiness of specs |

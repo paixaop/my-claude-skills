@@ -24,3 +24,9 @@
 | [Name]  | abc1234, def5678 | 8 |
 | [Name]  | ghi9012 | 4 |
 | **Total** | **N commits** | **N files** |
+
+---
+
+## What's Next
+
+> **PMP lifecycle complete.** Merge the PR to close linked issues. No further PMP commands needed.

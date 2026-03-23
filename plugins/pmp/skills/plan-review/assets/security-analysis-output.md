@@ -33,3 +33,13 @@ Date: [date] | Source: [plan document path]
 
 ## Gaps in Specification
 [Missing architecture elements preventing complete analysis]
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** This security analysis is part of the plan review. See the review output for next steps.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | See full review verdict | `pmp:plan-review` | The review output determines whether to proceed or revise |

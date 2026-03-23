@@ -24,9 +24,9 @@ You are a production gatekeeper. Be ruthless and thorough:
 ## Cross-Referencing Other Sub-Commands
 
 When dispatched by the orchestrator, findings from other sub-commands (spec-architecture, spec-security, spec-operations) may already be in context. Use them:
-- **spec-architecture findings** → inform criteria 1, 2, 4, 10
+- **spec-architecture findings** → inform criteria 1, 2, 4, 10, 12
 - **spec-security findings** → inform criterion 6
-- **spec-operations findings** → inform criteria 5, 7, 9
+- **spec-operations findings** → inform criteria 5, 7, 9, 12
 
 When running standalone, these cross-references are unavailable — evaluate each criterion independently.
 
@@ -180,6 +180,32 @@ Evaluate **component by component**:
 - Identify specific points where a coding agent would need to make judgment calls not guided by the spec
 - Identify implicit assumptions that require domain knowledge not present in the spec
 - Assess whether two developers reading the same spec could produce materially different implementations
+
+---
+
+### Criterion 12: Unspecified References
+
+Scan the entire spec for items mentioned in prose but never formally defined with enough detail to implement. These are "phantom specifications" — the spec acknowledges their existence but provides no concrete definition.
+
+**Distinction from Criterion 10:** Criterion 10 asks "is this *clear*?" (ambiguities, contradictions). Criterion 12 asks "is this *defined*?" — the spec may be explicit that something exists, but never provides the concrete attributes needed to implement it.
+
+Scan for these categories:
+
+- **Config settings / env vars** — mentioned ("configure the timeout", "set via environment variable") but no name, type, default value, or valid range defined
+- **Metrics / telemetry** — mentioned ("track latency", "emit metrics") but no metric name, dimensions, units, or thresholds defined
+- **Error codes / status codes** — mentioned ("returns an error", "fails with 4xx") but no error catalog, code-to-message mapping, or retry semantics
+- **Roles / permissions** — mentioned ("admin users can", "requires authorization") but no role enumeration, permission matrix, or RBAC model
+- **Events / signals / hooks** — mentioned ("emits an event", "triggers a webhook") but no event name, schema, delivery guarantees, or payload format
+- **Thresholds / limits / quotas** — mentioned ("rate limited", "max connections") but no concrete values, enforcement behavior, or overflow handling
+- **Feature flags** — mentioned ("behind a feature flag", "gradual rollout") but no flag names, default states, or management system
+- **CLI commands / flags** — mentioned ("run the migration command") but no command syntax, flag names, or usage documented
+- **Status / state enumerations** — mentioned ("order status changes") but no enumeration of valid states or transition rules
+
+For each phantom reference found:
+1. **Quote** the prose that mentions it
+2. **Classify** by category (from the list above)
+3. **Assess severity**: BLOCKER if the item is in a critical path (cannot implement without it), HIGH if it affects correctness, MEDIUM if it affects completeness, LOW if it affects polish
+4. **Specify what's missing** — list the concrete attributes that need definition
 
 ---
 

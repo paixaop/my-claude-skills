@@ -41,3 +41,13 @@
 > <relevant portion of the spec, roadmap, or brainstorm output that generated this issue — quote verbatim>
 
 </details>
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Begin implementation.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Start coding | `pmp:execute` | Implement the plan with code-test-fix loop |

@@ -369,7 +369,6 @@
 |-------------|:---:|:---:|-------|--------|
 | P99 latency | yes/no | yes/no | [value or "not specified"] | Complete / Gap |
 | Throughput | yes/no | yes/no | [value or "not specified"] | Complete / Gap |
-| Availability SLO | yes/no | yes/no | [value or "not specified"] | Complete / Gap |
 
 #### 6. Security, Compliance & Privacy
 
@@ -379,7 +378,6 @@
 |---------|:---:|:---:|---------|
 | Encryption at rest | yes/no | yes/no | [details or "not specified"] |
 | Secret management | yes/no | yes/no | [details or "not specified"] |
-| Audit logging | yes/no | yes/no | [details or "not specified"] |
 
 #### 7. Observability, Logging & Monitoring
 
@@ -390,7 +388,6 @@
 | Structured logging | yes/no | yes/no | [details or "not specified"] |
 | Metrics | yes/no | yes/no | [details or "not specified"] |
 | Distributed tracing | yes/no | yes/no | [details or "not specified"] |
-| Alerting rules | yes/no | yes/no | [details or "not specified"] |
 
 #### 8. Testing, Quality & Acceptance
 
@@ -401,7 +398,6 @@
 | Unit tests | yes/no | yes/no | yes/no | Complete / Gap |
 | Integration tests | yes/no | yes/no | yes/no | Complete / Gap |
 | E2E tests | yes/no | yes/no | yes/no | Complete / Gap |
-| Performance tests | yes/no | yes/no | yes/no | Complete / Gap |
 
 #### 9. Deployment, Operations & Configuration
 
@@ -411,8 +407,6 @@
 |--------|:---:|---------|
 | Deployment method | yes/no | [details or "not specified"] |
 | CI/CD pipeline | yes/no | [details or "not specified"] |
-| Configuration management | yes/no | [details or "not specified"] |
-| Rollback strategy | yes/no | [details or "not specified"] |
 
 #### 10. Ambiguities, Assumptions & Contradictions
 
@@ -429,6 +423,14 @@
 | Component | Implementable? | Judgment Calls Required | Missing Info |
 |-----------|:---:|----------------------|--------------|
 | [component] | yes / mostly / no | [what a coding agent would have to guess] | [what's missing] |
+
+#### 12. Unspecified References
+
+[detailed reasoning — list each phantom reference found with spec quote]
+
+| ID | Category | Prose Mention | Missing Definition | Location | Severity |
+|----|----------|---------------|--------------------|----------|----------|
+| UR-NNN | config / metric / error code / role / event / threshold / flag / CLI / enum | [quote from spec] | [concrete attributes missing] | [file/section] | BLOCKER / HIGH / MEDIUM / LOW |
 
 ### Gap List
 
@@ -489,3 +491,9 @@ For the top 3 critical gaps, provide exact spec language to add:
 | Aspect | Current | Proposed | Rationale |
 |--------|---------|----------|-----------|
 | [aspect] | [current state] | [proposed state] | [why this is better] |
+
+---
+
+## What's Next
+
+> **Next:** Run `pmp:discuss` to walk through findings interactively, or address issues and re-run `pmp:spec-review`.

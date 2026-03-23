@@ -34,3 +34,14 @@
 
 ## Deployment Notes
 <!-- Any special deployment considerations -->
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Optionally generate release notes, then merge.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Generate release notes | `pmp:changelog` | Create user-facing changelog from this PR |
+> | Done | — | Merge the PR; linked issues auto-close |

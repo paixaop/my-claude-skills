@@ -1,11 +1,11 @@
 ---
 name: spec-implementability
-description: "Implementability assessment — 11-criteria production-readiness gate. Determines whether a spec is complete enough for a coding agent to generate production-grade code without clarification. Part of the spec-review suite; can run standalone. Use when the user says 'implementability review', 'is this implementable', 'ready to code', 'spec completeness', 'can we implement this', 'coding readiness', or wants to verify a spec is implementation-ready."
+description: "Implementability assessment — 12-criteria production-readiness gate. Determines whether a spec is complete enough for a coding agent to generate production-grade code without clarification. Part of the spec-review suite; can run standalone. Use when the user says 'implementability review', 'is this implementable', 'ready to code', 'spec completeness', 'can we implement this', 'coding readiness', or wants to verify a spec is implementation-ready."
 ---
 
 # PMP: Spec Implementability Review
 
-11-criteria production-readiness gate. Determines whether a specification is complete enough for a coding agent (AI or human) to implement complete, production-grade, observable, secure, and maintainable code without any further clarification, assumptions, design work, or rework.
+12-criteria production-readiness gate. Determines whether a specification is complete enough for a coding agent (AI or human) to implement complete, production-grade, observable, secure, and maintainable code without any further clarification, assumptions, design work, or rework.
 
 Part of the spec-review suite — can run standalone or be dispatched by `/pmp:spec-review`.
 

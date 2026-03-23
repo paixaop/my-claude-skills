@@ -2,7 +2,7 @@
 
 Full architecture and specification review. Runs discovery once, dispatches focused sub-commands for analysis, consolidates findings into remediation, and produces a unified report.
 
-> **This is the Spec Review Orchestrator.** It coordinates four focused sub-reviews: architecture, security, operations, and implementability. Each sub-command can also be invoked standalone. For reviewing implementation plans, see [review.md](../../review/references/review.md).
+> **This is the Spec Review Orchestrator.** It coordinates four focused sub-reviews: architecture, security, operations, and implementability. Each sub-command can also be invoked standalone. For reviewing implementation plans, see [review.md](../../plan-review/references/review.md).
 
 **Announce at start** with message from [config.md](../../pmp/config.md) Stage Announcements.
 
@@ -101,7 +101,7 @@ stateDiagram-v2
    | 4a | Architecture | [spec-architecture.md](../../spec-architecture/references/spec-architecture.md) | Simplicity, Consistency, Invariants, State Machines |
    | 4b | Security | [spec-security.md](../../spec-security/references/spec-security.md) | Threat Modeling, Attack Simulation, AI Red Team |
    | 4c | Operations | [spec-operations.md](../../spec-operations/references/spec-operations.md) | Performance, Resources, Failure Modes, Scalability, Operability |
-   | 4d | Implementability | [spec-implementability.md](../../spec-implementability/references/spec-implementability.md) | 11-criteria production-readiness gate |
+   | 4d | Implementability | [spec-implementability.md](../../spec-implementability/references/spec-implementability.md) | 12-criteria production-readiness gate |
 
 5. **Consolidate findings** — deduplicate across sub-commands (same root cause reported by multiple sub-commands → report once with all phase references)
 6. Run **Remediation** (see below) — cross-references all findings

@@ -29,3 +29,14 @@
 
 ## Out of Scope
 [Explicitly excluded items to prevent scope creep]
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Convert this design into an actionable implementation plan.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Generate implementation plan | `pmp:plan` | Turn this design into a phased, testable plan |
+> | Discuss the design further | `pmp:discuss` | Walk through findings before committing to a plan |

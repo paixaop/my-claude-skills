@@ -53,3 +53,14 @@ Findings resolved during discussion without spec changes. GitHub blockquote aler
 | Finding | Severity | Decision | Reason | Annotated In |
 |---------|----------|----------|--------|--------------|
 | [title] | [severity] | Acknowledged / Skipped | [reason] | [spec file path] |
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Execute the collected fixes or regenerate the plan.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Execute fixes | `pmp:execute` | Apply the spec/doc changes collected above |
+> | Regenerate plan | `pmp:plan` | Start a fresh plan incorporating discussion outcomes |

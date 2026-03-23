@@ -121,3 +121,16 @@
 | Priority | Improvement | Addresses | Fix Type | Effort |
 |----------|------------|-----------|----------|--------|
 | 1 | [improvement] | [which attack IDs] | Spec Fix / Design Fix / Implementation Guidance | Low / Medium / High |
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Return results to the spec review orchestrator or run sibling analyses.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Consolidated spec review | `pmp:spec-review` | Combine with other sub-command results into a full report |
+> | Run architecture analysis | `pmp:spec-architecture` | Assess simplicity, boundaries, consistency |
+> | Run operations analysis | `pmp:spec-operations` | Assess performance, failure modes, scalability |
+> | Run implementability check | `pmp:spec-implementability` | Assess coding readiness of specs |

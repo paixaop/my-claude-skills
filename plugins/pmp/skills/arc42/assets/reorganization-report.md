@@ -103,3 +103,13 @@
 | `[!NOTE]` | N | [files] |
 
 All annotations will be preserved and moved with their associated content.
+
+---
+
+## What's Next
+
+> **PMP lifecycle complete.** Specs have been reorganized into arc42 structure.
+>
+> | Action | Command | When to use |
+> |--------|---------|-------------|
+> | Review reorganized specs | `pmp:spec-review` | Validate the reorganized spec corpus |

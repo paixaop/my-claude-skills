@@ -150,6 +150,16 @@
 
 ---
 
+### 12. Unspecified References
+
+[detailed reasoning — list each phantom reference found with spec quote]
+
+| ID | Category | Prose Mention | Missing Definition | Location | Severity |
+|----|----------|---------------|--------------------|----------|----------|
+| UR-NNN | config / metric / error code / role / event / threshold / flag / CLI / enum | [quote from spec] | [concrete attributes missing] | [file/section] | BLOCKER / HIGH / MEDIUM / LOW |
+
+---
+
 ## Gap List
 
 | Severity | Category | Gap Description | Suggested Fix | Effort |
@@ -193,3 +203,16 @@ For the top 3 critical gaps, provide exact spec language to add:
 
 **Suggested wording:**
 > [exact text to add to the spec]
+
+---
+
+## What's Next
+
+> **Next in the PMP lifecycle:** Act on the implementability verdict.
+>
+> | Verdict | Action | Command | When to use |
+> |---------|--------|---------|-------------|
+> | **READY** | Generate implementation plan | `pmp:plan` | Specs are complete enough to plan from |
+> | **READY WITH MINOR TWEAKS** | Fix and re-check | `pmp:spec-implementability` | Address minor gaps, then verify |
+> | **NOT READY** | Fix specs and re-check | `pmp:spec-implementability` | Address blockers before planning |
+> | Any | Return to orchestrator | `pmp:spec-review` | Combine with other sub-command results |
