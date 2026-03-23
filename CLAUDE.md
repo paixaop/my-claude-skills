@@ -7,3 +7,7 @@ When committing and pushing changes to a plugin, bump the patch version in that 
 ## Skill File Size Limit
 
 Keep all skill markdown files (SKILL.md, references/*.md, assets/*.md) at or below 500 lines. If a file exceeds 500 lines, split it into multiple focused files in the same directory.
+
+## Git Operations
+
+When performing git operations (push, pull, fetch, clone, etc.), ensure the GitHub CLI is using the `paixaop` user account. Switch with `gh auth switch --user paixaop` if needed.

@@ -200,7 +200,7 @@ For GitHub Issues Mode: the "roadmap" is the normalized feature list from step 0
 - When a feature modifies a spec-owned behavior, the plan must include updating the canonical spec file as an explicit step
 - When a feature adds a new concept, the plan must include adding it to the SSoT index as an explicit step
 
-**If no SSoT index exists** but spec files exist, note this and suggest running `/pmp:ssot-index` after plan generation.
+**If no SSoT index exists** but spec files exist, note this and suggest running `/pmp:spec-index` after plan generation.
 
 ### 2. Analyze the Codebase
 

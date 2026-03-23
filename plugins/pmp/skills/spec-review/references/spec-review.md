@@ -97,7 +97,7 @@ stateDiagram-v2
    - Use it to map concepts to canonical files (skip scanning for ownership)
    - Validate the index is current: check that every file listed still exists and every spec file is listed
    - Flag stale entries (files that no longer exist) and unlisted files as findings
-   - If not found: note in the report and suggest running `/pmp:ssot-index` after the review
+   - If not found: note in the report and suggest running `/pmp:spec-index` after the review
 4. **Check SSoT compliance** — verify spec files follow [single-source-of-truth.md](../../pmp/references/single-source-of-truth.md) formatting rules (summary blocks, cross-references, naming, deduplication). Flag violations as findings in the report.
 5. Dispatch sub-commands sequentially. Each sub-command runs its analysis phases using the system model and file contents already in context:
 

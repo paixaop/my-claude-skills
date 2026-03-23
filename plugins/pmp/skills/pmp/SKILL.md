@@ -56,7 +56,7 @@ For direct invocation when you know which stage you need:
 | `/pmp:decompose` | Break large plans into dependency-ordered phases |
 | `/pmp:changelog` | Generate user-facing release notes from completed plans |
 | `/pmp:arc42` | Reorganize spec files into arc42 standard structure |
-| `/pmp:ssot-index` | Generate SSoT ownership registry from spec files |
+| `/pmp:spec-index` | Generate SSoT ownership registry from spec files |
 
 ## Routing
 
@@ -124,7 +124,7 @@ When the user's intent maps to a specific stage, read the reference for that sta
 | "decompose plan", "break into phases", "phase this plan" | Decompose | [decompose.md](../decompose/references/decompose.md) |
 | "generate release notes", "changelog", "what was built" | Changelog | [changelog.md](../changelog/references/changelog.md) |
 | "organize specs", "arc42", "consolidate docs", "clean up specs", "reorganize architecture", "merge spec files" | Arc42 | [arc42.md](../arc42/references/arc42.md) |
-| "generate ssot index", "build ssot", "update ssot", "ssot index" | SSoT Index | [ssot-index-generator.md](../ssot-index/references/ssot-index-generator.md) |
+| "generate spec index", "build spec index", "update spec index", "spec index", "ssot index" | Spec Index | [spec-index-generator.md](../spec-index/references/spec-index-generator.md) |
 | "run tests", "re-test" | Execute (Test Only) | [execute-loop.md](../execute/references/execute-loop.md) |
 | Existing plan + "extend" | Plan (Extend) | [generate-plans.md](../plan/references/generate-plans.md) |
 

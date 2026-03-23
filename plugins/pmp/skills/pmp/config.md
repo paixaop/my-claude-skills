@@ -47,7 +47,7 @@ Epic #41 (Plan)
 | Review filename pattern | `YYYY-MM-DD-<plan-name>-review.md` | review (enables re-review to find prior reviews) |
 | Changelog directory | `docs/changelog/` | changelog |
 | Changelog filename pattern | `<plan-name>.md` or `<version>.md` | changelog |
-| SSoT index filename | `ssot-index.md` (in spec directory root) | ssot-index, plan, plan-review, spec-review, execute |
+| SSoT index filename | `ssot-index.md` (in spec directory root) | spec-index, plan, plan-review, spec-review, execute |
 | Analysis cache directory | `docs/.cache/` | All skills (opt-in) — see [analysis-cache.md](references/analysis-cache.md) |
 
 ---
