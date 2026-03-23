@@ -188,6 +188,20 @@ Read it completely. Understand every feature, requirement, and acceptance criter
 
 For GitHub Issues Mode: the "roadmap" is the normalized feature list from step 0.
 
+### 1b. Locate SSoT Index and Rules
+
+**If the project has spec files** (under `specs/`, `docs/architecture/`, or similar):
+
+1. **Look for `ssot-index.md`** in the spec directory root. If found, read it — this is the ownership registry that maps concepts to their canonical files.
+2. **Look for SSoT rules** in CLAUDE.md, the spec directory README.md, or `docs/single-source-of-truth.md`. If found, read them — all plan features that touch spec-owned concepts must reference the canonical source.
+
+**If an SSoT index exists**, use it throughout plan generation:
+- When a feature references a concept, link to the canonical file from the index — not to duplicates or summaries
+- When a feature modifies a spec-owned behavior, the plan must include updating the canonical spec file as an explicit step
+- When a feature adds a new concept, the plan must include adding it to the SSoT index as an explicit step
+
+**If no SSoT index exists** but spec files exist, note this and suggest running `/pmp:ssot-index` after plan generation.
+
 ### 2. Analyze the Codebase
 
 Use parallel agents if available, otherwise sequential:
@@ -336,3 +350,16 @@ If the plan was generated from GitHub Issues, include a [assets/github-issues-ta
 - Test runner command must be a single command that runs ALL E2E tests (code-file model)
 - For hybrid model: note execution model (code-file or agent-driven) per AC test
 - **Group changes by file** -- units of work should group changes by file if at all possible. When a task touches a file, all related changes to that file belong in the same task. This prevents parallel agents from conflicting on the same file and makes diffs reviewable.
+
+### SSoT Compliance Rules
+
+When the project has spec files with SSoT conventions, every plan MUST follow these rules so the executing agent maintains spec integrity:
+
+- **Reference canonical sources** — Every feature that implements a spec-defined behavior must link to the canonical spec file (from the SSoT index). Never reference duplicates, summaries, or inline copies.
+- **One concept = one file** — If a feature adds a new architectural concept, the plan must include a task to create its canonical spec file. No new concepts defined only in code comments or inline docs.
+- **Update specs alongside code** — If a feature changes spec-owned behavior, the plan must include an explicit task to update the canonical spec file. Code changes without spec updates are incomplete.
+- **No duplication** — Plan tasks must never instruct the agent to duplicate spec content into other files. Cross-reference with section-level links (`file.md#section`) instead.
+- **Update the SSoT index** — If the plan creates or removes spec files, include a task to update `ssot-index.md`.
+- **Stable anchors** — If a plan task renames a heading in a spec file, it must include updating all inbound cross-reference links. Use grep to find them.
+- **Section-level links** — All cross-references in plan tasks must use `file.md#section` format, not bare file links, so the executing agent links to the exact location.
+- **No magic numbers** — Numeric literals in plan tasks (thresholds, limits, timeouts) must reference a named setting from the settings catalog. If the setting doesn't exist yet, include a task to add it.

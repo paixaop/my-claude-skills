@@ -47,6 +47,7 @@ Epic #41 (Plan)
 | Review filename pattern | `YYYY-MM-DD-<plan-name>-review.md` | review (enables re-review to find prior reviews) |
 | Changelog directory | `docs/changelog/` | changelog |
 | Changelog filename pattern | `<plan-name>.md` or `<version>.md` | changelog |
+| SSoT index filename | `ssot-index.md` (in spec directory root) | ssot-index, plan, plan-review, spec-review, execute |
 | Analysis cache directory | `docs/.cache/` | All skills (opt-in) — see [analysis-cache.md](references/analysis-cache.md) |
 
 ---
@@ -301,3 +302,40 @@ Agents share no context with the main controller — each starts with an empty c
 |---------|--------|
 | Issue assigned | Move to "In Progress" |
 | Issue closed | Move to "Done" |
+
+---
+
+## Token Efficiency Targets
+
+| Skill Category | SKILL.md Target | Notes |
+|---|---|---|
+| Root pmp router | <200 words | Loaded on every planning request |
+| Stage skills (brainstorm, plan, execute) | <100 words in SKILL.md | Workflow lives in references |
+| Spec review sub-skills | <100 words in SKILL.md | Analysis lives in references |
+| Reference files | <500 words each | Split if exceeded |
+
+---
+
+## Task Granularity Rule
+
+Each plan task step MUST be one atomic action (2-5 minutes):
+- "Write the failing test" — step
+- "Run it to make sure it fails" — step
+- "Implement the minimal code to make the test pass" — step
+- "Run the tests and make sure they pass" — step
+- "Commit" — step
+
+Steps that bundle multiple actions ("implement and test the feature") MUST be split.
+
+---
+
+## Blocker Escalation
+
+**STOP executing immediately when:**
+- Hit a blocker mid-batch (missing dependency, test fails repeatedly, instruction unclear)
+- Plan has critical gaps preventing correct implementation
+- You don't understand an instruction
+- Verification fails repeatedly (3 attempts)
+
+**Ask for clarification rather than guessing.**
+**Don't force through blockers — stop and ask.**

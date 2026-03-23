@@ -150,6 +150,29 @@ Create a TodoWrite with these items and check each:
 - [ ] Migration is idempotent or guarded against re-runs
 - [ ] Rollback plan tested — down migration restores previous state without data loss
 
+### SSoT Compliance (when project has spec files)
+- [ ] SSoT index was consulted — plan features reference canonical spec files, not duplicates or summaries
+- [ ] Features that implement spec-defined behavior link to the canonical source (`file.md#section`)
+- [ ] Features that change spec-owned behavior include an explicit task to update the canonical spec file
+- [ ] Features that add new architectural concepts include a task to create the canonical spec file
+- [ ] No plan task instructs the agent to duplicate spec content — cross-references use section-level links
+- [ ] If plan creates or removes spec files, it includes a task to update `ssot-index.md`
+- [ ] If plan renames a heading in a spec file, it includes updating all inbound cross-reference links
+- [ ] Numeric literals (thresholds, limits, timeouts) reference named settings from the settings catalog
+- [ ] All cross-references use `file.md#section` format, not bare file links
+
+### Agent Readability
+- [ ] Every step has exactly one interpretation — no "should", "might", "consider", "as needed" without defining what that means
+- [ ] File paths are concrete and exact — no "relevant file", "the config", "appropriate location"
+- [ ] Acceptance criteria are testable assertions — no "works correctly", "handles errors properly", "is performant"
+- [ ] No implicit project knowledge assumed — no "the usual pattern", "standard approach", "as we do elsewhere" without showing the pattern inline
+- [ ] Each feature has explicit scope boundaries (in AND out) — agent can't reasonably gold-plate or under-build
+- [ ] Steps within each feature have a clear, unambiguous execution order
+- [ ] When modifying existing code, the plan specifies what to change — agent doesn't have to read surrounding code and guess intent
+- [ ] Error behavior is specified for every operation that can fail — which errors, what response, what log level
+- [ ] No hand-waving: no "etc.", "and so on", "similar to above", "repeat for other cases"
+- [ ] Code examples (when present) are complete and runnable — no pseudocode or partial snippets the agent must complete
+
 ### Completeness
 - [ ] Phase exit criteria are specific and automated
 - [ ] File paths are exact (not approximate)

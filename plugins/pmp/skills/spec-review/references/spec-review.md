@@ -93,20 +93,25 @@ stateDiagram-v2
 
 1. Read [config.md](../../pmp/config.md) for current constants
 2. Read [discovery.md](discovery.md) and execute **Phase 0 (Discovery)** and **Phase 1 (System Reconstruction)**
-3. **Check SSoT compliance** — verify spec files follow [single-source-of-truth.md](../../pmp/references/single-source-of-truth.md) formatting rules (summary blocks, cross-references, naming, deduplication). Flag violations as findings in the report.
-4. Dispatch sub-commands sequentially. Each sub-command runs its analysis phases using the system model and file contents already in context:
+3. **Load SSoT index** — look for `ssot-index.md` in the spec directory root. If found:
+   - Use it to map concepts to canonical files (skip scanning for ownership)
+   - Validate the index is current: check that every file listed still exists and every spec file is listed
+   - Flag stale entries (files that no longer exist) and unlisted files as findings
+   - If not found: note in the report and suggest running `/pmp:ssot-index` after the review
+4. **Check SSoT compliance** — verify spec files follow [single-source-of-truth.md](../../pmp/references/single-source-of-truth.md) formatting rules (summary blocks, cross-references, naming, deduplication). Flag violations as findings in the report.
+5. Dispatch sub-commands sequentially. Each sub-command runs its analysis phases using the system model and file contents already in context:
 
    | Step | Sub-Command | Reference | Phases |
    |------|------------|-----------|--------|
-   | 4a | Architecture | [spec-architecture.md](../../spec-architecture/references/spec-architecture.md) | Simplicity, Consistency, Invariants, State Machines |
-   | 4b | Security | [spec-security.md](../../spec-security/references/spec-security.md) | Threat Modeling, Attack Simulation, AI Red Team |
-   | 4c | Operations | [spec-operations.md](../../spec-operations/references/spec-operations.md) | Performance, Resources, Failure Modes, Scalability, Operability |
-   | 4d | Implementability | [spec-implementability.md](../../spec-implementability/references/spec-implementability.md) | 12-criteria production-readiness gate |
+   | 5a | Architecture | [spec-architecture.md](../../spec-architecture/references/spec-architecture.md) | Simplicity, Consistency, Invariants, State Machines |
+   | 5b | Security | [spec-security.md](../../spec-security/references/spec-security.md) | Threat Modeling, Attack Simulation, AI Red Team |
+   | 5c | Operations | [spec-operations.md](../../spec-operations/references/spec-operations.md) | Performance, Resources, Failure Modes, Scalability, Operability |
+   | 5d | Implementability | [spec-implementability.md](../../spec-implementability/references/spec-implementability.md) | 13-criteria production-readiness gate (includes agent compliance) |
 
-5. **Consolidate findings** — deduplicate across sub-commands (same root cause reported by multiple sub-commands → report once with all phase references)
-6. Run **Remediation** (see below) — cross-references all findings
-7. Assemble merged report using [spec-review-output.md](../assets/spec-review-output.md)
-8. Save report to reviews directory per [config.md](../../pmp/config.md) File Paths
+6. **Consolidate findings** — deduplicate across sub-commands (same root cause reported by multiple sub-commands → report once with all phase references)
+7. Run **Remediation** (see below) — cross-references all findings
+8. Assemble merged report using [spec-review-output.md](../assets/spec-review-output.md)
+9. Save report to reviews directory per [config.md](../../pmp/config.md) File Paths
 
 ### Remediation
 

@@ -1,9 +1,11 @@
 ---
 name: plan
-description: "Generate detailed implementation plans from specs, roadmaps, requirements, or GitHub Issues. Use when the user provides a spec, roadmap, requirements doc, user stories, or says 'create a plan', 'plan this', 'plan from roadmap', 'plan from issues', 'plan from epic #N', 'generate plan', 'write a plan', or 'extend plan'. Also handles GitHub Issues Mode — fetching epics and sub-issues to build plans from existing issue hierarchies. Includes E2E project detection, monorepo support, and execution model selection. Not for vague ideas (use pmp:brainstorm) or reviewing existing plans (use pmp:plan-review)."
+description: Use when the user has a spec, roadmap, requirements, or GitHub Issues and says 'create a plan', 'plan from roadmap', 'plan from issues', or 'extend plan' — requires existing input artifacts, not vague ideas
 ---
 
 # PMP: Plan
+
+**Announce at start:** "Using pmp:plan to generate the implementation plan."
 
 Generate implementation plans from specs, roadmaps, or GitHub Issues. Each plan includes feature specs with acceptance criteria, E2E test cases, and a dependency graph.
 
@@ -13,8 +15,8 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
 ## Workflow
 
-1. Read [config.md](../pmp/config.md) for current constants
-2. Read [generate-plans.md](references/generate-plans.md) and follow it completely — it contains E2E project detection, plan generation, GitHub Issues Mode, and Extend Mode
+1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants
+2. **REQUIRED:** Read [generate-plans.md](references/generate-plans.md) and follow it completely — it contains E2E project detection, plan generation, GitHub Issues Mode, and Extend Mode
 3. After saving the plan, ask: "Plan saved. Ready for plan review?"
 4. If yes → tell the user to invoke `/pmp:plan-review`
 
@@ -25,6 +27,7 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
 ## Shared Resources
 
+- SSoT formatting rules: [single-source-of-truth.md](../pmp/references/single-source-of-truth.md)
 - GitHub Issues table: [github-issues-table.md](../pmp/assets/github-issues-table.md)
 - Testing approaches by project type: [testing-approaches.md](../pmp/references/testing-approaches.md)
-- Full lifecycle overview: [overview.md](../pmp/references/overview.md)
+- **BACKGROUND:** [overview.md](../pmp/references/overview.md) for lifecycle context

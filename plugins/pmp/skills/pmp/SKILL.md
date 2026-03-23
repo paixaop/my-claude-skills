@@ -1,16 +1,40 @@
 ---
 name: pmp
-version: "1.7.5"
-description: "Full planning lifecycle router — dispatches to focused sub-skills for each stage. Use this when the user's intent is ambiguous or spans multiple stages, e.g. 'plan this feature', 'help me build X', 'I have a feature idea', or general planning requests. For specific stages, prefer the focused sub-skills: pmp:brainstorm (design exploration), pmp:plan (generate plans), pmp:plan-review (plan review), pmp:execute (code-test-fix), pmp:spec-review (architecture analysis orchestrator), pmp:spec-architecture (architecture quality), pmp:spec-security (threat modeling), pmp:spec-operations (performance/scalability), pmp:spec-implementability (coding-readiness gate), pmp:github (issues/projects), pmp:decompose (phase breakdown), pmp:changelog (release notes). This root skill routes to the right stage based on the user's input."
+description: Use when the user says 'plan this', 'help me build', 'I have a feature idea', or any planning request that doesn't clearly map to a specific stage like brainstorm, plan, review, or execute
 ---
 
 # PMP — Plan
+
+**Announce at start:** "Using PMP to route this planning request."
 
 Full planning lifecycle: brainstorm, write, review, execute. Routes to focused sub-skills for each stage.
 
 Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
-**CRITICAL: Always ask the user before transitioning to the next stage.** Use the AskQuestion tool. Never auto-advance.
+## The Iron Law
+
+```
+NO STAGE TRANSITIONS WITHOUT EXPLICIT USER CONFIRMATION
+```
+
+**Violating the letter of this rule is violating the spirit of this rule.**
+
+Use the AskQuestion tool. Never auto-advance.
+
+| Excuse | Reality |
+|--------|---------|
+| "The design is approved, moving to plan" | User must explicitly say to proceed |
+| "Plan review passed, starting execution" | Ask first. Always. |
+| "It's obvious they want to continue" | Obvious ≠ confirmed |
+| "I'll save them time by auto-advancing" | You'll waste their time by doing wrong work |
+| "They said 'go ahead' earlier" | 'Go ahead' for step N ≠ permission for step N+1 |
+
+## Red Flags — STOP
+
+- About to invoke a sub-skill without asking the user first
+- Assuming user wants the "next" stage because the current one finished
+- Routing to a stage based on what seems logical rather than what user said
+- Using "should", "probably" about which stage the user wants
 
 ## Sub-Skills
 
@@ -26,14 +50,59 @@ For direct invocation when you know which stage you need:
 | `/pmp:spec-architecture` | Architecture quality: simplicity, consistency, invariants, state machines |
 | `/pmp:spec-security` | Security: STRIDE threat modeling, attack simulation, AI red team |
 | `/pmp:spec-operations` | Operations: performance, resources, failure modes, scalability, operability |
-| `/pmp:spec-implementability` | Implementability: 12-criteria production-readiness gate |
+| `/pmp:spec-implementability` | Implementability: 13-criteria production-readiness gate (includes agent compliance) |
 | `/pmp:discuss` | Structured walkthrough of review findings, collect fixes into a plan |
 | `/pmp:github` | Publish plan as GitHub Issues/Projects, or sync changes to existing issues |
 | `/pmp:decompose` | Break large plans into dependency-ordered phases |
 | `/pmp:changelog` | Generate user-facing release notes from completed plans |
 | `/pmp:arc42` | Reorganize spec files into arc42 standard structure |
+| `/pmp:ssot-index` | Generate SSoT ownership registry from spec files |
 
 ## Routing
+
+```dot
+digraph pmp_routing {
+    rankdir=TB;
+    "What did the user say?" [shape=ellipse];
+
+    "Idea, 'what if', 'design this'?" [shape=diamond];
+    "Spec/roadmap/requirements present?" [shape=diamond];
+    "Existing plan referenced?" [shape=diamond];
+    "User intent with plan?" [shape=diamond];
+    "Existing specs/docs referenced?" [shape=diamond];
+    "User intent with specs?" [shape=diamond];
+
+    "pmp:brainstorm" [shape=box];
+    "pmp:plan" [shape=box];
+    "pmp:plan-review" [shape=box, label="pmp:plan-review\n('review plan', 'check my plan')"];
+    "pmp:execute" [shape=box, label="pmp:execute\n('execute', 'start coding', 'run tests')"];
+    "pmp:discuss" [shape=box, label="pmp:discuss\n('discuss review', 'walk through findings')"];
+    "pmp:github" [shape=box, label="pmp:github\n('create issues', 'publish to GitHub')"];
+    "pmp:spec-review" [shape=box, label="pmp:spec-review\n('review specs', 'architecture review')"];
+    "pmp:decompose" [shape=box, label="pmp:decompose\n('break into phases')"];
+    "pmp:changelog" [shape=box, label="pmp:changelog\n('release notes', 'changelog')"];
+    "pmp:arc42" [shape=box, label="pmp:arc42\n('organize specs', 'consolidate docs')"];
+    "Ask user to clarify" [shape=box, style=filled, fillcolor="#fff3cc"];
+
+    "What did the user say?" -> "Idea, 'what if', 'design this'?";
+    "Idea, 'what if', 'design this'?" -> "pmp:brainstorm" [label="yes"];
+    "Idea, 'what if', 'design this'?" -> "Spec/roadmap/requirements present?" [label="no"];
+    "Spec/roadmap/requirements present?" -> "pmp:plan" [label="yes"];
+    "Spec/roadmap/requirements present?" -> "Existing plan referenced?" [label="no"];
+    "Existing plan referenced?" -> "User intent with plan?" [label="yes"];
+    "User intent with plan?" -> "pmp:plan-review" [label="review"];
+    "User intent with plan?" -> "pmp:execute" [label="execute/code"];
+    "User intent with plan?" -> "pmp:discuss" [label="discuss findings"];
+    "User intent with plan?" -> "pmp:github" [label="publish issues"];
+    "User intent with plan?" -> "pmp:decompose" [label="phase/decompose"];
+    "User intent with plan?" -> "pmp:changelog" [label="release notes"];
+    "Existing plan referenced?" -> "Existing specs/docs referenced?" [label="no"];
+    "Existing specs/docs referenced?" -> "User intent with specs?" [label="yes"];
+    "User intent with specs?" -> "pmp:spec-review" [label="review/analyze"];
+    "User intent with specs?" -> "pmp:arc42" [label="organize/restructure"];
+    "Existing specs/docs referenced?" -> "Ask user to clarify" [label="no artifacts"];
+}
+```
 
 When the user's intent maps to a specific stage, read the reference for that stage directly:
 
@@ -55,6 +124,7 @@ When the user's intent maps to a specific stage, read the reference for that sta
 | "decompose plan", "break into phases", "phase this plan" | Decompose | [decompose.md](../decompose/references/decompose.md) |
 | "generate release notes", "changelog", "what was built" | Changelog | [changelog.md](../changelog/references/changelog.md) |
 | "organize specs", "arc42", "consolidate docs", "clean up specs", "reorganize architecture", "merge spec files" | Arc42 | [arc42.md](../arc42/references/arc42.md) |
+| "generate ssot index", "build ssot", "update ssot", "ssot index" | SSoT Index | [ssot-index-generator.md](../ssot-index/references/ssot-index-generator.md) |
 | "run tests", "re-test" | Execute (Test Only) | [execute-loop.md](../execute/references/execute-loop.md) |
 | Existing plan + "extend" | Plan (Extend) | [generate-plans.md](../plan/references/generate-plans.md) |
 

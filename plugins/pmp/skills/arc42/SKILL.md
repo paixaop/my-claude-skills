@@ -1,9 +1,11 @@
 ---
 name: arc42
-description: "Reorganize spec and architecture files into arc42 standard structure — consolidates scattered content into 12 arc42 section directories with one file per concern. Use when the user says 'organize specs', 'arc42', 'consolidate docs', 'clean up specs', 'reorganize architecture', 'merge spec files', 'deduplicate specs', or has spec files that grew disorganized over multiple revisions and reviews. Reads all files, classifies content into arc42 sections, identifies duplicates/overlaps/contradictions, proposes a new structure, and executes the reorganization after user approval. Standalone workflow — does not feed into plan generation or execution."
+description: Use when the user says 'organize specs', 'arc42', 'consolidate docs', 'clean up specs', 'reorganize architecture', 'merge spec files', or has spec files that grew disorganized and need restructuring
 ---
 
 # PMP: Arc42
+
+**Announce at start:** "Using pmp:arc42 to reorganize specifications."
 
 Reorganize spec/architecture files into the arc42 standard structure. Reads the corpus, classifies content into arc42's 12 sections, identifies duplicates and contradictions, proposes a new directory structure, and executes the reorganization after user approval.
 
@@ -15,10 +17,10 @@ Use agent teams (Task tool) ONLY for parallel file reading when the corpus is la
 
 ## Workflow
 
-1. Read [config.md](../pmp/config.md) for current constants
+1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants
 2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md). Check `docs/.cache/arc42/manifest.json`. Load cached summaries for unchanged files, only read changed/new files in full. This is mandatory, not optional.
-3. Read [single-source-of-truth.md](../pmp/references/single-source-of-truth.md) — all reorganized files must follow these formatting and linking rules
-4. Read [arc42.md](references/arc42.md) and follow it completely — it contains the full reorganization algorithm
+3. **REQUIRED:** Read [single-source-of-truth.md](../pmp/references/single-source-of-truth.md) — all reorganized files must follow these formatting and linking rules
+4. **REQUIRED:** Read [arc42.md](references/arc42.md) and follow it completely — it contains the full reorganization algorithm
 5. Present reorganization proposal to user for approval/adjustment
 6. Execute approved reorganization
 7. Verify no content was lost

@@ -1,9 +1,11 @@
 ---
 name: decompose
-description: "Break large plans into dependency-ordered phases with entry/exit criteria. Use when the user says 'decompose plan', 'break this into phases', 'phase this plan', or has an existing plan with 5+ features that lacks a Phases section. Takes a plan file path and restructures it into phases."
+description: Use when the user says 'decompose plan', 'break this into phases', 'phase this plan', or has a large plan that needs dependency-ordered phase boundaries with entry and exit criteria
 ---
 
 # PMP: Decompose
+
+**Announce at start:** "Using pmp:decompose to break the plan into phases."
 
 Break large implementation plans into dependency-ordered phases with entry/exit criteria.
 
@@ -13,8 +15,8 @@ Track progress with TodoWrite throughout.
 
 ## Workflow
 
-1. Read [config.md](../pmp/config.md) for current constants
-2. Read [decompose.md](references/decompose.md) and follow it completely — it contains the phasing algorithm
+1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants
+2. **REQUIRED:** Read [decompose.md](references/decompose.md) and follow it completely — it contains the phasing algorithm
 3. Present proposed phases to the user for confirmation/adjustment
 4. Insert the `## Phases` section into the plan file
 

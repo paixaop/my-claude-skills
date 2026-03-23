@@ -1,9 +1,11 @@
 ---
 name: spec-security
-description: "Security analysis — STRIDE threat modeling, attack simulation, AI red team. Part of the spec-review suite; can run standalone. Use when the user says 'threat model', 'security review', 'red team', 'attack simulation', 'STRIDE analysis', or wants focused security analysis without the full spec-review suite."
+description: Use when the user says 'threat model', 'security review', 'red team', 'attack simulation', 'STRIDE analysis', or wants focused security analysis without the full spec-review suite
 ---
 
 # PMP: Spec Security Review
+
+**Announce at start:** "Using pmp:spec-security for security analysis."
 
 Security analysis: STRIDE threat modeling, adversarial attack simulation, and AI red team analysis (conditional).
 
@@ -11,7 +13,7 @@ Part of the spec-review suite — can run standalone or be dispatched by `/pmp:s
 
 ## Workflow
 
-1. Read [config.md](../pmp/config.md) for current constants
+1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants
 2. **Check the analysis cache FIRST** — see [analysis-cache.md](../pmp/references/analysis-cache.md)
 3. **If running standalone:** Read [discovery.md](../spec-review/references/discovery.md) and execute Phase 0 (Discovery) + Phase 1 (System Reconstruction)
 4. **If dispatched by orchestrator:** Skip discovery — system model already in context

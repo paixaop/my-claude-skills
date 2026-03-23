@@ -1,9 +1,11 @@
 ---
 name: github
-description: "Publish implementation plans as GitHub Issues, Epics, Projects, and milestones — or sync plan changes to existing issues. Use when the user says 'create issues', 'publish to GitHub', 'make an epic', 'create GitHub issues for this plan', 'update issues', 'sync issues', 'push plan changes', or wants to turn a plan into trackable GitHub artifacts. Handles 3-level hierarchy (Epic → Feature Issues → Task Sub-issues), complexity tiers (SIMPLE/STANDARD/COMPLEX), Projects v2 boards, label taxonomy, and bidirectional linking. Not for plan creation (use pmp:plan) or execution (use pmp:execute)."
+description: Use when the user says 'create issues', 'publish to GitHub', 'make an epic', 'create GitHub issues for this plan', 'update issues', 'sync issues', or 'push plan changes'
 ---
 
 # PMP: GitHub
+
+**Announce at start:** "Using pmp:github to publish to GitHub."
 
 Publish plans as GitHub Issues or sync plan changes to existing issues. Handles the full GitHub integration: epics, sub-issues, Projects v2, milestones, and label taxonomy.
 
@@ -15,8 +17,8 @@ Use agent teams (Task tool) and track progress with TodoWrite throughout.
 
 ### Create Issues (from plan)
 
-1. Read [config.md](../pmp/config.md) for current constants — especially Complexity Tiers and Label Taxonomy
-2. Read [github-planning.md](references/github-planning.md) and follow it completely — it contains pre-flight checks, tier-based creation, Projects v2 setup, plan annotation, and the mandatory checklist
+1. **REQUIRED:** Read [config.md](../pmp/config.md) for current constants — especially Complexity Tiers and Label Taxonomy
+2. **REQUIRED:** Read [github-planning.md](references/github-planning.md) and follow it completely — it contains pre-flight checks, tier-based creation, Projects v2 setup, plan annotation, and the mandatory checklist
 3. After issues are created and the plan is annotated, ask: "Issues created. Ready to start implementation?"
 4. If yes → tell the user to invoke `/pmp:execute`
 

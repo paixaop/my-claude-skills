@@ -209,6 +209,29 @@ For each phantom reference found:
 
 ---
 
+### Criterion 13: Agent Compliance Readiness
+
+Will a coding agent (Claude Code, Codex, Copilot Workspace, or similar) follow this spec to the letter without deviation, gold-plating, or misinterpretation? This criterion evaluates the spec from the agent's perspective — treating it as the sole input to plan generation and code execution.
+
+**Scan for agent failure modes:**
+
+- **Ambiguous directives** — "should", "may", "optionally", "as appropriate", "consider" without a concrete condition. Agents interpret these inconsistently: some skip optional items, others implement all of them, others ask for clarification and stall.
+- **Implicit knowledge dependencies** — "follow the standard pattern", "use the existing approach", "as documented elsewhere" without restating the pattern inline. Agents cannot reliably infer patterns from surrounding code without explicit instruction.
+- **Prose-embedded requirements** — Critical requirements buried in narrative paragraphs rather than structured headings, lists, or tables. Agents scanning for headings will miss them. Every requirement must be in a scannable structure.
+- **Contradictory instructions** — Same behavior defined differently in two locations. Agents processing specs linearly will follow whichever they read last, producing inconsistent implementations.
+- **Missing "don't" constraints** — Spec says what TO do but not what NOT to do. Without explicit boundaries, agents gold-plate: adding caching the spec didn't ask for, adding retry logic not specified, implementing features from similar systems they've seen in training data.
+- **Vague error handling** — "handle errors gracefully" or "return appropriate error" without specifying: which error types, what HTTP status, what error body, what to log. Agents will invent error handling that may not match the system's conventions.
+- **Undefined sequencing** — Steps that could be executed in multiple orders. Agents may parallelize or reorder steps unless the spec explicitly states dependencies.
+- **"Etc." and hand-waving** — "...and similar cases", "repeat for other endpoints", "apply the same pattern to X, Y, Z". Agents may implement for X but miss Y and Z, or interpret "similar" differently.
+
+**For each finding:**
+1. Quote the problematic text
+2. Classify the failure mode (from the list above)
+3. Assess severity: BLOCKER if an agent would produce incorrect code, HIGH if it would produce incomplete code, MEDIUM if it would produce non-idiomatic code
+4. Provide a concrete rewrite that eliminates the ambiguity
+
+---
+
 ## Output
 
 Use [spec-implementability-output.md](../assets/spec-implementability-output.md) for the report structure.
