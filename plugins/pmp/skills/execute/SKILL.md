@@ -1,6 +1,6 @@
 ---
 name: execute
-description: "Code-test-fix execution loop that implements plans with agent teams. Use when the user says 'execute plan', 'implement plan', 'start coding', 'build this', 'run the plan', or has an approved plan ready for implementation. Also handles 'run tests', 're-test', 'check E2E' for test-only mode. Uses a two-task model per feature: Task A (implementation + unit tests) → Task B (E2E tests). Manages batching, parallel agents, fix loops, CI gates, PR creation, and GitHub Issue updates. Not for plan creation (use pmp:plan) or review (use pmp:review)."
+description: "Code-test-fix execution loop that implements plans with agent teams. Use when the user says 'execute plan', 'implement plan', 'start coding', 'build this', 'run the plan', or has an approved plan ready for implementation. Also handles 'run tests', 're-test', 'check E2E' for test-only mode. Uses a two-task model per feature: Task A (implementation + unit tests) → Task B (E2E tests). Manages batching, parallel agents, fix loops, CI gates, PR creation, and GitHub Issue updates. Not for plan creation (use pmp:plan) or review (use pmp:plan-review)."
 ---
 
 # PMP: Execute

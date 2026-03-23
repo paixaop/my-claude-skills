@@ -317,7 +317,7 @@ pmp/
 │   │   └── feature.md                      # Feature spec with ACs and E2E tests
 │   └── references/
 │       └── generate-plans.md               # Plan generation (+ GitHub Issues Mode)
-├── review/
+├── plan-review/
 │   ├── SKILL.md
 │   ├── assets/
 │   │   ├── review-output.md                # Plan review verdict and findings
@@ -377,7 +377,7 @@ pmp/
 │   ├── assets/
 │   │   └── spec-implementability-output.md # Implementability report template
 │   └── references/
-│       └── spec-implementability.md        # 11-criteria production-readiness assessment
+│       └── spec-implementability.md        # 12-criteria production-readiness assessment
 ├── arc42/
 │   ├── SKILL.md                            # Arc42 spec reorganization
 │   ├── assets/

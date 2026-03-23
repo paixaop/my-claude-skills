@@ -1,5 +1,5 @@
 ---
-name: review
+name: plan-review
 description: "Skeptical senior-engineer review of implementation plans. Use when the user has an existing plan file and says 'review plan', 'review this', 'check my plan', 'is this plan good', or presents a plan for feedback. Evaluates architecture, security, testing coverage, complexity, and completeness. Includes a security gate (STRIDE + attack trees) for plans touching auth, data, or endpoints. Produces a structured verdict with actionable findings. Not for architecture/spec review of existing systems (use pmp:spec-review)."
 ---
 
@@ -14,7 +14,7 @@ Use agent teams (Task tool) ONLY for parallel file reading when the corpus is la
 ## Workflow
 
 1. Read [config.md](../pmp/config.md) for current constants
-2. Read [review.md](references/review.md) and follow it completely — it contains the review checklist, security gate, and verdict loop
+2. Read [review.md](references/review.md) and follow it completely — it contains the review checklist, spec alignment gate, security gate, and verdict loop
 3. The review loops until the user picks "proceed", "update", or "discuss"
 4. On approval, ask: "Plan approved. Want to publish as GitHub Issues before implementation?"
    - If yes → tell the user to invoke `/pmp:github`
@@ -23,6 +23,7 @@ Use agent teams (Task tool) ONLY for parallel file reading when the corpus is la
 ## Key References
 
 - Review output template: [review-output.md](assets/review-output.md)
+- Spec alignment: [spec-alignment.md](references/spec-alignment.md)
 - Security analysis: [security-analysis.md](references/security-analysis.md)
 - Security report template: [security-analysis-output.md](assets/security-analysis-output.md)
 

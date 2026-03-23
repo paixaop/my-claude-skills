@@ -14,7 +14,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [design-doc.md](../../brainstorm/assets/design-doc.md) | Design document from brainstorm | brainstorm.md |
 | [feature.md](../../plan/assets/feature.md) | Feature spec with ACs and E2E tests | generate-plans.md |
 | [task.md](../assets/task.md) | TDD task with steps | reference template |
-| [review-output.md](../../review/assets/review-output.md) | Plan review verdict and findings | review.md |
+| [review-output.md](../../plan-review/assets/review-output.md) | Plan review verdict and findings | review.md |
 | [spec-review-output.md](../../spec-review/assets/spec-review-output.md) | Architecture & spec review report | spec-review.md |
 | [issue-simple.md](../../github/assets/issue-simple.md) | SIMPLE tier: single issue body | github-planning.md |
 | [issue-epic.md](../../github/assets/issue-epic.md) | STANDARD/COMPLEX tier: epic body | github-planning.md |
@@ -22,7 +22,7 @@ Reusable templates for all artifacts. Reference files use these templates — re
 | [issue-task.md](../../github/assets/issue-task.md) | Task issue body (sub-issue of feature) | github-planning.md |
 | [pr-body.md](../../execute/assets/pr-body.md) | Pull request body | execute-loop.md |
 | [e2e-test-spec.md](../../execute/assets/e2e-test-spec.md) | Agent-driven test spec format | execute-loop.md |
-| [security-analysis-output.md](../../review/assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
+| [security-analysis-output.md](../../plan-review/assets/security-analysis-output.md) | Security analysis report | security-analysis.md |
 | [github-issues-table.md](../assets/github-issues-table.md) | Feature→Issue mapping table | generate-plans.md, github-planning.md |
 | [phase-exit-criteria.md](../assets/phase-exit-criteria.md) | Phase gate checklist | reference template |
 | [yaml-feature-form.yml](../../github/assets/yaml-feature-form.yml) | GitHub Issue form: feature | github-planning.md |
@@ -119,7 +119,7 @@ The agent handles the rest — detecting your project type, choosing test framew
 
 ### 1.6.0
 
-- **Sub-skill architecture:** Split PMP into focused sub-skills (`pmp:brainstorm`, `pmp:plan`, `pmp:review`, `pmp:execute`, `pmp:spec-review`, `pmp:github`). Each loads only the context it needs. Root `pmp` skill becomes a router for ambiguous requests.
+- **Sub-skill architecture:** Split PMP into focused sub-skills (`pmp:brainstorm`, `pmp:plan`, `pmp:plan-review`, `pmp:execute`, `pmp:spec-review`, `pmp:github`). Each loads only the context it needs. Root `pmp` skill becomes a router for ambiguous requests.
 - **Improved descriptions:** Each sub-skill has a focused, trigger-optimized description instead of one monolithic description covering all use cases.
 - **SKILL.md further compressed:** Root skill is now 72 lines (down from 530 in v1.4). Sub-skills average 28 lines each.
 

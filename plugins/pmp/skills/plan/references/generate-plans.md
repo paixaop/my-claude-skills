@@ -237,7 +237,7 @@ Walk through every acceptance criterion and confirm it has an E2E test case dire
 
 After saving, use AskQuestion: "Plan saved to docs/plans/. Ready to move to the review stage?"
 
-Once confirmed, read [review.md](../../review/references/review.md) and follow it. Do NOT skip plan review.
+Once confirmed, read [review.md](../../plan-review/references/review.md) and follow it. Do NOT skip plan review.
 
 ---
 
