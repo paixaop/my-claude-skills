@@ -1,6 +1,6 @@
 ---
 name: spec-implementability
-description: Use when the user says 'is this implementable', 'ready to code', 'spec completeness', 'can we implement this', or wants to verify a spec is complete enough for a coding agent to implement without clarification
+description: Implementability assessment — 13-criteria production-readiness gate. Use when the user says 'is this implementable', 'ready to code', 'spec completeness', 'can we implement this', or wants to verify a spec is complete enough for a coding agent to implement without clarification
 ---
 
 # PMP: Spec Implementability Review

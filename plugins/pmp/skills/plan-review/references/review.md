@@ -128,6 +128,7 @@ Create a TodoWrite with these items and check each:
   - User-facing flows that cross multiple components or services
   - Critical paths (auth, payments, data pipelines) that break silently without E2E coverage
   - If the user opts to include E2E tests, add an E2E testing phase to the plan with specific scenarios, tooling, and pass/fail criteria
+  - If the plan explicitly documents an E2E opt-out decision (per generate-plans.md § E2E Test Opt-Out), verify the opt-out reason is valid for the project type — do not flag as missing
 
 ### Config & Data Changes
 - [ ] Config file changes identified (env vars, YAML, TOML, JSON configs)
