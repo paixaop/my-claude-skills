@@ -158,7 +158,6 @@ Always ask before transitioning. Use AskQuestion. Never auto-advance.
 
 ## References
 
-- SSoT formatting rules: [single-source-of-truth.md](../pmp/references/single-source-of-truth.md) — agents must follow these when touching spec files
 - Implementer prompt: [implementer-prompt.md](references/implementer-prompt.md)
 - Spec reviewer prompt: [spec-reviewer-prompt.md](../pmp/references/spec-reviewer-prompt.md)
 - Code quality reviewer: [code-quality-reviewer-prompt.md](references/code-quality-reviewer-prompt.md)

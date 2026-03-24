@@ -93,8 +93,8 @@ If saving, write the file and confirm the path.
 
 Once generated, the spec index is consumed by:
 
-- **pmp:plan** — Before generating a plan from specs, reads the index to locate canonical sources for each concept. Plan features reference the canonical file, not duplicates.
-- **pmp:plan-review** — During spec alignment gate, uses the index to verify plan features reference canonical sources.
+- **pmp:plan** — Before generating a plan from specs, reads the spec index to locate canonical sources for each concept. Plan features reference the canonical file, not duplicates.
+- **pmp:plan-review** — During spec alignment gate, uses the spec index to verify plan features reference canonical sources.
+- **pmp:execute** — Implementer agents read the spec index to find the authoritative spec for their task.
 - **pmp:spec-review** — During discovery phase, uses the index instead of scanning all files. Detects index staleness.
-- **pmp:execute** — Implementer agents read the index to find the authoritative spec for their task.
 - **pmp:arc42** — Reads the index as input for reorganization. Produces an updated index after reorganization.

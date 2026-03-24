@@ -48,6 +48,19 @@ stateDiagram-v2
     Approved --> [*] : transition to GitHub Planning / Execute
 ```
 
+## Master-Plan-Only Review
+
+When reviewing a master plan generated without sub-plans (indicated by the "Reminder" block at the bottom):
+
+- **Scope:** Review phase structure, dependency ordering, spec coverage completeness, and feature grouping — not detailed ACs or task tables (those don't exist yet)
+- **Key checks:** All spec sections mapped to a phase, no circular phase dependencies, phase boundaries align with architectural concerns, entry/exit criteria are concrete
+- **Skip:** Spec Fidelity, Testing Completeness, Parallelism & Task Structure, and Agent Readability checklist sections (these apply to sub-plans, not master plans)
+- **Flag:** Any phase whose scope is too broad to implement in a single controller session (3-feature batch limit)
+
+After review, remind the user: "Sub-plans will be generated during execution with `/pmp:execute`."
+
+---
+
 ## The Review Mindset
 
 You are a skeptical senior engineer. Do NOT:
@@ -161,17 +174,6 @@ Create a TodoWrite with these items and check each:
 - [ ] Error responses specify HTTP status, body schema, error code — not "returns an error"
 - [ ] Thresholds reference named settings from the settings catalog — not "rejects large requests"
 - [ ] State transitions specify from/to/trigger/side-effects — not "updates the status"
-
-### SSoT Compliance (when project has spec files)
-- [ ] SSoT index was consulted — plan features reference canonical spec files, not duplicates or summaries
-- [ ] Features that implement spec-defined behavior link to the canonical source (`file.md#section`)
-- [ ] Features that change spec-owned behavior include an explicit task to update the canonical spec file
-- [ ] Features that add new architectural concepts include a task to create the canonical spec file
-- [ ] No plan task instructs the agent to duplicate spec content — cross-references use section-level links
-- [ ] If plan creates or removes spec files, it includes a task to update `spec-index.md`
-- [ ] If plan renames a heading in a spec file, it includes updating all inbound cross-reference links
-- [ ] Numeric literals (thresholds, limits, timeouts) reference named settings from the settings catalog
-- [ ] All cross-references use `file.md#section` format, not bare file links
 
 ### Testing Completeness
 - [ ] Every feature explicitly lists which testing layers apply (unit/module/integration/E2E) with rationale for each

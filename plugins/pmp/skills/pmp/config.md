@@ -312,7 +312,7 @@ Agents share no context with the main controller — each starts with an empty c
 | Root pmp router | <200 words | Loaded on every planning request |
 | Stage skills (brainstorm, plan, execute) | <100 words in SKILL.md | Workflow lives in references |
 | Spec review sub-skills | <100 words in SKILL.md | Analysis lives in references |
-| Reference files | <500 words each | Split if exceeded |
+| Reference files | No hard limit | Split by concern when files become unwieldy |
 
 ---
 
@@ -334,7 +334,7 @@ Within each task, the Red-Green-Refactor cycle applies:
 
 | Constant | Value | Used By |
 |---|---|---|
-| Large spec threshold | **50** files | generate-plans (triggers master/sub-plan mode) |
+| Large spec threshold | **50** files | generate-plans (advisory — recommends full plan with sub-plans in step 3b; master/sub-plan mode triggers on 5+ features by user choice) |
 | Sub-plan filename pattern | `YYYY-MM-DD-<system>-phase-N-<name>-plan.md` | generate-plans |
 | Master plan filename pattern | `YYYY-MM-DD-<system>-master-plan.md` | generate-plans |
 

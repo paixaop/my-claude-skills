@@ -1,6 +1,6 @@
 # Analysis Cache
 
-Reusable per-file digest cache for skills that read spec/architecture files upfront. Avoids re-reading unchanged files on subsequent runs by storing structured summaries alongside content hashes.
+Reusable per-file digest cache for skills that read spec/architecture files upfront. Avoids re-reading unchanged files on subsequent runs by storing structured summaries alongside content hashes. See [config.md](../config.md) for cache-related constants.
 
 ## When to Use
 
@@ -120,7 +120,7 @@ To add caching to a skill:
 
 2. **Add the cache check** — insert the cache check algorithm (above) into the skill's discovery/input reading phase, between file classification and file reading.
 
-3. **Use the standard directory** — store in `docs/.cache/<skill-name>/` per [config.md](../pmp/config.md) File Paths.
+3. **Use the standard directory** — store in `docs/.cache/<skill-name>/` per [config.md](../config.md) File Paths.
 
 ## Spec-Review Extraction Template
 

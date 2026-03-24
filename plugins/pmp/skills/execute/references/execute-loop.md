@@ -26,6 +26,17 @@ Controller (session, max 3 features per batch)
 
 **Master plan execution:** Sub-plans execute in phase order. Each phase is a separate controller session. Phase N+1 starts only after Phase N exit criteria are met.
 
+**Master-plan-only execution (no sub-plans yet):** When a master plan was generated without sub-plans (indicated by the "Reminder" block at the bottom of the plan), the execute loop must generate each phase's sub-plan before implementing it:
+
+1. Read the master plan and identify all phases from the Phase Dependency Graph
+2. For Phase N (in dependency order):
+   a. Generate the sub-plan for Phase N by running `/pmp:plan` scoped to that phase's spec files and features listed in the Spec Coverage Summary
+   b. Save the sub-plan using the filename pattern from [config.md](../../pmp/config.md) Sub-Plan Filename Pattern
+   c. Run `/pmp:plan-review` on the sub-plan
+   d. Execute the sub-plan using the standard execute loop
+   e. Verify Phase N exit criteria are met
+3. Proceed to Phase N+1 only after Phase N is complete
+
 ## Legacy Two-Task Model (fallback)
 
 For plans that use the older two-task format (Task A: all implementation, Task B: all E2E), the following execution model applies:

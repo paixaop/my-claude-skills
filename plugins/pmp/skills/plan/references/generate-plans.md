@@ -188,19 +188,13 @@ Read it completely. Understand every feature, requirement, and acceptance criter
 
 For GitHub Issues Mode: the "roadmap" is the normalized feature list from step 0.
 
-### 1b. Locate SSoT Index and Rules
+### 1b. Explore Specs
 
 **If the project has spec files** (under `specs/`, `docs/architecture/`, or similar):
 
-1. **Look for `spec-index.md`** in the spec directory root. If found, read it — this is the ownership registry that maps concepts to their canonical files.
-2. **Look for SSoT rules** in CLAUDE.md, the spec directory README.md, or `docs/single-source-of-truth.md`. If found, read them — all plan features that touch spec-owned concepts must reference the canonical source.
-
-**If an SSoT index exists**, use it throughout plan generation:
-- When a feature references a concept, link to the canonical file from the index — not to duplicates or summaries
-- When a feature modifies a spec-owned behavior, the plan must include updating the canonical spec file as an explicit step
-- When a feature adds a new concept, the plan must include adding it to the SSoT index as an explicit step
-
-**If no SSoT index exists** but spec files exist, note this and suggest running `/pmp:spec-index` after plan generation.
+1. **Look for `spec-index.md`** in the spec directory root. If found, read it — use it as a map to guide your exploration. The index tells you which file owns which concept, so you know where to look instead of scanning blindly.
+2. **Follow cross-references between specs.** Spec files heavily interlink — a feature spec may reference a data model spec, which references a config spec, which references an API spec. Follow these links to build a complete picture. Don't stop at the first file; trace the full dependency chain for each concept the plan will touch.
+3. **If no spec index exists**, explore the spec directory structure directly. Read file headers and summaries to build your own mental map of which file owns what, then follow cross-references as above.
 
 ### 2. Analyze the Codebase
 
@@ -233,7 +227,7 @@ After all clarifying questions are resolved and the plan has **5 or more feature
 - For plans with < 5 features (no phases): skip this question — generate the single detailed plan as today
 - For plans with 5+ features: always ask this question
 - When the spec corpus has 50+ files (per [config.md](../../pmp/config.md) Large Spec Threshold), recommend the full plan: "This is a large specification (N files). I recommend the full plan with sub-plans."
-- Record the user's choice — it controls Phase 4 and Phase 6 behavior
+- Record the user's choice — it controls step 4 and step 6 behavior
 
 ### 4. Generate the Plan
 
@@ -459,7 +453,7 @@ When the user chose **full plan with sub-plans** in step 3b (plans with 5+ featu
 5. **Generate one sub-plan per phase** — each is a normal plan file scoped to that phase's spec files. Filename: per [config.md](../../pmp/config.md) Sub-Plan Filename Pattern
 6. **Announce progress:** "Phase N sub-plan generated (M features). Moving to Phase N+1."
 
-If the user chose **master plan only** in step 3b, skip this section — the master plan was already generated in Phase 4.
+If the user chose **master plan only** in step 3b, skip this section — the master plan was already generated in step 4.
 
 Sub-plans include:
 - `**Master Plan:** [link]` in header
@@ -467,4 +461,4 @@ Sub-plans include:
 - Spec traceability (subset of master)
 - Test harness references (subset of harness for this phase's components)
 
-See [execution-model.md](execution-model.md) for the orchestrator agent execution model and SSoT compliance rules.
+See [execution-model.md](execution-model.md) for the orchestrator agent execution model.
